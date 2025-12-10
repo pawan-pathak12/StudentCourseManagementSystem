@@ -1,4 +1,4 @@
-﻿using Student_Course_Management_API.Models.Enums;
+﻿using Student_Course_Management_API.Enums;
 
 namespace Student_Course_Management_API.Models
 {
@@ -9,7 +9,7 @@ namespace Student_Course_Management_API.Models
 
         public int StudentId { get; set; }                  // FK to Student
         public int CourseId { get; set; }                   // FK to Course
-        public EnrollmentStatus Status { get; set; } = EnrollmentStatus.Confirmed;              // e.g., "Pending", "Confirmed", "Cancelled"                                                                                              //      public bool IsFeePaid { get; set; }                 // Fee status
+        public EnrollmentStatus Status { get; set; } = EnrollmentStatus.Comfirmed;              // e.g., "Pending", "Confirmed", "Cancelled"                                                                                              //      public bool IsFeePaid { get; set; }                 // Fee status
         public bool IsActive { get; set; } = true;
         public DateTimeOffset CreatedAt => DateTime.UtcNow;
 

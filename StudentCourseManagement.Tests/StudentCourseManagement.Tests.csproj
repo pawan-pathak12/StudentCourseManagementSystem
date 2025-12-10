@@ -12,4 +12,10 @@
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StudentCourseManagement.API\StudentCourseManagement.API.csproj" />
+    <ProjectReference Include="..\StudentCourseManagement.Business\StudentCourseManagement.Business.csproj" />
+    <ProjectReference Include="..\StudentCourseManagement.Data\StudentCourseManagement.Data.csproj" />
+  </ItemGroup>
+
 </Project>
