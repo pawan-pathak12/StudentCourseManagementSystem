@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Repositories\InMemory\" />
     <Folder Include="Repositories\Dapper\" />
   </ItemGroup>
 

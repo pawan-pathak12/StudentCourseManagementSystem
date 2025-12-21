@@ -1,6 +1,13 @@
-﻿namespace StudentCourseManagement.Business.Interfaces.Services
+﻿using StudentCourseManagement.Business.DTOs.Student;
+
+namespace StudentCourseManagement.Business.Interfaces.Services
 {
-    internal interface IStudentService
+    public interface IStudentService
     {
+        bool Create(CreateStudentDto dto);
+        List<StudentResponseDto> GetAll();
+        StudentResponseDto? GetById(int id);
+        bool Update(int id, UpdateStudentDto dto);
+        bool Delete(int id);
     }
 }
