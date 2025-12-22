@@ -12,4 +12,4 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
         bool EmailExists(string email);
     }
 }
-}
+

@@ -16,9 +16,9 @@ namespace StudentCourseManagement.Business.Services
 
         public bool Create(CreateStudentDto dto)
         {
-            if (_repository.EmailExists(dto.Email))
-                return false;
-
+            /* if (_repository.EmailExists(dto.Email))
+                 return false;
+ */
             var student = new Student
             {
                 Name = dto.Name,
