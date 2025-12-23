@@ -14,8 +14,6 @@ namespace StudentCourseManagement.API.Controllers
             this._studentService = studentService;
         }
 
-
-
         #region HttpGet
 
         [HttpGet]
