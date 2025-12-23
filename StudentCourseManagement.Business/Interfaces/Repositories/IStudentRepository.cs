@@ -4,11 +4,15 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
 {
     public interface IStudentRepository
     {
-        void Add(Student student);
-        Student? GetById(int id);
-        List<Student> GetAll();
-        bool Update(Student student);
-        bool Delete(int id);
+        #region CURD Operations 
+        Task Add(Student student);
+        Task<Student?> GetById(int id);
+        Task<List<Student>> GetAll();
+        Task<bool> Update(Student student);
+        Task<bool> Delete(int id);
+
+        #endregion
+
         bool EmailExists(string email);
     }
 }

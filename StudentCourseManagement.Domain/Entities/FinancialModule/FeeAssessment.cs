@@ -1,4 +1,6 @@
-﻿namespace StudentCourseManagement.Domain.Entities.FinancialModule
+﻿using StudentCourseManagement.Domain.Enums;
+
+namespace StudentCourseManagement.Domain.Entities.FinancialModule
 {
     public class FeeAssessment
     {
@@ -9,7 +11,7 @@
         public int FeeTemplateId { get; set; }
         public decimal Amount { get; set; }
         public DateTimeOffset? DueDate { get; set; }
-        public AssessmentStatus Status { get; set; }
+        public AssessmentStatus FeeAssessmentStatus { get; set; }
         public bool IsActive { get; set; }
 
         // 🔄 NEW PROPERTIES ADDED

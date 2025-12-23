@@ -1,4 +1,6 @@
-﻿namespace StudentCourseManagement.Domain.Entities.FinancialModule
+﻿using StudentCourseManagement.Domain.Enums;
+
+namespace StudentCourseManagement.Domain.Entities.FinancialModule
 {
     public class PaymentMethod
     {

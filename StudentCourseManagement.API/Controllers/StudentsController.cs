@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.Business.DTOs.Student;
 using StudentCourseManagement.Business.Interfaces.Services;
 
 namespace StudentCourseManagement.API.Controllers
@@ -16,20 +15,16 @@ namespace StudentCourseManagement.API.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult Create(CreateStudentDto dto)
-        {
-            if (!_studentService.Create(dto))
-                return Conflict();
 
-            return Ok();
-        }
+        #region HttpGet
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var result = _studentService.GetAll();
             return Ok(result);
         }
+
+        #endregion
     }
 }

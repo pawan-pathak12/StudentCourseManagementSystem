@@ -1,4 +1,6 @@
-﻿namespace StudentCourseManagement.Domain.Entities.FinancialModule
+﻿using StudentCourseManagement.Domain.Enums;
+
+namespace StudentCourseManagement.Domain.Entities.FinancialModule
 {
     public class Invoice
     {
@@ -11,7 +13,7 @@
         public DateTimeOffset IssuedAt { get; set; }
         public DateTimeOffset? DueDate { get; set; }
         public decimal TotalAmount { get; set; }
-        public InvoiceStatus Status { get; set; }
+        public InvoiceStatus InvoiceStatus { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public decimal AmountPaid { get; set; }
         public decimal BalanceDue { get; set; }
