@@ -1,0 +1,16 @@
+﻿namespace StudentCourseManagement.Domain.Entities.FinancialModule
+{
+    public class InvoicelineItem
+    {
+        public int InvoiceLineItemId { get; set; }
+        public int FeeTemplateId { get; set; }
+        public int CourseId { get; set; }
+        public int InvoiceId { get; set; }
+        public string? Description { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Amount { get; set; }
+        public DateTimeOffset CreatedAt => DateTimeOffset.UtcNow;
+
+    }
+}

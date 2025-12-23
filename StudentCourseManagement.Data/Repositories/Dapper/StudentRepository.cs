@@ -14,36 +14,67 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             this._dbContext = dbContext;
         }
 
+        #region CURD Operation
         public async Task Add(Student student)
         {
-            var connection = _dbContext.CreateConnection();
-            var sql = "INSERT INTO Students (Name, Email) VALUES (@Name, @Email)";
+            using var connection = _dbContext.CreateConnection();
+            var sql = @"INSERT INTO Students(Name, Email, DOB, Number, IsActive, Gender, Address)
+                    VALUES (@Name, @Email, @DOB, @Number, @IsActive, @Gender, @Address)";
+
             await connection.ExecuteAsync(sql, student);
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            var sql = "Update Students set IsActive=1 where StudentId=@Id";
+            var rows = await connection.ExecuteAsync(sql, new { Id = id });
+            return rows > 0;
         }
+
+        public async Task<List<Student>> GetAll()
+        {
+            using var connection = _dbContext.CreateConnection();
+            var sql = "SELECT * FROM Students";
+            var result = await connection.QueryAsync<Student>(sql);
+            return result.ToList();
+        }
+
+        public async Task<Student?> GetById(int id)
+        {
+            using var connection = _dbContext.CreateConnection();
+            var sql = "SELECT * FROM Students WHERE Id = @Id";
+            return await connection.QueryFirstOrDefaultAsync<Student>(sql, new { Id = id });
+        }
+
+        public async Task<bool> Update(Student student)
+        {
+            using var connection = _dbContext.CreateConnection();
+            var sql = @"UPDATE Students 
+                    SET Name = @Name,
+                        Email = @Email,
+                        DOB = @DOB,
+                        Number = @Number,
+                        EmrollementDate = @EmrollementDate,
+                        IsActive = @IsActive,
+                        Gender = @Gender,
+                        Address = @Address
+                    WHERE StudentId = @StudentId";
+            var rows = await connection.ExecuteAsync(sql, student);
+            return rows > 0;
+        }
+
+
+
+        #endregion
+
+        #region Validation of Student
 
         public bool EmailExists(string email)
         {
             throw new NotImplementedException();
         }
 
-        public List<Student> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Student? GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Update(Student student)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }

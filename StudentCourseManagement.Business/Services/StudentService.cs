@@ -1,7 +1,6 @@
 ﻿using StudentCourseManagement.Business.DTOs.Student;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
-using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.Business.Services
 {
@@ -14,59 +13,29 @@ namespace StudentCourseManagement.Business.Services
             _repository = repository;
         }
 
-        public bool Create(CreateStudentDto dto)
+        public Task<bool> Create(CreateStudentDto dto)
         {
-            /* if (_repository.EmailExists(dto.Email))
-                 return false;
- */
-            var student = new Student
-            {
-                Name = dto.Name,
-                Email = dto.Email
-            };
-
-            _repository.Add(student);
-            return true;
+            throw new NotImplementedException();
         }
 
-        public List<StudentResponseDto> GetAll()
+        public Task<bool> Delete(int id)
         {
-            return _repository.GetAll()
-                .Select(s => new StudentResponseDto
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Email = s.Email
-                }).ToList();
+            throw new NotImplementedException();
         }
 
-        public StudentResponseDto? GetById(int id)
+        public Task<List<StudentResponseDto>> GetAll()
         {
-            var student = _repository.GetById(id);
-            if (student == null) return null;
-
-            return new StudentResponseDto
-            {
-                Id = student.Id,
-                Name = student.Name,
-                Email = student.Email
-            };
+            throw new NotImplementedException();
         }
 
-        public bool Update(int id, UpdateStudentDto dto)
+        public Task<StudentResponseDto?> GetById(int id)
         {
-            var student = _repository.GetById(id);
-            if (student == null) return false;
-
-            student.Name = dto.Name;
-            student.Email = dto.Email;
-
-            return _repository.Update(student);
+            throw new NotImplementedException();
         }
 
-        public bool Delete(int id)
+        public Task<bool> Update(int id, UpdateStudentDto dto)
         {
-            return _repository.Delete(id);
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,27 +1,16 @@
-using Serilog;
-using StudentCourseManagement.Data.Database;
+using StudentCourseManagement.Business;
+using StudentCourseManagement.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-
-#region Register Logger
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateLogger();
-
-builder.Host.UseSerilog();
-
-#endregion
-
-#region Register DataBase and Repository 
-builder.Services.AddSingleton<StudentSysDbContext>();
-#endregion
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddBusinessLayer();                // Business Layer Registration 
+builder.Services.AddDataLayer(builder.Configuration);  // Data layer DI registration
+
 
 var app = builder.Build();
 
