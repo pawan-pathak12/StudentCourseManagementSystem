@@ -1,39 +1,48 @@
-﻿using StudentCourseManagement.Business.DTOs.Student;
+﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
+using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.Business.Services
 {
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _repository;
+        private readonly IMapper _mapper;
 
         public StudentService(IStudentRepository repository)
         {
+
             _repository = repository;
         }
-
-        public Task<bool> Create(CreateStudentDto dto)
+        public StudentService(IMapper mapper)
         {
-            throw new NotImplementedException();
+            this._mapper = mapper;
+
         }
+        public async Task Create(Student student)
+        {
+            await _repository.Add(student);
+        }
+
+
 
         public Task<bool> Delete(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<StudentResponseDto>> GetAll()
+        public Task<List<Student>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<StudentResponseDto?> GetById(int id)
+        public Task<Student?> GetById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(int id, UpdateStudentDto dto)
+        public Task<bool> Update(int id, Student dto)
         {
             throw new NotImplementedException();
         }

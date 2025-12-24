@@ -5,12 +5,18 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 {
     public class InMemoryStudentRepository : IStudentRepository
     {
-        private readonly List<Student> _students;
+        public readonly List<Student> _students;
         private int _id = 1;
+        public InMemoryStudentRepository()
+        {
+            _students = new List<Student>();
+        }
 
         public Task Add(Student student)
         {
-            throw new NotImplementedException();
+            _students.Add(student);
+
+            return Task.CompletedTask;
         }
 
         public Task<bool> Delete(int id)

@@ -8,12 +8,14 @@ namespace StudentCourseManagement.Tests.Common
     public abstract class StudentServiceTestBase
     {
         protected IStudentService _studentService;
+        protected InMemoryStudentRepository _repository;
 
         [TestInitialize]
         public void Setup()
         {
-            var repo = new InMemoryStudentRepository();
-            _studentService = new StudentService(repo);
+            _repository = new InMemoryStudentRepository();
+            _studentService = new StudentService(_repository);
+
         }
     }
 }
