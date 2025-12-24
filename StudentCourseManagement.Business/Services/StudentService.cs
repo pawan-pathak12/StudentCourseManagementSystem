@@ -15,11 +15,6 @@ namespace StudentCourseManagement.Business.Services
 
             _repository = repository;
         }
-        public StudentService(IMapper mapper)
-        {
-            this._mapper = mapper;
-
-        }
         public async Task Create(Student student)
         {
             await _repository.Add(student);
@@ -27,24 +22,28 @@ namespace StudentCourseManagement.Business.Services
 
 
 
-        public Task<bool> Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            return await _repository.Delete(id);
         }
 
-        public Task<List<Student>> GetAll()
+        public async Task<IEnumerable<Student>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _repository.GetAll();
         }
 
-        public Task<Student?> GetById(int id)
+        public async Task<Student?> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _repository.GetById(id);
         }
 
-        public Task<bool> Update(int id, Student dto)
+        public async Task<bool> Update(int id, Student student)
         {
-            throw new NotImplementedException();
+            if (id != student.Id)
+            {
+                return false;
+            }
+            return await _repository.Update(student);
         }
     }
 }

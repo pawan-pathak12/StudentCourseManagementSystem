@@ -6,8 +6,8 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
     {
         #region CURD Operations 
         Task Add(Student student);
-        Task<Student?> GetById(int id);
-        Task<List<Student>> GetAll();
+        Task<Student> GetById(int id);
+        Task<IEnumerable<Student>> GetAll();
         Task<bool> Update(Student student);
         Task<bool> Delete(int id);
 

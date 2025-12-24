@@ -6,11 +6,11 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
     public class InMemoryStudentRepository : IStudentRepository
     {
         public readonly List<Student> _students;
-        private int _id = 1;
         public InMemoryStudentRepository()
         {
             _students = new List<Student>();
         }
+
 
         public Task Add(Student student)
         {
@@ -19,27 +19,51 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.CompletedTask;
         }
 
-        public Task<bool> Delete(int id)
+        public Task<IEnumerable<Student>> GetAll()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_students.AsEnumerable());
         }
 
-        public bool EmailExists(string email)
+        public Task<Student> GetById(int id)
         {
-            throw new NotImplementedException();
-        }
+            var result = _students.Find(x => x.Id == id);
+            return Task.FromResult(result);
 
-        public Task<List<Student>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Student?> GetById(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<bool> Update(Student student)
+        {
+            var existingStudent = _students.Find(x => x.Id == student.Id);
+            if (existingStudent == null)
+            {
+                return Task.FromResult(false);
+            }
+
+
+            existingStudent.Name = student.Name;
+            existingStudent.Email = student.Email;
+            existingStudent.DOB = student.DOB;
+            existingStudent.Number = student.Number;
+            existingStudent.Gender = student.Gender;
+            existingStudent.Address = student.Address;
+
+            return Task.FromResult(true);
+
+        }
+
+        public Task<bool> Delete(int id)
+        {
+
+            var existingStudent = _students.FirstOrDefault(x => x.Id == id);
+            if (existingStudent == null)
+            {
+                return Task.FromResult(false);
+            }
+            existingStudent.IsActive = false;
+            return Task.FromResult(true);
+
+        }
+        public bool EmailExists(string email)
         {
             throw new NotImplementedException();
         }
