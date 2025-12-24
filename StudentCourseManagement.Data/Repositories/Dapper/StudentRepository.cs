@@ -32,7 +32,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return rows > 0;
         }
 
-        public async Task<List<Student>> GetAll()
+        public async Task<IEnumerable<Student>> GetAll()
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "SELECT * FROM Students";
@@ -40,7 +40,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return result.ToList();
         }
 
-        public async Task<Student?> GetById(int id)
+        public async Task<Student> GetById(int id)
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "SELECT * FROM Students WHERE Id = @Id";

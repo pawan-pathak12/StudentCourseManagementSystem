@@ -1,13 +1,13 @@
-﻿using StudentCourseManagement.Business.DTOs.Student;
+﻿using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.Business.Interfaces.Services
 {
     public interface IStudentService
     {
-        Task<bool> Create(CreateStudentDto dto);
-        Task<List<StudentResponseDto>> GetAll();
-        Task<StudentResponseDto?> GetById(int id);
-        Task<bool> Update(int id, UpdateStudentDto dto);
+        Task Create(Student student);
+        Task<IEnumerable<Student>> GetAll();
+        Task<Student?> GetById(int id);
+        Task<bool> Update(int id, Student student);
         Task<bool> Delete(int id);
     }
 }

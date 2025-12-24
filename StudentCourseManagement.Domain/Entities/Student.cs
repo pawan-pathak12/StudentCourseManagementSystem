@@ -9,7 +9,7 @@
         public DateTimeOffset DOB { get; set; }
         public string Number { get; set; }
         public DateTimeOffset EnrollmentDate { get; set; }
-        public bool IsActive => true;
+        public bool IsActive { get; set; } = true;
         public string Gender { get; set; }
         public string Address { get; set; }
 
