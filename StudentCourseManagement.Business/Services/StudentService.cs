@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using StudentCourseManagement.Business.Interfaces.Repositories;
+﻿using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
 
@@ -8,7 +7,6 @@ namespace StudentCourseManagement.Business.Services
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _repository;
-        private readonly IMapper _mapper;
 
         public StudentService(IStudentRepository repository)
         {

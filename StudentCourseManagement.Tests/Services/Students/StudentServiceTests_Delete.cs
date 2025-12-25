@@ -21,7 +21,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Assume id 1 exists
             int id = 1;
 
-            var isDeleted = await _studentService.Delete(1);
+            var isDeleted = await _studentService.Delete(id);
 
             Assert.IsTrue(isDeleted);
         }
