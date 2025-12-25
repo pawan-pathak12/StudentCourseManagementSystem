@@ -31,6 +31,7 @@ namespace StudentCourseManagement.Data
             #region Repository Registration 
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
             #endregion
 
             return services;
