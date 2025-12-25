@@ -100,6 +100,7 @@ namespace StudentCourseManagement.API.Controllers
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             _logger.LogInformation($"API Request : Delete student with Id {id}");
+
             var isDeleted = await _studentService.Delete(id);
             if (!isDeleted)
             {

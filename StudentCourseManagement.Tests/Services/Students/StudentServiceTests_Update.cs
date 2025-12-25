@@ -13,7 +13,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Arrange 
             var studentData = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm"
             };
@@ -22,7 +22,7 @@ namespace StudentCourseManagement.Tests.Services.Students
 
             var student = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram Nath",
                 Address = "Ktm"
             };
@@ -39,7 +39,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Arrange 
             var studentData = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm"
             };
@@ -67,7 +67,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Arrange 
             var studentData = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm"
             };
@@ -76,7 +76,7 @@ namespace StudentCourseManagement.Tests.Services.Students
 
             var student = new Student
             {
-                Id = 111,
+                StudentId = 111,
                 Name = "Ram Nath",
                 Address = "Ktm"
             };

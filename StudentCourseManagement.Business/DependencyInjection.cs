@@ -14,6 +14,7 @@ namespace StudentCourseManagement.Business
 
             #region Service Registration 
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<ICourseService, CourseService>();
             #endregion
 
 
