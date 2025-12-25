@@ -8,10 +8,14 @@ namespace StudentCourseManagement.Business
     {
         public static IServiceCollection AddBusinessLayer(this IServiceCollection services)
         {
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            // Only scan this assembly for profiles
+            services.AddAutoMapper(typeof(DependencyInjection).Assembly);
+
 
             #region Service Registration 
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IEnrollmentService, EnrollmentService>();
             #endregion
 
 

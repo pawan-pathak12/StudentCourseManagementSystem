@@ -26,14 +26,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
         public Task<Student> GetById(int id)
         {
-            var result = _students.Find(x => x.Id == id);
+            var result = _students.Find(x => x.StudentId == id);
             return Task.FromResult(result);
 
         }
 
         public Task<bool> Update(Student student)
         {
-            var existingStudent = _students.Find(x => x.Id == student.Id);
+            var existingStudent = _students.Find(x => x.StudentId == student.StudentId);
             if (existingStudent == null)
             {
                 return Task.FromResult(false);
@@ -54,7 +54,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         public Task<bool> Delete(int id)
         {
 
-            var existingStudent = _students.FirstOrDefault(x => x.Id == id);
+            var existingStudent = _students.FirstOrDefault(x => x.StudentId == id);
             if (existingStudent == null)
             {
                 return Task.FromResult(false);

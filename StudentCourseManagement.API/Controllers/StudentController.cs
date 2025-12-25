@@ -8,15 +8,19 @@ namespace StudentCourseManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentsController : ControllerBase
+    public class StudentController : ControllerBase
     {
+
+
         private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
+        private readonly ILogger<StudentController> _logger;
 
-        public StudentsController(IStudentService studentService, IMapper mapper)
+        public StudentController(IStudentService studentService, IMapper mapper, ILogger<StudentController> logger)
         {
             this._studentService = studentService;
             this._mapper = mapper;
+            this._logger = logger;
         }
 
 
@@ -26,7 +30,11 @@ namespace StudentCourseManagement.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
         {
             var student = _mapper.Map<Student>(createStudentDto);
+            _logger.LogInformation("API request : POST new student data");
+
             await _studentService.Create(student);
+
+            _logger.LogInformation("API Response : Created now student data");
             return Ok("Student Record Added");
 
 
@@ -38,8 +46,14 @@ namespace StudentCourseManagement.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = _studentService.GetAll();
+            _logger.LogInformation("API request : GET student all record ");
+
+            var result = await _studentService.GetAll();
+            _logger.LogInformation("API resposne : returning student all record ");
+
             return Ok(result);
+
+
         }
 
         #region GetById
@@ -47,7 +61,10 @@ namespace StudentCourseManagement.API.Controllers
 
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
+            _logger.LogInformation($"API request : GET student with ID {id}");
+
             var student = await _studentService.GetById(id);
+            _logger.LogInformation("API Resposne : returning data");
             var studentDto = _mapper.Map<StudentResponseDto>(student);
 
             return Ok(studentDto);
@@ -65,7 +82,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             var student = _mapper.Map<Student>(updateStudentDto);
 
-            var isUpdated = await _studentService.Update(student.Id, student);
+            var isUpdated = await _studentService.Update(student.StudentId, student);
 
             if (!isUpdated)
             {
@@ -79,9 +96,11 @@ namespace StudentCourseManagement.API.Controllers
 
         #region HttpDelete 
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
+            _logger.LogInformation($"API Request : Delete student with Id {id}");
+
             var isDeleted = await _studentService.Delete(id);
             if (!isDeleted)
             {

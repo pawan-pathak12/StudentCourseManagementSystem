@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using StudentCourseManagement.Business.Interfaces.Repositories;
+﻿using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
 
@@ -8,7 +7,6 @@ namespace StudentCourseManagement.Business.Services
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _repository;
-        private readonly IMapper _mapper;
 
         public StudentService(IStudentRepository repository)
         {
@@ -29,17 +27,27 @@ namespace StudentCourseManagement.Business.Services
 
         public async Task<IEnumerable<Student>> GetAll()
         {
-            return await _repository.GetAll();
+            var students = await _repository.GetAll();
+            if (!students.Any() || students == null)
+            {
+                return null;
+            }
+            return students;
         }
 
         public async Task<Student?> GetById(int id)
         {
-            return await _repository.GetById(id);
+            var student = await _repository.GetById(id);
+            if (student == null)
+            {
+                return null;
+            }
+            return student;
         }
 
         public async Task<bool> Update(int id, Student student)
         {
-            if (id != student.Id)
+            if (id != student.StudentId)
             {
                 return false;
             }

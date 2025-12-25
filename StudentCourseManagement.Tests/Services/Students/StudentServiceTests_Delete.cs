@@ -12,7 +12,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Arrange 
             var student = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm"
             };
@@ -21,7 +21,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Assume id 1 exists
             int id = 1;
 
-            var isDeleted = await _studentService.Delete(1);
+            var isDeleted = await _studentService.Delete(id);
 
             Assert.IsTrue(isDeleted);
         }
@@ -32,7 +32,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             //Arrange 
             var student = new Student
             {
-                Id = 1,
+                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm"
             };
