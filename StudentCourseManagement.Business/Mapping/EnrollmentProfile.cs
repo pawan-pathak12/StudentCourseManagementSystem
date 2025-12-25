@@ -1,0 +1,17 @@
+﻿using AutoMapper;
+using StudentCourseManagement.Business.DTOs.Enrollments;
+using StudentCourseManagement.Domain.Entities;
+
+namespace StudentCourseManagement.Business.Mapping
+{
+    public class EnrollmentProfile : Profile
+    {
+        public EnrollmentProfile()
+        {
+            CreateMap<Enrollment, Enrollment>();
+            CreateMap<Enrollment, CreateEnrollmentDto>().ReverseMap();
+            CreateMap<Enrollment, UpdateEnrollmentDto>().ReverseMap();
+            CreateMap<Enrollment, EnrollmentResponseDto>().ReverseMap();
+        }
+    }
+}
