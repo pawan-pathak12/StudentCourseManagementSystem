@@ -12,6 +12,7 @@ namespace StudentCourseManagement.Data.Database
         public StudentSysDbContext(IConfiguration configuration)
         {
             this._configuration = configuration;
+            _connectionString = _configuration.GetConnectionString("DefaultConnection");
 
         }
         public IDbConnection CreateConnection()

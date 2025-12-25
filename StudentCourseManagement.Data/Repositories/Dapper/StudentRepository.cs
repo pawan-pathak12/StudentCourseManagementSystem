@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities;
@@ -8,10 +9,12 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
     public class StudentRepository : IStudentRepository
     {
         private readonly StudentSysDbContext _dbContext;
+        private readonly ILogger<StudentRepository> _logger;
 
-        public StudentRepository(StudentSysDbContext dbContext)
+        public StudentRepository(StudentSysDbContext dbContext, ILogger<StudentRepository> logger)
         {
             this._dbContext = dbContext;
+            this._logger = logger;
         }
 
         #region CURD Operation
@@ -27,15 +30,24 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<bool> Delete(int id)
         {
             using var connection = _dbContext.CreateConnection();
-            var sql = "Update Students set IsActive=1 where StudentId=@Id";
-            var rows = await connection.ExecuteAsync(sql, new { Id = id });
-            return rows > 0;
+            var sql = "Update Students set IsActive=0 where StudentId=@StudentId";
+            var rows = await connection.ExecuteAsync(sql, new { StudentId = id });
+            if (rows > 0)
+            {
+                _logger.LogInformation("Student with ID {StudentId} marked inactive.", id);
+                return true;
+            }
+
+            _logger.LogWarning("Delete failed. No student found with ID {StudentId}.", id);
+            return false;
+
         }
 
         public async Task<IEnumerable<Student>> GetAll()
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "SELECT * FROM Students";
+            _logger.LogInformation("Fetching all record of Student table");
             var result = await connection.QueryAsync<Student>(sql);
             return result.ToList();
         }
@@ -43,7 +55,9 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<Student> GetById(int id)
         {
             using var connection = _dbContext.CreateConnection();
-            var sql = "SELECT * FROM Students WHERE Id = @Id";
+            var sql = "SELECT * FROM Students WHERE StudentId = @Id";
+
+            _logger.LogInformation("Fetching Student record with Id " + id);
             return await connection.QueryFirstOrDefaultAsync<Student>(sql, new { Id = id });
         }
 
@@ -61,7 +75,16 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                         Address = @Address
                     WHERE StudentId = @StudentId";
             var rows = await connection.ExecuteAsync(sql, student);
-            return rows > 0;
+
+            if (rows > 0)
+            {
+                _logger.LogInformation($"Updated Student with Id{student.StudentId}");
+                return true;
+            }
+
+            _logger.LogWarning($"Failed to Update student record with id {student.StudentId}");
+            return false;
+
         }
 
 
