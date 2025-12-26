@@ -22,8 +22,8 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<int> Create(Enrollment enrollment)
         {
             const string sql = @"
-                    INSERT INTO Enrollments (StudentId, CourseId, EnrollmentStatus, EnrolledOn, IsActive, FeeAssessedDate, CancelledDate, CancellationReason)
-                    VALUES (@StudentId, @CourseId, @EnrollmentStatus, @EnrolledOn, @IsActive,   @FeeAssessedDate, @CancelledDate, @CancellationReason);
+                    INSERT INTO Enrollments (StudentId, CourseId, EnrollmentStatus, EnrolledOn, IsActive, FeeAssessmentDate, CancelledDate, CancellationReason)
+                    VALUES (@StudentId, @CourseId, @EnrollmentStatus, @EnrolledOn, @IsActive,   @FeeAssessmentDate, @CancelledDate, @CancellationReason);
                     SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var connection = _dbContext.CreateConnection();

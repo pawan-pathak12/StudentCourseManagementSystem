@@ -11,7 +11,7 @@ namespace StudentCourseManagement.Business.DTOs.Enrollments
         public DateTimeOffset EnrolledOn { get; set; } = DateTimeOffset.UtcNow;
         public bool IsActive { get; set; } = true;
 
-        public DateTimeOffset? FeeAssessedDate { get; set; }
+        public DateTimeOffset? FeeAssessmentDate { get; set; }
         public DateTimeOffset? CancelledDate { get; set; }
         public string? CancellationReason { get; set; }
     }

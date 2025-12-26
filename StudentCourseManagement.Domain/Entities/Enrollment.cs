@@ -12,7 +12,7 @@ namespace StudentCourseManagement.Domain.Entities
         public bool IsActive { get; set; } = true;
         public DateTimeOffset CreatedAt => DateTime.UtcNow;
 
-        public DateTimeOffset? FeeAssessedDate { get; set; }     // When fee was calculated
+        public DateTimeOffset? FeeAssessmentDate { get; set; }     // When fee was calculated
         public DateTimeOffset? CancelledDate { get; set; }       // For refund tracking
         public string? CancellationReason { get; set; }    // Optional: why cancelled
     }
