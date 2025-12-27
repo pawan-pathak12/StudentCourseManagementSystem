@@ -26,11 +26,11 @@ namespace StudentCourseManagement.Tests.Services.Courses
                 EnrollmentEndDate = new DateTimeOffset(2026, 1, 10, 23, 59, 0, TimeSpan.FromHours(5.75))   // Jan 10, 2026
             };
 
-            await _courseService.Create(course);
+            await _courseService.CreateAsync(course);
 
             //Act 
 
-            var courses = await _courseService.GetAll();
+            var courses = await _courseService.GetAllAsync();
 
             Assert.IsNotNull(courses);
             Assert.AreNotEqual(0, _courseRepository._courses.Count());
@@ -58,11 +58,11 @@ namespace StudentCourseManagement.Tests.Services.Courses
                 EnrollmentEndDate = new DateTimeOffset(2026, 1, 10, 23, 59, 0, TimeSpan.FromHours(5.75))   // Jan 10, 2026
             };
 
-            await _courseService.Create(course);
+            await _courseService.CreateAsync(course);
 
             //Act 
 
-            var exisitngCourse = await _courseService.GetById(course.CourseId);
+            var exisitngCourse = await _courseService.GetByIdAsync(course.CourseId);
 
             Assert.IsNotNull(exisitngCourse);
             Assert.AreEqual(course.CourseId, exisitngCourse.CourseId);
@@ -75,7 +75,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
             int id = 99;
             //Act 
 
-            var exisitngCourse = await _courseService.GetById(id);
+            var exisitngCourse = await _courseService.GetByIdAsync(id);
 
             Assert.IsNull(exisitngCourse);
         }

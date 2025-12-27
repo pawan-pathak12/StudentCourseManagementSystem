@@ -26,10 +26,10 @@ namespace StudentCourseManagement.Tests.Services.Courses
                 EnrollmentEndDate = new DateTimeOffset(2026, 1, 10, 23, 59, 0, TimeSpan.FromHours(5.75))   // Jan 10, 2026
             };
 
-            await _courseService.Create(course);
+            await _courseService.CreateAsync(course);
 
             //Act 
-            var isDeleted = await _courseService.Delete(course.CourseId);
+            var isDeleted = await _courseService.DeleteAsync(course.CourseId);
 
             Assert.IsTrue(isDeleted);
         }
@@ -44,7 +44,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
 
 
             //Act 
-            var isDeleted = await _courseService.Delete(id);
+            var isDeleted = await _courseService.DeleteAsync(id);
 
 
             Assert.IsFalse(isDeleted);

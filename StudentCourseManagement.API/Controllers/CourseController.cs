@@ -39,10 +39,9 @@ namespace StudentCourseManagement.API.Controllers
                 _logger.LogInformation("Creating new course with title: {Title}", createCourseDto.Title);
 
                 var course = _mapper.Map<Course>(createCourseDto);
-                var createdId = await _courseService.Create(course);
+                var createdId = await _courseService.CreateAsync(course);
 
                 var responseDto = _mapper.Map<CourseResponseDto>(course);
-                responseDto.CourseId = createdId;
 
                 _logger.LogInformation("Course created successfully with ID: {CourseId}", createdId);
 
@@ -66,7 +65,7 @@ namespace StudentCourseManagement.API.Controllers
             {
                 _logger.LogInformation("Fetching all active courses.");
 
-                var courses = await _courseService.GetAll();
+                var courses = await _courseService.GetAllAsync();
                 var responseDtos = _mapper.Map<IEnumerable<CourseResponseDto>>(courses);
 
                 return Ok(responseDtos);
@@ -86,7 +85,7 @@ namespace StudentCourseManagement.API.Controllers
             {
                 _logger.LogInformation("Fetching course with ID: {CourseId}", id);
 
-                var course = await _courseService.GetById(id);
+                var course = await _courseService.GetByIdAsync(id);
 
                 if (course == null)
                 {
@@ -126,7 +125,7 @@ namespace StudentCourseManagement.API.Controllers
                 _logger.LogInformation("Updating course with ID: {CourseId}", id);
 
                 var course = _mapper.Map<Course>(updateCourseDto);
-                var success = await _courseService.Update(id, course);
+                var success = await _courseService.UpdateAsync(id, course);
 
                 if (!success)
                 {
@@ -152,7 +151,7 @@ namespace StudentCourseManagement.API.Controllers
             {
                 _logger.LogInformation("Deleting (soft) course with ID: {CourseId}", id);
 
-                var success = await _courseService.Delete(id);
+                var success = await _courseService.DeleteAsync(id);
 
                 if (!success)
                 {

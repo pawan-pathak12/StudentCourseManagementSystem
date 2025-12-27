@@ -13,34 +13,34 @@ namespace StudentCourseManagement.Business.Services
             _repository = repository;
         }
 
-        public async Task<int> CreateEnrollmentAsync(Enrollment enrollment)
+        public async Task<int> CreateAsync(Enrollment enrollment)
         {
-            var newId = await _repository.Create(enrollment);
+            var newId = await _repository.AddAsync(enrollment);
             return newId;
         }
 
-        public async Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync()
+        public async Task<IEnumerable<Enrollment>> GetAllAsync()
         {
-            return await _repository.GetAll();
+            return await _repository.GetAllAsync();
         }
 
-        public async Task<Enrollment?> GetEnrollmentByIdAsync(int id)
+        public async Task<Enrollment?> GetByIdAsync(int id)
         {
-            return await _repository.GetById(id);
+            return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<bool> UpdateEnrollmentAsync(int id, Enrollment enrollment)
+        public async Task<bool> UpdateAsync(int id, Enrollment enrollment)
         {
             if (id != enrollment.EnrollmentId)
             {
                 return false;
             }
-            return await _repository.Update(id, enrollment);
+            return await _repository.UpdateAsync(id, enrollment);
         }
 
-        public async Task<bool> DeleteEnrollmentAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.Delete(id);
+            return await _repository.DeleteAsync(id);
         }
 
 

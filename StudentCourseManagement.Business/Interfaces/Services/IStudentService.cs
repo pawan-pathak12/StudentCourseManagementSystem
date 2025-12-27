@@ -4,10 +4,10 @@ namespace StudentCourseManagement.Business.Interfaces.Services
 {
     public interface IStudentService
     {
-        Task Create(Student student);
-        Task<IEnumerable<Student>> GetAll();
-        Task<Student?> GetById(int id);
-        Task<bool> Update(int id, Student student);
-        Task<bool> Delete(int id);
+        Task<bool> CreateAsync(Student student);
+        Task<IEnumerable<Student>> GetAllAsync();
+        Task<Student?> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(int id, Student student);
+        Task<bool> DeleteAsync(int id);
     }
 }

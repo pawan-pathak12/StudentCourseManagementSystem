@@ -36,7 +36,7 @@ namespace StudentCourseManagement.API.Controllers
             try
             {
                 var enrollment = _mapper.Map<Enrollment>(createDto);
-                var createdId = await _enrollmentService.CreateEnrollmentAsync(enrollment);
+                var createdId = await _enrollmentService.CreateAsync(enrollment);
 
                 var responseDto = _mapper.Map<EnrollmentResponseDto>(enrollment);
 
@@ -60,7 +60,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             try
             {
-                var enrollments = await _enrollmentService.GetAllEnrollmentsAsync();
+                var enrollments = await _enrollmentService.GetAllAsync();
                 var responseDtos = _mapper.Map<IEnumerable<EnrollmentResponseDto>>(enrollments);
 
                 return Ok(responseDtos);
@@ -80,7 +80,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             try
             {
-                var enrollment = await _enrollmentService.GetEnrollmentByIdAsync(id);
+                var enrollment = await _enrollmentService.GetByIdAsync(id);
 
                 if (enrollment == null)
                 {
@@ -115,7 +115,7 @@ namespace StudentCourseManagement.API.Controllers
             try
             {
                 var enrollment = _mapper.Map<Enrollment>(updateDto);
-                var success = await _enrollmentService.UpdateEnrollmentAsync(id, enrollment);
+                var success = await _enrollmentService.UpdateAsync(id, enrollment);
 
                 if (!success)
                 {
@@ -140,7 +140,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             try
             {
-                var isDeleted = await _enrollmentService.DeleteEnrollmentAsync(id);
+                var isDeleted = await _enrollmentService.DeleteAsync(id);
 
                 if (!isDeleted)
                 {

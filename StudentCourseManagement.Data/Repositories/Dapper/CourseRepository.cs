@@ -17,7 +17,9 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             this._logger = logger;
         }
 
-        public async Task<int> CreateAsync(Course course)
+        #region CURD Operations 
+
+        public async Task<int> AddAsync(Course course)
         {
             string sql = @"
                 INSERT INTO Courses ( Code, Title, Credits, Description, Instructor,StartDate, EndDate, Capacity,
@@ -122,5 +124,21 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return false;
 
         }
+
+        #endregion
+
+        #region Validation of Course 
+        public Task<bool> CodeExistsAsync(string code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TitleExistsAsync(string Name)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
     }
 }

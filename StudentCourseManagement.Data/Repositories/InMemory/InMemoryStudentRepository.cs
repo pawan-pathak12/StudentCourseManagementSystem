@@ -11,27 +11,28 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             _students = new List<Student>();
         }
 
-
-        public Task Add(Student student)
+        #region CURD Operations 
+        public Task<int> AddAsync(Student student)
         {
             _students.Add(student);
 
-            return Task.CompletedTask;
+            student.StudentId++;
+            return Task.FromResult(student.StudentId);
         }
 
-        public Task<IEnumerable<Student>> GetAll()
+        public Task<IEnumerable<Student>> GetAllAsync()
         {
             return Task.FromResult(_students.AsEnumerable());
         }
 
-        public Task<Student> GetById(int id)
+        public Task<Student> GetByIdAsync(int id)
         {
             var result = _students.Find(x => x.StudentId == id);
             return Task.FromResult(result);
 
         }
 
-        public Task<bool> Update(Student student)
+        public Task<bool> UpdateAsync(Student student)
         {
             var existingStudent = _students.Find(x => x.StudentId == student.StudentId);
             if (existingStudent == null)
@@ -51,7 +52,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
         }
 
-        public Task<bool> Delete(int id)
+        public Task<bool> DeleteAsync(int id)
         {
 
             var existingStudent = _students.FirstOrDefault(x => x.StudentId == id);
@@ -63,9 +64,31 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(true);
 
         }
-        public bool EmailExists(string email)
+        #endregion
+
+        #region Student busines logic 
+        public Task<bool> EmailExistsAsync(string email)
         {
-            throw new NotImplementedException();
+            var emailExist = _students.Find(x => x.Email == email);
+            if (emailExist == null)
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(true);
         }
+
+        public Task<bool> IsStudentActiveAsync(int studentId)
+        {
+            var student = _students.Find(x => x.StudentId == studentId);
+            if (!student.IsActive)
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(true);
+
+        }
+
+        #endregion
+
     }
 }

@@ -18,16 +18,17 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
 
         #region CURD Operation
-        public async Task Add(Student student)
+        public async Task<int> AddAsync(Student student)
         {
             using var connection = _dbContext.CreateConnection();
             var sql = @"INSERT INTO Students(Name, Email, DOB, Number, IsActive, Gender, Address)
-                    VALUES (@Name, @Email, @DOB, @Number, @IsActive, @Gender, @Address)";
+                    VALUES (@Name, @Email, @DOB, @Number, @IsActive, @Gender, @Address);
+                        SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            await connection.ExecuteAsync(sql, student);
+            return await connection.ExecuteAsync(sql, student);
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "Update Students set IsActive=0 where StudentId=@StudentId";
@@ -43,7 +44,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
         }
 
-        public async Task<IEnumerable<Student>> GetAll()
+        public async Task<IEnumerable<Student>> GetAllAsync()
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "SELECT * FROM Students";
@@ -52,7 +53,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return result.ToList();
         }
 
-        public async Task<Student> GetById(int id)
+        public async Task<Student> GetByIdAsync(int id)
         {
             using var connection = _dbContext.CreateConnection();
             var sql = "SELECT * FROM Students WHERE StudentId = @Id";
@@ -61,7 +62,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return await connection.QueryFirstOrDefaultAsync<Student>(sql, new { Id = id });
         }
 
-        public async Task<bool> Update(Student student)
+        public async Task<bool> UpdateAsync(Student student)
         {
             using var connection = _dbContext.CreateConnection();
             var sql = @"UPDATE Students 
@@ -94,6 +95,16 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         #region Validation of Student
 
         public bool EmailExists(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsStudentActiveAsync(int studentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IStudentRepository.EmailExistsAsync(string email)
         {
             throw new NotImplementedException();
         }

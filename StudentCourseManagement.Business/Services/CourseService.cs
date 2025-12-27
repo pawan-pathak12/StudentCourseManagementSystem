@@ -13,29 +13,39 @@ namespace StudentCourseManagement.Business.Services
             this._courseRepository = courseRepository;
         }
 
-        public async Task<int> Create(Course course)
+        public async Task<bool> CreateAsync(Course course)
         {
-            var created = await _courseRepository.CreateAsync(course);
-            return created;
+            var codeExists = await _courseRepository.CodeExistsAsync(course.Code);
+            if (codeExists)
+            {
+                return false;
+            }
+            var titleExists = await _courseRepository.TitleExistsAsync(course.Title);
+            if (titleExists)
+            {
+                return false;
+            }
+            await _courseRepository.AddAsync(course);
+            return true;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             return await _courseRepository.DeleteAsync(id);
 
         }
 
-        public async Task<IEnumerable<Course>> GetAll()
+        public async Task<IEnumerable<Course>> GetAllAsync()
         {
             return await _courseRepository.GetAllAsync();
         }
 
-        public async Task<Course?> GetById(int id)
+        public async Task<Course?> GetByIdAsync(int id)
         {
             return await _courseRepository.GetByIdAsync(id);
         }
 
-        public async Task<bool> Update(int id, Course course)
+        public async Task<bool> UpdateAsync(int id, Course course)
         {
             if (id != course.CourseId)
             {

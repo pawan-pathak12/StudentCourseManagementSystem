@@ -16,9 +16,9 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(student);
+            await _studentService.CreateAsync(student);
 
-            var students = _studentService.GetAll();
+            var students = _studentService.GetAllAsync();
 
             Assert.IsNotNull(students);
         }
@@ -33,13 +33,13 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(studentData);
+            await _studentService.CreateAsync(studentData);
 
 
             //Assume Id 1 exists 
             int id = 1;
 
-            var student = await _studentService.GetById(id);
+            var student = await _studentService.GetByIdAsync(id);
 
             Assert.IsNotNull(student);
 
@@ -56,13 +56,13 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(studentData);
+            await _studentService.CreateAsync(studentData);
 
 
             //Assume no  Id 111 exists 
             int id = 111;
 
-            var student = await _studentService.GetById(id);
+            var student = await _studentService.GetByIdAsync(id);
 
             Assert.IsNull(student);
         }

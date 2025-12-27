@@ -14,7 +14,8 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             this._mapper = mapper;
         }
 
-        public Task<int> CreateAsync(Course course)
+        #region CURD Operations 
+        public Task<int> AddAsync(Course course)
         {
             _courses.Add(course);
             return Task.FromResult(course.CourseId);
@@ -44,6 +45,8 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(exisitngCourse);
         }
 
+
+
         public Task<bool> UpdateAsync(int id, Course course)
         {
             var exisitngCourse = _courses.Find(x => x.CourseId == id);
@@ -55,5 +58,29 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
             return Task.FromResult(true);
         }
+        #endregion
+
+        #region Course Validation
+
+        public Task<bool> CodeExistsAsync(string code)
+        {
+            var course = _courses.Find(x => x.Code == code);
+            if (course == null)
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> TitleExistsAsync(string title)
+        {
+            var course = _courses.Find(x => x.Title == title);
+            if (course == null)
+            {
+                return Task.FromResult(false);
+            }
+            return Task.FromResult(true);
+        }
+        #endregion
     }
 }
