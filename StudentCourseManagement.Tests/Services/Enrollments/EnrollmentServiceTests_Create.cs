@@ -15,7 +15,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 StudentId = 1
             };
 
-            var enrollmentId = await _service.CreateEnrollmentAsync(enrollment);
+            var enrollmentId = await _service.CreateAsync(enrollment);
 
             Assert.AreEqual(1, enrollmentId);
         }

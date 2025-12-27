@@ -14,7 +14,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             this._mapper = mapper;
         }
 
-        public Task<int> CreateAsync(Course course)
+        public Task<int> AddAsync(Course course)
         {
             _courses.Add(course);
             return Task.FromResult(course.CourseId);

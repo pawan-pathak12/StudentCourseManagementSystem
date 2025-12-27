@@ -16,12 +16,12 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(student);
+            await _studentService.CreateAsync(student);
 
             //Assume id 1 exists
             int id = 1;
 
-            var isDeleted = await _studentService.Delete(id);
+            var isDeleted = await _studentService.DeleteAsync(id);
 
             Assert.IsTrue(isDeleted);
         }
@@ -36,14 +36,14 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(student);
+            await _studentService.CreateAsync(student);
 
 
 
             //Assume id 1111 don't exists
             int id = 1111;
 
-            var isDeleted = await _studentService.Delete(id);
+            var isDeleted = await _studentService.DeleteAsync(id);
 
             Assert.IsFalse(isDeleted);
         }

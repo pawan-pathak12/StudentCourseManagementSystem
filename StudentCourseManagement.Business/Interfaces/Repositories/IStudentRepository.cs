@@ -5,15 +5,24 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
     public interface IStudentRepository
     {
         #region CURD Operations 
-        Task Add(Student student);
-        Task<Student> GetById(int id);
-        Task<IEnumerable<Student>> GetAll();
-        Task<bool> Update(Student student);
-        Task<bool> Delete(int id);
+        Task<int> AddAsync(Student student);
+        Task<Student> GetByIdAsync(int id);
+        Task<IEnumerable<Student>> GetAllAsync();
+        Task<bool> UpdateAsync(Student student);
+        Task<bool> DeleteAsync(int id);
 
         #endregion
 
-        bool EmailExists(string email);
+        #region Validation 
+
+        #region Student business logic 
+        Task<bool> IsStudentActiveAsync(int studentId);
+        Task<bool> EmailExistsAsync(string email);
+
+        #endregion
+
+
+        #endregion
     }
 }
 

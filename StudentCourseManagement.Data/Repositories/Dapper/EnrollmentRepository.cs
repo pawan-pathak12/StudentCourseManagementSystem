@@ -19,7 +19,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
         #region CURD Operations 
         // CREATE - Returns the new EnrollmentId
-        public async Task<int> Create(Enrollment enrollment)
+        public async Task<int> AddAsync(Enrollment enrollment)
         {
             const string sql = @"
                     INSERT INTO Enrollments (StudentId, CourseId, EnrollmentStatus, EnrolledOn, IsActive, FeeAssessmentDate, CancelledDate, CancellationReason)
@@ -42,7 +42,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
 
         // GET ALL - Only active enrollments
-        public async Task<IEnumerable<Enrollment>> GetAll()
+        public async Task<IEnumerable<Enrollment>> GetAllAsync()
         {
             const string sql = "Select * from Enrollments where ISActive=1";
 
@@ -55,7 +55,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
 
         // GET BY ID
-        public async Task<Enrollment?> GetById(int id)
+        public async Task<Enrollment?> GetByIdAsync(int id)
         {
             const string sql = @"Select * from Enrollments where EnrollmentId =@Id and IsActive=1";
 
@@ -76,7 +76,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
 
         // UPDATE
-        public async Task<bool> Update(int id, Enrollment enrollment)
+        public async Task<bool> UpdateAsync(int id, Enrollment enrollment)
         {
 
             enrollment.EnrollmentId = id;
@@ -110,7 +110,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
 
         // DELETE - Soft delete by setting IsActive = false
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             const string sql = @"
                 UPDATE Enrollments SET IsActive = 0

@@ -16,7 +16,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 StudentId = 1
             };
 
-            await _service.CreateEnrollmentAsync(enrollment);
+            await _service.CreateAsync(enrollment);
 
             var enrollment2 = new Enrollment
             {
@@ -24,10 +24,10 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 StudentId = 1
             };
 
-            await _service.CreateEnrollmentAsync(enrollment2);
+            await _service.CreateAsync(enrollment2);
 
             //Act 
-            var enrollments = await _service.GetAllEnrollmentsAsync();
+            var enrollments = await _service.GetAllAsync();
 
             //Assert 
             Assert.IsNotNull(enrollments);

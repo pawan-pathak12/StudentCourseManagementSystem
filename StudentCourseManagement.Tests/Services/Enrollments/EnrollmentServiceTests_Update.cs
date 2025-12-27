@@ -15,7 +15,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 StudentId = 1
             };
 
-            var enrollmentId = await _service.CreateEnrollmentAsync(enrollment);
+            var enrollmentId = await _service.CreateAsync(enrollment);
 
             var enrollment2 = new Enrollment
             {
@@ -24,7 +24,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 CancellationReason = "testing "
             };
 
-            var isUpdated = await _service.UpdateEnrollmentAsync(enrollmentId, enrollment2);
+            var isUpdated = await _service.UpdateAsync(enrollmentId, enrollment2);
 
             Assert.IsTrue(isUpdated);
         }
@@ -44,7 +44,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 CancellationReason = "testing "
             };
 
-            var isUpdated = await _service.UpdateEnrollmentAsync(enrollmentId, enrollment);
+            var isUpdated = await _service.UpdateAsync(enrollmentId, enrollment);
 
             Assert.IsFalse(isUpdated);
         }

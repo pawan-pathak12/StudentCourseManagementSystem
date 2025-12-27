@@ -14,14 +14,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             _enrollments = new List<Enrollment>();
             this._mapper = mapper;
         }
-        public Task<int> Create(Enrollment enrollment)
+        public Task<int> AddAsync(Enrollment enrollment)
         {
             _enrollments.Add(enrollment);
             enrollment.EnrollmentId++;
             return Task.FromResult(enrollment.EnrollmentId);
         }
 
-        public Task<bool> Delete(int id)
+        public Task<bool> DeleteAsync(int id)
         {
             var enrollment = _enrollments
                  .FirstOrDefault(e => e.EnrollmentId == id && e.IsActive);
@@ -37,7 +37,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(true);
         }
 
-        public Task<IEnumerable<Enrollment>> GetAll()
+        public Task<IEnumerable<Enrollment>> GetAllAsync()
         {
             var enrollments = _enrollments.AsEnumerable();
             if (!enrollments.Any())
@@ -47,14 +47,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(enrollments);
         }
 
-        public Task<Enrollment?> GetById(int id)
+        public Task<Enrollment?> GetByIdAsync(int id)
         {
             var enrollment = _enrollments
                 .FirstOrDefault(e => e.EnrollmentId == id && e.IsActive);
             return Task.FromResult(enrollment);
         }
 
-        public Task<bool> Update(int id, Enrollment enrollment)
+        public Task<bool> UpdateAsync(int id, Enrollment enrollment)
         {
             var existing = _enrollments
                   .FirstOrDefault(e => e.EnrollmentId == id && e.IsActive);

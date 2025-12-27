@@ -16,10 +16,10 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
                 CourseId = 1
             };
 
-            var enrollmentId = await _service.CreateEnrollmentAsync(enrollment);
+            var enrollmentId = await _service.CreateAsync(enrollment);
 
             //Act 
-            var isDeleted = await _service.DeleteEnrollmentAsync(enrollmentId);
+            var isDeleted = await _service.DeleteAsync(enrollmentId);
 
             Assert.IsTrue(isDeleted);
 
@@ -31,7 +31,7 @@ namespace StudentCourseManagement.Tests.Services.Enrollments
             //Assume Enrollment Id 555 don't exists
             int enrollmentId = 555;
 
-            var isDeleted = await _service.DeleteEnrollmentAsync(enrollmentId);
+            var isDeleted = await _service.DeleteAsync(enrollmentId);
 
             Assert.IsFalse(isDeleted);
 

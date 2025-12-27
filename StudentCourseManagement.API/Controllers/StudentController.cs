@@ -32,11 +32,14 @@ namespace StudentCourseManagement.API.Controllers
             var student = _mapper.Map<Student>(createStudentDto);
             _logger.LogInformation("API request : POST new student data");
 
-            await _studentService.Create(student);
+            var isCreated = await _studentService.CreateAsync(student);
+            if (!isCreated)
+            {
+                return BadRequest();
+            }
 
             _logger.LogInformation("API Response : Created now student data");
             return Ok("Student Record Added");
-
 
         }
         #endregion
@@ -48,7 +51,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             _logger.LogInformation("API request : GET student all record ");
 
-            var result = await _studentService.GetAll();
+            var result = await _studentService.GetAllAsync();
             _logger.LogInformation("API resposne : returning student all record ");
 
             return Ok(result);
@@ -63,7 +66,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             _logger.LogInformation($"API request : GET student with ID {id}");
 
-            var student = await _studentService.GetById(id);
+            var student = await _studentService.GetByIdAsync(id);
             _logger.LogInformation("API Resposne : returning data");
             var studentDto = _mapper.Map<StudentResponseDto>(student);
 
@@ -82,7 +85,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             var student = _mapper.Map<Student>(updateStudentDto);
 
-            var isUpdated = await _studentService.Update(student.StudentId, student);
+            var isUpdated = await _studentService.UpdateAsync(student.StudentId, student);
 
             if (!isUpdated)
             {
@@ -101,7 +104,7 @@ namespace StudentCourseManagement.API.Controllers
         {
             _logger.LogInformation($"API Request : Delete student with Id {id}");
 
-            var isDeleted = await _studentService.Delete(id);
+            var isDeleted = await _studentService.DeleteAsync(id);
             if (!isDeleted)
             {
                 return BadRequest("Failed to delete");

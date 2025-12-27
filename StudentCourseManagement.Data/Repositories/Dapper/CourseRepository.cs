@@ -17,7 +17,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             this._logger = logger;
         }
 
-        public async Task<int> CreateAsync(Course course)
+        public async Task<int> AddAsync(Course course)
         {
             string sql = @"
                 INSERT INTO Courses ( Code, Title, Credits, Description, Instructor,StartDate, EndDate, Capacity,

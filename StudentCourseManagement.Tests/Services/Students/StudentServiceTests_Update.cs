@@ -17,7 +17,7 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(studentData);
+            await _studentService.CreateAsync(studentData);
 
 
             var student = new Student
@@ -27,7 +27,7 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Address = "Ktm"
             };
 
-            var isUpdated = await _studentService.Update(studentData.StudentId, student);
+            var isUpdated = await _studentService.UpdateAsync(studentData.StudentId, student);
 
             Assert.IsTrue(isUpdated);
 
@@ -43,7 +43,7 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(studentData);
+            await _studentService.CreateAsync(studentData);
 
 
             //assume id 111 don't exists
@@ -55,7 +55,7 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Address = "Ktm"
             };
 
-            var isUpdated = await _studentService.Update(id, student);
+            var isUpdated = await _studentService.UpdateAsync(id, student);
 
             Assert.IsFalse(isUpdated);
 
@@ -71,7 +71,7 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Name = "Ram",
                 Address = "Ktm"
             };
-            await _studentService.Create(studentData);
+            await _studentService.CreateAsync(studentData);
 
 
             var student = new Student
@@ -81,11 +81,36 @@ namespace StudentCourseManagement.Tests.Services.Students
                 Address = "Ktm"
             };
 
-            var isUpdated = await _studentService.Update(studentData.StudentId, student);
+            var isUpdated = await _studentService.UpdateAsync(studentData.StudentId, student);
 
             Assert.IsFalse(isUpdated);
 
         }
+
+        [TestMethod]
+        public async Task Update_WithInactiveStudent_ReturnsFalse()
+        {
+            // Arrange
+            var student = new Student
+            {
+                Name = "Ram",
+                Address = "Ktm",
+                IsActive = false
+            };
+
+            await _studentService.CreateAsync(student);
+
+            // Act
+            var result = await _studentService.UpdateAsync(1, new Student
+            {
+                Name = "Ram Nath",
+                Address = "Ktm"
+            });
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
 
 
     }

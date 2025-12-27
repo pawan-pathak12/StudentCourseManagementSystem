@@ -5,11 +5,11 @@ namespace StudentCourseManagement.Business.Interfaces.Services
     public interface IEnrollmentService
     {
         #region   CURD Operations 
-        Task<int> CreateEnrollmentAsync(Enrollment enrollment);
-        Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync();
-        Task<Enrollment?> GetEnrollmentByIdAsync(int id);
-        Task<bool> UpdateEnrollmentAsync(int id, Enrollment enrollment);
-        Task<bool> DeleteEnrollmentAsync(int id);
+        Task<int> CreateAsync(Enrollment enrollment);
+        Task<IEnumerable<Enrollment>> GetAllAsync();
+        Task<Enrollment?> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(int id, Enrollment enrollment);
+        Task<bool> DeleteAsync(int id);
 
         #endregion
     }

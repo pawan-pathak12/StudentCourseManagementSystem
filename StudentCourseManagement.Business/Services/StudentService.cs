@@ -13,21 +13,27 @@ namespace StudentCourseManagement.Business.Services
 
             _repository = repository;
         }
-        public async Task Create(Student student)
+        public async Task<bool> CreateAsync(Student student)
         {
-            await _repository.Add(student);
+            var emailExists = await _repository.EmailExistsAsync(student.Email);
+            if (emailExists)
+            {
+                return false;
+            }
+            await _repository.AddAsync(student);
+            return true;
         }
 
 
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return await _repository.Delete(id);
+            return await _repository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<Student>> GetAll()
+        public async Task<IEnumerable<Student>> GetAllAsync()
         {
-            var students = await _repository.GetAll();
+            var students = await _repository.GetAllAsync();
             if (!students.Any() || students == null)
             {
                 return null;
@@ -35,9 +41,9 @@ namespace StudentCourseManagement.Business.Services
             return students;
         }
 
-        public async Task<Student?> GetById(int id)
+        public async Task<Student?> GetByIdAsync(int id)
         {
-            var student = await _repository.GetById(id);
+            var student = await _repository.GetByIdAsync(id);
             if (student == null)
             {
                 return null;
@@ -45,13 +51,18 @@ namespace StudentCourseManagement.Business.Services
             return student;
         }
 
-        public async Task<bool> Update(int id, Student student)
+        public async Task<bool> UpdateAsync(int id, Student student)
         {
             if (id != student.StudentId)
             {
                 return false;
             }
-            return await _repository.Update(student);
+            var isStudentActive = await _repository.IsStudentActiveAsync(id);
+            if (!isStudentActive)
+            {
+                return false;
+            }
+            return await _repository.UpdateAsync(student);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
             };
 
             //Act 
-            var createdId = await _courseService.Create(course);
+            var createdId = await _courseService.CreateAsync(course);
 
             Assert.AreEqual(1, _courseRepository._courses.Count());
             Assert.AreEqual(createdId, course.CourseId);

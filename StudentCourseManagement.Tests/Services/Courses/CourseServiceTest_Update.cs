@@ -26,7 +26,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
                 EnrollmentEndDate = new DateTimeOffset(2026, 1, 10, 23, 59, 0, TimeSpan.FromHours(5.75))   // Jan 10, 2026
             };
 
-            await _courseService.Create(course);
+            await _courseService.CreateAsync(course);
 
             var course2 = new Course
             {
@@ -46,7 +46,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
 
 
             //Act 
-            var isUpdated = await _courseService.Update(course.CourseId, course2);
+            var isUpdated = await _courseService.UpdateAsync(course.CourseId, course2);
 
             Assert.IsTrue(isUpdated);
         }
@@ -77,7 +77,7 @@ namespace StudentCourseManagement.Tests.Services.Courses
 
 
             //Act 
-            var isUpdated = await _courseService.Update(id, course2);
+            var isUpdated = await _courseService.UpdateAsync(id, course2);
 
             Assert.IsFalse(isUpdated);
         }
