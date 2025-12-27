@@ -6,7 +6,7 @@ namespace StudentCourseManagement.Business.DTOs.Enrollments
     {
         public int StudentId { get; set; }          // FK to Student
         public int CourseId { get; set; }           // FK to Course
-        public EnrollmentStatus EnrollmentStatus { get; set; } = EnrollmentStatus.Confirmed;
+        public EnrollmentStatus EnrollmentStatus { get; set; } = EnrollmentStatus.Comfirmed;
         public DateTimeOffset EnrolledOn { get; set; } = DateTimeOffset.UtcNow;
         public bool IsActive { get; set; } = true;
 

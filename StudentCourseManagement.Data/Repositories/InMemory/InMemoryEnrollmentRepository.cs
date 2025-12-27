@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         public Task<int> Create(Enrollment enrollment)
         {
             _enrollments.Add(enrollment);
+            enrollment.EnrollmentId++;
             return Task.FromResult(enrollment.EnrollmentId);
         }
 
@@ -39,6 +40,10 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         public Task<IEnumerable<Enrollment>> GetAll()
         {
             var enrollments = _enrollments.AsEnumerable();
+            if (!enrollments.Any())
+            {
+                return Task.FromResult(Enumerable.Empty<Enrollment>());
+            }
             return Task.FromResult(enrollments);
         }
 
