@@ -42,7 +42,6 @@ namespace StudentCourseManagement.API.Controllers
                 var createdId = await _courseService.CreateAsync(course);
 
                 var responseDto = _mapper.Map<CourseResponseDto>(course);
-                responseDto.CourseId = createdId;
 
                 _logger.LogInformation("Course created successfully with ID: {CourseId}", createdId);
 

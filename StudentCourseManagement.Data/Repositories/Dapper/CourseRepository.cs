@@ -17,6 +17,8 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             this._logger = logger;
         }
 
+        #region CURD Operations 
+
         public async Task<int> AddAsync(Course course)
         {
             string sql = @"
@@ -122,5 +124,21 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return false;
 
         }
+
+        #endregion
+
+        #region Validation of Course 
+        public Task<bool> CodeExistsAsync(string code)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TitleExistsAsync(string Name)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
     }
 }
