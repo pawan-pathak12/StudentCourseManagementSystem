@@ -89,5 +89,22 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             Assert.IsTrue(isDeleted);
         }
 
+        [TestMethod]
+        public async Task IsStudentActiveAsync_WithExistingStudentID_ReturnTrue()
+        {
+            int id = 1;
+            var isActive = await _repository.IsStudentActiveAsync(id);
+
+            Assert.IsTrue(isActive);
+        }
+
+        [TestMethod]
+        public async Task EmailExistsAsync_IfEmailExists_Returntrue()
+        {
+            var email = "emnail";
+            var emailExists = await _repository.EmailExistsAsync(email);
+            Assert.IsTrue(emailExists);
+        }
+
     }
 }

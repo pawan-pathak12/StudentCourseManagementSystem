@@ -133,7 +133,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             using var connection = _dbContext.CreateConnection();
             const string sql = @"select case " +
                  "when exists (select 1 from Courses where Code=@Code) then 1" +
-                 "else 0 end";
+                 " else 0 end";
             var codeExists = await connection.ExecuteScalarAsync<int>(sql, new { Code = code });
             return codeExists == 1;
         }
@@ -143,7 +143,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             using var connection = _dbContext.CreateConnection();
             const string sql = @"select case " +
                  "when exists (select 1 from Courses where Title=@Title) then 1" +
-                 "else 0 end";
+                 " else 0 end";
             var titleExists = await connection.ExecuteScalarAsync<int>(sql, new { Title = title });
             return titleExists == 1;
         }
