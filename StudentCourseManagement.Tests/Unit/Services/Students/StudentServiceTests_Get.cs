@@ -1,13 +1,13 @@
 ﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Common;
+using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Services.Students
+namespace StudentCourseManagement.Tests.Unit.Services.Students
 {
     [TestClass]
     public class StudentServiceTests_Get : StudentServiceTestBase
     {
         [TestMethod]
-        public async void GetAll_ReturnslistOfStudent()
+        public async Task GetAll_ReturnslistOfStudent()
         {
             //Arrange 
             var student = new Student
@@ -37,9 +37,9 @@ namespace StudentCourseManagement.Tests.Services.Students
 
 
             //Assume Id 1 exists 
-            int id = 1;
+            //     int id = 1;
 
-            var student = await _studentService.GetByIdAsync(id);
+            var student = await _studentService.GetByIdAsync(studentData.StudentId);
 
             Assert.IsNotNull(student);
 

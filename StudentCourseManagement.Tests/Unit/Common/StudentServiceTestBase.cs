@@ -2,7 +2,7 @@
 using StudentCourseManagement.Business.Services;
 using StudentCourseManagement.Data.Repositories.InMemory;
 
-namespace StudentCourseManagement.Tests.Common
+namespace StudentCourseManagement.Tests.Unit.Common
 {
     [TestClass]
     public abstract class StudentServiceTestBase

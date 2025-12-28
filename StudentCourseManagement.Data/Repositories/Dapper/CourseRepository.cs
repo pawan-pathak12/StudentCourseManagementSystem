@@ -128,14 +128,24 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         #endregion
 
         #region Validation of Course 
-        public Task<bool> CodeExistsAsync(string code)
+        public async Task<bool> CodeExistsAsync(string code)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select case " +
+                 "when exists (select 1 from Courses where Code=@Code) then 1" +
+                 " else 0 end";
+            var codeExists = await connection.ExecuteScalarAsync<int>(sql, new { Code = code });
+            return codeExists == 1;
         }
 
-        public Task<bool> TitleExistsAsync(string Name)
+        public async Task<bool> TitleExistsAsync(string title)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select case " +
+                 "when exists (select 1 from Courses where Title=@Title) then 1" +
+                 " else 0 end";
+            var titleExists = await connection.ExecuteScalarAsync<int>(sql, new { Title = title });
+            return titleExists == 1;
         }
 
         #endregion

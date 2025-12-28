@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Common;
+using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Services.Students
+namespace StudentCourseManagement.Tests.Unit.Services.Students
 {
     [TestClass]
     public class StudentServiceTests_Delete : StudentServiceTestBase
@@ -14,7 +14,8 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
             await _studentService.CreateAsync(student);
 
@@ -22,6 +23,7 @@ namespace StudentCourseManagement.Tests.Services.Students
             int id = 1;
 
             var isDeleted = await _studentService.DeleteAsync(id);
+            Console.WriteLine(isDeleted);
 
             Assert.IsTrue(isDeleted);
         }
@@ -34,11 +36,10 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
             await _studentService.CreateAsync(student);
-
-
 
             //Assume id 1111 don't exists
             int id = 1111;
