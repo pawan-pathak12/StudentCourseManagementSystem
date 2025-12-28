@@ -3,7 +3,7 @@ using StudentCourseManagement.Domain.Entities;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace StudentCourseManagement.Tests.Controllers.Students
+namespace StudentCourseManagement.Tests.Unit.Controllers.Students
 {
     [TestClass]
     public class StudentControllerTests_Post

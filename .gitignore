@@ -7,6 +7,7 @@ appsettings.json
 appsettings.Development.json
 appsettings.Local.json
 appsettings.json
+appsettings.Test.json
 Logs/
 log
 StudentCourseManagement.API/Logs

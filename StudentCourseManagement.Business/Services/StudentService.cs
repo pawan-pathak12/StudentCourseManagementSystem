@@ -10,7 +10,6 @@ namespace StudentCourseManagement.Business.Services
 
         public StudentService(IStudentRepository repository)
         {
-
             _repository = repository;
         }
         public async Task<bool> CreateAsync(Student student)
@@ -24,10 +23,13 @@ namespace StudentCourseManagement.Business.Services
             return true;
         }
 
-
-
         public async Task<bool> DeleteAsync(int id)
         {
+            var isStudentActive = await _repository.IsStudentActiveAsync(id);
+            if (!isStudentActive)
+            {
+                return false;
+            }
             return await _repository.DeleteAsync(id);
         }
 

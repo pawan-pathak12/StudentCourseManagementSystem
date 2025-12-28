@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Common;
+using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Services.Students
+namespace StudentCourseManagement.Tests.Unit.Services.Students
 {
     [TestClass]
     public class StudentServiceTests_Update : StudentServiceTestBase
@@ -15,7 +15,8 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
             await _studentService.CreateAsync(studentData);
 
@@ -24,7 +25,8 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram Nath",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
 
             var isUpdated = await _studentService.UpdateAsync(studentData.StudentId, student);
@@ -41,7 +43,8 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
             await _studentService.CreateAsync(studentData);
 
@@ -69,7 +72,8 @@ namespace StudentCourseManagement.Tests.Services.Students
             {
                 StudentId = 1,
                 Name = "Ram",
-                Address = "Ktm"
+                Address = "Ktm",
+                IsActive = true
             };
             await _studentService.CreateAsync(studentData);
 

@@ -70,7 +70,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                         Email = @Email,
                         DOB = @DOB,
                         Number = @Number,
-                        EmrollementDate = @EmrollementDate,
+                        EnrollmentDate = @EnrollmentDate,
                         IsActive = @IsActive,
                         Gender = @Gender,
                         Address = @Address
@@ -93,20 +93,26 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         #endregion
 
         #region Validation of Student
-
-        public bool EmailExists(string email)
+        public async Task<bool> IsStudentActiveAsync(int studentId)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select case " +
+                 "when exists (select 1 from Students where StudentId=@StudentId and IsActive=1) then 1" +
+                 "else 0 end";
+            _logger.LogInformation("Repo : Checking student is active or not");
+            var studentExists = await connection.ExecuteScalarAsync<int>(sql, new { StudentId = studentId });
+            return studentExists == 1;
         }
 
-        public Task<bool> IsStudentActiveAsync(int studentId)
+        public async Task<bool> EmailExistsAsync(string email)
         {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IStudentRepository.EmailExistsAsync(string email)
-        {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select case " +
+                 "when exists (select 1 from Students where Email=@Email) then 1" +
+                 "else 0 end";
+            _logger.LogInformation("Repo : Checking student email exists or not");
+            var emailExists = await connection.ExecuteScalarAsync<int>(sql, new { Email = email });
+            return emailExists == 1;
         }
 
         #endregion

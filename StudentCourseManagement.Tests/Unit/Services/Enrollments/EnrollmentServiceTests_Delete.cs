@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Common;
+using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Services.Enrollments
+namespace StudentCourseManagement.Tests.Unit.Services.Enrollments
 {
     [TestClass]
     public class EnrollmentServiceTests_Delete : EnrollmentServiceTestBase
