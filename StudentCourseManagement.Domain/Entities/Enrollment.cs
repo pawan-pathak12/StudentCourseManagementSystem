@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Domain.Entities
     public class Enrollment
     {
         public int EnrollmentId { get; set; }
-        public DateTimeOffset EnrolledOn { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset EnrollmentDate { get; set; } = DateTimeOffset.UtcNow;
         public int StudentId { get; set; }                  // FK to Student
         public int CourseId { get; set; }                   // FK to Course
         public EnrollmentStatus EnrollmentStatus { get; set; } = EnrollmentStatus.Comfirmed;              // e.g., "Pending", "Confirmed", "Cancelled"                                                                                              //      public bool IsFeePaid { get; set; }                 // Fee status
