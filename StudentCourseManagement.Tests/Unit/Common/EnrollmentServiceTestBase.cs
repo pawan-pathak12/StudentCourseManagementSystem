@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Services;
@@ -24,9 +25,11 @@ namespace StudentCourseManagement.Tests.Unit.Common
                 cfg.AddProfile<EnrollmentProfile>(); // add your mapping profile
             });
             IMapper mapper = config.CreateMapper();
-            logger = new LoggerFactory().CreateLogger<EnrollmentService>();
-
+            logger = NullLogger<EnrollmentService>.Instance;
+            _studentRepository = new InMemoryStudentRepository();
+            _courseRepository = new InMemoryCourseRepository(mapper);
             _repository = new InMemoryEnrollmentRepository(mapper);
+
             _service = new EnrollmentService(_repository, _studentRepository, _courseRepository, logger);
         }
     }

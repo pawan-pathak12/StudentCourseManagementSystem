@@ -6,27 +6,21 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 {
     public class InMemoryEnrollmentRepository : IEnrollmentRepository
     {
-        private readonly List<Student> _students;
-        private readonly List<Course> _course;
         public readonly List<Enrollment> _enrollments;
         private readonly IMapper _mapper;
 
         public InMemoryEnrollmentRepository(IMapper mapper)
         {
             _enrollments = new List<Enrollment>();
-            _students = new List<Student>();
-            _course = new List<Course>();
             this._mapper = mapper;
         }
         public Task<int> AddAsync(Enrollment enrollment)
         {
-            if (_students.Find(x => x.StudentId == enrollment.StudentId))
-            {
+            var newId = _enrollments.Count + 1;
+            enrollment.EnrollmentId = newId;
 
-            }
             _enrollments.Add(enrollment);
-            enrollment.EnrollmentId++;
-            return Task.FromResult(enrollment.EnrollmentId);
+            return Task.FromResult(newId);
         }
 
         public Task<bool> DeleteAsync(int id)
