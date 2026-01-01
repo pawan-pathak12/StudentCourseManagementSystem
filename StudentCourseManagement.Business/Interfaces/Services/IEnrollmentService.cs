@@ -12,5 +12,6 @@ namespace StudentCourseManagement.Business.Interfaces.Services
         Task<bool> DeleteAsync(int id);
 
         #endregion
+
     }
 }

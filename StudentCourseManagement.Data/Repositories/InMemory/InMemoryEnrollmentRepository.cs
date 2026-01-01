@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.InMemory
 {
@@ -14,6 +15,8 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             _enrollments = new List<Enrollment>();
             this._mapper = mapper;
         }
+
+        #region CURD Operations 
         public Task<int> AddAsync(Enrollment enrollment)
         {
             var newId = _enrollments.Count + 1;
@@ -38,7 +41,6 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
             return Task.FromResult(true);
         }
-
         public Task<IEnumerable<Enrollment>> GetAllAsync()
         {
             var enrollments = _enrollments.AsEnumerable();
@@ -56,6 +58,8 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(enrollment);
         }
 
+
+
         public Task<bool> UpdateAsync(int id, Enrollment enrollment)
         {
             var existing = _enrollments
@@ -70,5 +74,34 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
             return Task.FromResult(true);
         }
+
+        #endregion
+
+
+        #region Business Logic Required Methods
+
+        public Task<int> GetEnrollmentCountByCourse(int courseId)
+        {
+            var count = _enrollments
+          .Count(e => e.CourseId == courseId);
+
+            return Task.FromResult(count);
+        }
+
+        public Task<bool> ExistsAsync(int studentId, int courseId)
+        {
+            var isDuplicate = _enrollments.Any(x => x.StudentId == studentId && x.CourseId == courseId);
+            return Task.FromResult(isDuplicate);
+        }
+
+        public Task<int> GetEnrollmentCountByStudent(int studentId)
+        {
+            var count = (from a in _enrollments where a.StudentId == studentId && a.EnrollmentStatus == EnrollmentStatus.Comfirmed select a).Count();
+            return Task.FromResult(count);
+
+        }
+
+
+        #endregion
     }
 }
