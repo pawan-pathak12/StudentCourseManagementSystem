@@ -14,10 +14,10 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         #region CURD Operations 
         public Task<int> AddAsync(Student student)
         {
+            var newId = _students.Count + 1;
+            student.StudentId = newId;
             _students.Add(student);
-
-            student.StudentId++;
-            return Task.FromResult(student.StudentId);
+            return Task.FromResult(newId);
         }
 
         public Task<IEnumerable<Student>> GetAllAsync()
@@ -85,7 +85,6 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
                 return Task.FromResult(false);
             }
             return Task.FromResult(true);
-
         }
 
         #endregion

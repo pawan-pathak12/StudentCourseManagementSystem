@@ -20,24 +20,24 @@ namespace StudentCourseManagement.Business.Services
             this._logger = logger;
         }
 
-        public async Task<int> CreateAsync(Enrollment enrollment)
+        public async Task<bool> CreateAsync(Enrollment enrollment)
         {
             var student = await _studentRepository.GetByIdAsync(enrollment.StudentId);
             if (student == null)
             {
                 _logger.LogWarning($"Service : Enrollment Failed : Student with Id {enrollment.StudentId} not found or is inactive");
-                return 0;
+                return false;
             }
             var course = await _courseRepository.GetByIdAsync(enrollment.CourseId);
             if (course == null)
             {
                 _logger.LogWarning($"Service : Enrollment Failed : Course with Id {enrollment.CourseId} not found or is inactive");
-                return 0;  // later it will be fixed by changing method return type to bool 
+                return false;  // later it will be fixed by changing method return type to bool 
             }
 
-            var newId = await _repository.AddAsync(enrollment);
+            await _repository.AddAsync(enrollment);
             _logger.LogInformation($"Enrollment created for Student id {enrollment.StudentId} for course id {enrollment.CourseId}");
-            return newId;
+            return true;
         }
 
         public async Task<IEnumerable<Enrollment>> GetAllAsync()

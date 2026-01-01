@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Business.Interfaces.Services
     public interface IEnrollmentService
     {
         #region   CURD Operations 
-        Task<int> CreateAsync(Enrollment enrollment);
+        Task<bool> CreateAsync(Enrollment enrollment);
         Task<IEnumerable<Enrollment>> GetAllAsync();
         Task<Enrollment?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(int id, Enrollment enrollment);

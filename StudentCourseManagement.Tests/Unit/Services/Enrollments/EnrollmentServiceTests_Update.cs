@@ -9,6 +9,20 @@ namespace StudentCourseManagement.Tests.Unit.Services.Enrollments
         [TestMethod]
         public async Task Update_WihExisitngEnrollmentId_ReturnsTrue()
         {
+            var student = new Student
+            {
+                Address = "HAlibari ",
+                Name = "Ram Nath"
+            };
+            var course = new Course
+            {
+                Capacity = 20,
+                Code = "C2001"
+            };
+
+            await _studentRepository.AddAsync(student);
+            await _courseRepository.AddAsync(course);
+
             var enrollment = new Enrollment
             {
                 CourseId = 1,
@@ -19,12 +33,12 @@ namespace StudentCourseManagement.Tests.Unit.Services.Enrollments
 
             var enrollment2 = new Enrollment
             {
-                EnrollmentId = enrollmentId,
+                EnrollmentId = 1,
                 IsActive = false,
                 CancellationReason = "testing "
             };
 
-            var isUpdated = await _service.UpdateAsync(enrollmentId, enrollment2);
+            var isUpdated = await _service.UpdateAsync(1, enrollment2);
 
             Assert.IsTrue(isUpdated);
         }

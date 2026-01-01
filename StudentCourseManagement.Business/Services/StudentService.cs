@@ -25,6 +25,11 @@ namespace StudentCourseManagement.Business.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
+            var student = await _repository.GetByIdAsync(id);
+            if (student == null)
+            {
+                return false;
+            }
             var isStudentActive = await _repository.IsStudentActiveAsync(id);
             if (!isStudentActive)
             {
@@ -56,6 +61,11 @@ namespace StudentCourseManagement.Business.Services
         public async Task<bool> UpdateAsync(int id, Student student)
         {
             if (id != student.StudentId)
+            {
+                return false;
+            }
+            var studentExist = await _repository.GetByIdAsync(id);
+            if (studentExist == null)
             {
                 return false;
             }

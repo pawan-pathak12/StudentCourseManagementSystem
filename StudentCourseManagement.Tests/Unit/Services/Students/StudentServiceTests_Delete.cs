@@ -12,7 +12,6 @@ namespace StudentCourseManagement.Tests.Unit.Services.Students
             //Arrange 
             var student = new Student
             {
-                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm",
                 IsActive = true
@@ -34,7 +33,6 @@ namespace StudentCourseManagement.Tests.Unit.Services.Students
             //Arrange 
             var student = new Student
             {
-                StudentId = 1,
                 Name = "Ram",
                 Address = "Ktm",
                 IsActive = true

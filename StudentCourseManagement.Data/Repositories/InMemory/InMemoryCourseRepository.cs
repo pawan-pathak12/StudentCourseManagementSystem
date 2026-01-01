@@ -17,8 +17,11 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         #region CURD Operations 
         public Task<int> AddAsync(Course course)
         {
+            var newId = _courses.Count + 1;
+            course.CourseId = newId;
             _courses.Add(course);
-            return Task.FromResult(course.CourseId);
+            return Task.FromResult(newId);
+
         }
 
         public Task<bool> DeleteAsync(int id)
