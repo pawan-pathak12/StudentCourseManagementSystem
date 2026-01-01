@@ -132,6 +132,26 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             return rowsAffected > 0;
 
         }
+
+        #endregion
+
+
+        #region Business Logc required method
+
+        public Task<bool> ExistsAsync(int studentId, int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetEnrollmentCountByCourse(int courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> GetEnrollmentCountByStudent(int studentId)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
     }

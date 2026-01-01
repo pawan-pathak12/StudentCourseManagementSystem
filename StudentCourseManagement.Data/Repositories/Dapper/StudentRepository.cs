@@ -56,7 +56,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<Student> GetByIdAsync(int id)
         {
             using var connection = _dbContext.CreateConnection();
-            var sql = "SELECT * FROM Students WHERE StudentId = @Id";
+            var sql = "SELECT * FROM Students WHERE StudentId = @Id and IsActive=1";
 
             _logger.LogInformation("Fetching Student record with Id " + id);
             return await connection.QueryFirstOrDefaultAsync<Student>(sql, new { Id = id });
