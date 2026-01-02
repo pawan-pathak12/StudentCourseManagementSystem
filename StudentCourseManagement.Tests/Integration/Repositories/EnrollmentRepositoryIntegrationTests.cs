@@ -16,6 +16,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             _repository = new EnrollmentRepository(fixture.DbContext, loggerMock.Object);
         }
 
+        #region CRUD Operations 
+
         [TestMethod]
         public async Task AddAsync_WithValidData_InsertData()
         {
@@ -71,6 +73,46 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
             Assert.IsTrue(isDeleted);
         }
+
+        #endregion
+
+        #region Business Logic Test 
+
+        [TestMethod]
+        public async Task ExistsAsync_WithExistingEnrollment_ReturnsTrue()
+        {
+            int studentId = 1;
+            int courseId = 2;
+
+            var doesExists = await _repository.ExistsAsync(studentId, courseId);
+
+            Assert.IsTrue(doesExists);
+        }
+
+        [TestMethod]
+        public async Task GetEnrollmentCountByCourse_ReturnInteger()
+        {
+            int courseId = 1;
+
+            var count = await _repository.GetEnrollmentCountByCourse(courseId);
+
+            Assert.IsNotNull(count >= 0);
+
+        }
+
+        [TestMethod]
+        public async Task GetEnrollmentCountByStudent_ReturnInteger()
+        {
+            int studentId = 1;
+
+            var count = await _repository.GetEnrollmentCountByStudent(studentId);
+
+            Assert.IsNotNull(count >= 0);
+
+
+        }
+        #endregion
+
 
     }
 }

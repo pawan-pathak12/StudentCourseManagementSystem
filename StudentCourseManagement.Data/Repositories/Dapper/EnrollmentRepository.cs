@@ -138,19 +138,43 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
         #region Business Logc required method
 
-        public Task<bool> ExistsAsync(int studentId, int courseId)
+        public async Task<bool> ExistsAsync(int studentId, int courseId)
         {
-            throw new NotImplementedException();
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select distinct case when StudentId =@StudentId and CourseId=@CourseId  then 1 end
+                                from Enrollments";
+
+            _logger.LogInformation(
+                "Checking if enrollment exists for StudentId {StudentId} in CourseId {CourseId}", studentId, courseId);
+
+            var result = await connection.ExecuteScalarAsync<int>(sql, new { StudentId = studentId, CourseId = courseId });
+            return result == 1;
         }
 
-        public Task<int> GetEnrollmentCountByCourse(int courseId)
+        public async Task<int> GetEnrollmentCountByCourse(int courseId)
         {
-            throw new NotImplementedException();
+
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select count(1) from Enrollments where CourseId =@CourseId ;";
+
+            _logger.LogInformation("Getting enrollment count for CourseId {CourseId}", courseId);
+
+            var count = await connection.ExecuteScalarAsync<int>(sql, new { CourseId = courseId });
+
+            return count;
         }
 
-        public Task<int> GetEnrollmentCountByStudent(int studentId)
+        public async Task<int> GetEnrollmentCountByStudent(int studentId)
         {
-            throw new NotImplementedException();
+
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select count(1) from Enrollments where StudentId =@StudentId ;";
+
+            _logger.LogInformation("Getting enrollment count for StudentId {StudentId}", studentId);
+
+            var count = await connection.ExecuteScalarAsync<int>(sql, new { StudentId = studentId });
+
+            return count;
         }
         #endregion
 
