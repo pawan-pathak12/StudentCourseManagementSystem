@@ -19,7 +19,6 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
         Task<int> GetEnrollmentCountByCourse(int courseId);
         //get count of enrollment in how many courses 
         Task<int> GetEnrollmentCountByStudent(int studentId);
-
         #endregion
     }
 }

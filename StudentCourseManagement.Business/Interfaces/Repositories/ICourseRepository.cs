@@ -13,9 +13,14 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
 
         #endregion
 
-        #region Business logic validation
+        #region  logic validation  of Course
         Task<bool> CodeExistsAsync(string code);
         Task<bool> TitleExistsAsync(string Name);
+
+        #endregion
+
+        #region Enrollment Service Required Methods 
+        Task<bool> CheckEnrollmentDateAsync(int courseId, DateTimeOffset enrollmentDate);
 
         #endregion
 

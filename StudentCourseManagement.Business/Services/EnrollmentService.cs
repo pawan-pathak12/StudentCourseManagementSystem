@@ -45,6 +45,13 @@ namespace StudentCourseManagement.Business.Services
                 return false;
             }
 
+            var enrollmentDateisValid = await _courseRepository.CheckEnrollmentDateAsync(enrollment.CourseId, enrollment.EnrollmentDate);
+            if (!enrollmentDateisValid)
+            {
+                _logger.LogWarning($"Service :Enrollment date for CourseId {enrollment.CourseId} must be between {course.EnrollmentStartDate} and {course.EnrollmentEndDate} .");
+                return false;
+            }
+
             var count = await _repository.GetEnrollmentCountByCourse(enrollment.CourseId);
             if (count >= course.Capacity)
             {

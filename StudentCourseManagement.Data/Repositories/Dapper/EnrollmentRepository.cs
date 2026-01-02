@@ -6,6 +6,7 @@ using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper
 {
+
     public class EnrollmentRepository : IEnrollmentRepository
     {
         private readonly StudentSysDbContext _dbContext;

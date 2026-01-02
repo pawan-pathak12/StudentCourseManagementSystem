@@ -85,5 +85,18 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(true);
         }
         #endregion
+
+        public Task<bool> CheckEnrollmentDateAsync(int courseId, DateTimeOffset enrollmentDate)
+        {
+            var course = from a in _courses where a.CourseId == courseId select a;
+
+            var isValid = (from a in course
+                           where enrollmentDate >= a.EnrollmentStartDate
+                              && enrollmentDate < a.EnrollmentEndDate
+                           select a).Any();
+
+            return Task.FromResult(isValid);
+        }
+
     }
 }

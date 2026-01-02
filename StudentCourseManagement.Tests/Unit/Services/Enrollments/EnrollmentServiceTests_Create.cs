@@ -233,5 +233,40 @@ namespace StudentCourseManagement.Tests.Unit.Services.Enrollments
             }
 
         }
+
+        [TestMethod]
+        public async Task CreateAsync_WhenEnrollmentDateWindowIsOut_ReturnFalse()
+        {
+            //Arrange 
+            var student = new Student
+            {
+                Name = "Ram",
+                Address = "Ktm"
+            };
+
+            var course = new Course
+            {
+                Title = "C# Master class",
+                Capacity = 11,
+                EnrollmentStartDate = new DateTimeOffset(2025, 12, 01, 8, 0, 0, TimeSpan.FromHours(5.75)),
+                EnrollmentEndDate = new DateTimeOffset(2025, 12, 15, 17, 0, 0, TimeSpan.FromHours(5.75)),
+                IsActive = true
+            };
+
+            var studentId = await _studentRepository.AddAsync(student);
+            var courseId = await _courseRepository.AddAsync(course);
+
+            var enrollment = new Enrollment
+            {
+                StudentId = studentId,
+                CourseId = courseId,
+                EnrollmentDate = new DateTimeOffset(2025, 11, 25, 10, 0, 0, TimeSpan.FromHours(5.75))
+            };
+
+            //Act 
+            var isCreated = await _service.CreateAsync(enrollment);
+
+            Assert.IsFalse(isCreated);
+        }
     }
 }

@@ -113,5 +113,33 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             Assert.IsTrue(titleExists);
         }
         #endregion
+
+        #region Enrollment required method 
+
+        [TestMethod]
+        public async Task CheckEnrollmentDateAsync_WithEnrollmentDateOut_ReturnsFalse()
+        {
+            //Arrange 
+            var course = new Course
+            {
+                Title = "C# Master class 2",
+                Capacity = 11,
+                EnrollmentStartDate = new DateTimeOffset(2025, 12, 01, 8, 0, 0, TimeSpan.FromHours(5.75)),
+                EnrollmentEndDate = new DateTimeOffset(2025, 12, 15, 17, 0, 0, TimeSpan.FromHours(5.75)),
+                IsActive = true
+            };
+
+            var courseId = await _repository.AddAsync(course);
+
+            // pick any date outside the enrollment date window 
+            var testDate = new DateTimeOffset(2025, 11, 25, 10, 0, 0, TimeSpan.FromHours(5.75));
+
+
+            var isValid = await _repository.CheckEnrollmentDateAsync(courseId, testDate);
+
+            Assert.IsFalse(isValid);
+
+        }
+        #endregion
     }
 }

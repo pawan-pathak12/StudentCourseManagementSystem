@@ -147,6 +147,22 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             var titleExists = await connection.ExecuteScalarAsync<int>(sql, new { Title = title });
             return titleExists == 1;
         }
+        #endregion
+
+        #region Enrollment Service Required Methods 
+        public async Task<bool> CheckEnrollmentDateAsync(int courseId, DateTimeOffset enrollmentDate)
+        {
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"select  CASE WHEN EXISTS (
+                              SELECT 1
+                              FROM Courses
+                              WHERE CourseId = @CourseId AND IsActive = 1
+                              AND @EnrollmentDate BETWEEN EnrollmentStartDate AND EnrollmentEndDate )
+                              THEN 1 END";
+            var isValid = await connection.ExecuteScalarAsync<bool>(sql, new { CourseId = courseId, EnrollmentDate = enrollmentDate });
+            return isValid;
+
+        }
 
         #endregion
 
