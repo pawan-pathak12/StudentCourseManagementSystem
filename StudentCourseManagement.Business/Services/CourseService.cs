@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Business.Interfaces.Repositories;
+﻿using Microsoft.Extensions.Logging;
+using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
 
@@ -7,10 +8,12 @@ namespace StudentCourseManagement.Business.Services
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _courseRepository;
+        private readonly ILogger<CourseService> _logger;
 
-        public CourseService(ICourseRepository courseRepository)
+        public CourseService(ICourseRepository courseRepository, ILogger<CourseService> logger)
         {
             this._courseRepository = courseRepository;
+            this._logger = logger;
         }
 
         public async Task<bool> CreateAsync(Course course)
@@ -18,13 +21,16 @@ namespace StudentCourseManagement.Business.Services
             var codeExists = await _courseRepository.CodeExistsAsync(course.Code);
             if (codeExists)
             {
+                _logger.LogWarning($"Repo : Failed to create course : Code {course.Code} already exists ");
                 return false;
             }
             var titleExists = await _courseRepository.TitleExistsAsync(course.Title);
             if (titleExists)
             {
+                _logger.LogWarning($"Repo : Failed to create course : title {course.Title} already exists ");
                 return false;
             }
+            _logger.LogInformation($"Repo : Course created suc+-cessfully with title : {course.Title}");
             await _courseRepository.AddAsync(course);
             return true;
         }

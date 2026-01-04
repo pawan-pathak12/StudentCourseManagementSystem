@@ -42,11 +42,7 @@ namespace StudentCourseManagement.API.Controllers
                     return BadRequest("Enrollment creation fails");
                 }
                 var responseDto = _mapper.Map<EnrollmentResponseDto>(enrollment);
-
-                _logger.LogInformation("Enrollment created successfully  for Student {StudentId} in Course {CourseId}",
-                     createDto.StudentId, createDto.CourseId);
-
-                return CreatedAtAction(nameof(GetById), responseDto);
+                return Ok(responseDto);
             }
             catch (Exception ex)
             {

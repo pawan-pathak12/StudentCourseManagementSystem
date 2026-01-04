@@ -11,9 +11,9 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public DateTimeOffset PaymentDate { get; set; }
         public int PaymentMethodId { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
-        public string ReferenceNumber { get; set; }
+        public string ReferenceNumber { get; set; } = string.Empty;
         public string? Notes { get; set; }
-        public string ProcessedBy { get; set; }
+        public string ProcessedBy { get; set; } = string.Empty;
         public DateTimeOffset CreatedDate { get; set; }
     }
 }

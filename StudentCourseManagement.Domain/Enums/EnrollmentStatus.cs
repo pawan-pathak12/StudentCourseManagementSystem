@@ -2,9 +2,9 @@
 {
     public enum EnrollmentStatus
     {
-        pending = 0,
+        Pending = 0,
         Comfirmed = 1,
-        cancelled = 2,
+        Cancelled = 2,
         Failed = 3
     }
 }

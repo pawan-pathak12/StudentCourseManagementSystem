@@ -10,8 +10,7 @@ namespace StudentCourseManagement.Domain.Entities
         public int CourseId { get; set; }                   // FK to Course
         public EnrollmentStatus EnrollmentStatus { get; set; } = EnrollmentStatus.Comfirmed;              // e.g., "Pending", "Confirmed", "Cancelled"                                                                                              //      public bool IsFeePaid { get; set; }                 // Fee status
         public bool IsActive { get; set; } = true;
-        public DateTimeOffset CreatedAt => DateTime.UtcNow;
-
+        public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTimeOffset? FeeAssessmentDate { get; set; }     // When fee was calculated
         public DateTimeOffset? CancelledDate { get; set; }       // For refund tracking
         public string? CancellationReason { get; set; }    // Optional: why cancelled

@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
     public class Invoice
     {
         public int InvoiceId { get; set; }
-        public string InvoiceNumber { get; set; }
+        public string InvoiceNumber { get; set; } = string.Empty;
         public int StudentId { get; set; }
         public int CourseId { get; set; }
         public int FeeAssessmentId { get; set; }

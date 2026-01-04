@@ -30,8 +30,6 @@ namespace StudentCourseManagement.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
         {
             var student = _mapper.Map<Student>(createStudentDto);
-            _logger.LogInformation("API request : POST new student data");
-
             var isCreated = await _studentService.CreateAsync(student);
             if (!isCreated)
             {
@@ -49,7 +47,6 @@ namespace StudentCourseManagement.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            _logger.LogInformation("API request : GET student all record ");
 
             var result = await _studentService.GetAllAsync();
             _logger.LogInformation("API resposne : returning student all record ");
@@ -89,6 +86,7 @@ namespace StudentCourseManagement.API.Controllers
 
             if (!isUpdated)
             {
+                _logger.LogError($"Update failed for student id {student.StudentId}");
                 return BadRequest("Update failed");
             }
 
@@ -102,11 +100,11 @@ namespace StudentCourseManagement.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            _logger.LogInformation($"API Request : Delete student with Id {id}");
 
             var isDeleted = await _studentService.DeleteAsync(id);
             if (!isDeleted)
             {
+                _logger.LogInformation($"API Request : soft delete failed for student with Id {id}");
                 return BadRequest("Failed to delete");
             }
             return Ok("Delete is Successful");

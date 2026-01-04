@@ -32,7 +32,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
             if (newId > 0)
             {
-                _logger.LogInformation("Repo: Enrollment created successfully with ID {EnrollmentId} for StudentId {StudentId} and CourseId {CourseId}",
+                _logger.LogInformation("Repo: Enrollment added successfully with ID {EnrollmentId} for StudentId {StudentId} and CourseId {CourseId}",
                     newId, enrollment.StudentId, enrollment.CourseId);
                 return newId;
             }

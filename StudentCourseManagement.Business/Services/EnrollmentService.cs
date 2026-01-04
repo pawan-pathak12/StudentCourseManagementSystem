@@ -2,6 +2,7 @@
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Business.Services
 {
@@ -67,7 +68,10 @@ namespace StudentCourseManagement.Business.Services
                 return false;
             }
 
-
+            enrollment.IsActive = true;
+            enrollment.EnrollmentStatus = EnrollmentStatus.Comfirmed;
+            enrollment.EnrollmentDate = DateTimeOffset.UtcNow;
+            enrollment.CreatedAt = DateTimeOffset.UtcNow;
             await _repository.AddAsync(enrollment);
             _logger.LogInformation($"Enrollment created for Student id {enrollment.StudentId} for course id {enrollment.CourseId}");
             return true;

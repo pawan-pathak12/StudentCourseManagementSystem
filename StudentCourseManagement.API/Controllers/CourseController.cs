@@ -36,16 +36,17 @@ namespace StudentCourseManagement.API.Controllers
 
             try
             {
-                _logger.LogInformation("Creating new course with title: {Title}", createCourseDto.Title);
-
                 var course = _mapper.Map<Course>(createCourseDto);
-                var createdId = await _courseService.CreateAsync(course);
-
+                var isCreaated = await _courseService.CreateAsync(course);
+                if (!isCreaated)
+                {
+                    return BadRequest("failed to create course");
+                }
                 var responseDto = _mapper.Map<CourseResponseDto>(course);
 
-                _logger.LogInformation("Course created successfully with ID: {CourseId}", createdId);
+                _logger.LogInformation("Course created successfully ");
 
-                return CreatedAtAction(nameof(GetById), new { id = createdId }, responseDto);
+                return Ok(responseDto);
             }
             catch (Exception ex)
             {
@@ -122,8 +123,6 @@ namespace StudentCourseManagement.API.Controllers
 
             try
             {
-                _logger.LogInformation("Updating course with ID: {CourseId}", id);
-
                 var course = _mapper.Map<Course>(updateCourseDto);
                 var success = await _courseService.UpdateAsync(id, course);
 
@@ -133,7 +132,6 @@ namespace StudentCourseManagement.API.Controllers
                     return NotFound($"Course with ID {id} not found.");
                 }
 
-                _logger.LogInformation("Course with ID {CourseId} updated successfully.", id);
                 return NoContent();
             }
             catch (Exception ex)
@@ -149,8 +147,6 @@ namespace StudentCourseManagement.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Deleting (soft) course with ID: {CourseId}", id);
-
                 var success = await _courseService.DeleteAsync(id);
 
                 if (!success)
@@ -158,7 +154,6 @@ namespace StudentCourseManagement.API.Controllers
                     _logger.LogWarning("Course with ID {CourseId} not found for deletion.", id);
                     return NotFound($"Course with ID {id} not found.");
                 }
-
                 _logger.LogInformation("Course with ID {CourseId} soft-deleted successfully.", id);
                 return NoContent();
             }

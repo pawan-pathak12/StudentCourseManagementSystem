@@ -31,7 +31,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var connection = _dbContext.CreateConnection();
-            _logger.LogInformation($"Creating new record of course");
+            _logger.LogInformation($"Repo : adding new record of course");
             var newId = await connection.QuerySingleAsync<int>(sql, course);
 
             if (newId > 0)
@@ -65,7 +65,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                 SELECT * FROM Courses  WHERE CourseId = @Id AND IsActive = 1;";
 
             using var connection = _dbContext.CreateConnection();
-            _logger.LogInformation($"Repo : Fetching  record of course of course ID {id}");
 
             var course = await connection.QueryFirstOrDefaultAsync<Course>(sql, new { Id = id });
 
@@ -98,7 +97,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             var rowsAffected = await connection.ExecuteAsync(sql, course);
             if (rowsAffected > 0)
             {
-                _logger.LogInformation($"Repo : Updated record of course with Id : {id}");
                 return true;
             }
             _logger.LogInformation($"Repo :Failed to  Update record of course with Id : {id}");
@@ -116,7 +114,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
             if (rowsAffected > 0)
             {
-                _logger.LogInformation($"Repo : Deleted course record with Id {id}");
+                _logger.LogInformation($"Repo :softly Deleted course record with Id {id}");
                 return true;
             }
 
