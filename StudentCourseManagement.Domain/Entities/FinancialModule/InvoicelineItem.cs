@@ -1,6 +1,6 @@
 ﻿namespace StudentCourseManagement.Domain.Entities.FinancialModule
 {
-    public class InvoicelineItem
+    public class InvoiceLineItem
     {
         public int InvoiceLineItemId { get; set; }
         public int FeeTemplateId { get; set; }
