@@ -1,0 +1,16 @@
+﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
+
+namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule
+{
+    public interface IFeeAssessmentRepository
+    {
+        #region CURD Operations 
+        Task<int> AddAsync(FeeAssessment feeAssessment);
+        Task<IEnumerable<FeeAssessment>> GetAllAsync();
+        Task<FeeAssessment?> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(int id, FeeAssessment feeAssessment);
+        Task<bool> DeleteAsync(int id);
+
+        #endregion
+    }
+}
