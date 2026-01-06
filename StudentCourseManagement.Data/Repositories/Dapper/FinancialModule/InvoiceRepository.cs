@@ -8,6 +8,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
     public class InvoiceRepository : IInvoiceRepository
     {
+    {
         private readonly StudentSysDbContext context;
         private readonly ILogger<InvoiceRepository> logger;
 
