@@ -8,7 +8,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         #region CURD Operations 
         Task<int> AddAsync(FeeTemplate feeTemplate);
         Task<IEnumerable<FeeTemplate>> GetAllAsync();
-        Task<?> GetByIdAsync(int id);
+        Task<FeeTemplate?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(int id, FeeTemplate feeTemplate);
         Task<bool> DeleteAsync(int id);
 
