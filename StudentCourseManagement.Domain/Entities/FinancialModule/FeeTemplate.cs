@@ -14,7 +14,6 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? UpdatedAt { get; set; }
 
-        // for join queries required 
-        public string CourseTitle { get; set; } = string.Empty;
+
     }
 }
