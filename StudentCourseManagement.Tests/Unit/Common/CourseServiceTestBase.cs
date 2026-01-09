@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Services;
@@ -20,9 +22,10 @@ namespace StudentCourseManagement.Tests.Unit.Common
                 cfg.AddProfile<CourseProfile>(); // add your mapping profile
             });
             IMapper mapper = config.CreateMapper();
+            var loggerMock = new Mock<ILogger<CourseService>>();
 
             _courseRepository = new InMemoryCourseRepository(mapper);
-            _courseService = new CourseService(_courseRepository);
+            _courseService = new CourseService(_courseRepository, loggerMock.Object);
         }
     }
 }
