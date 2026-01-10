@@ -62,7 +62,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         public async Task<IEnumerable<PaymentMethod>> GetAllAsync()
         {
 
-            const string sql = "SELECT * FROM PaymentMethods ORDER BY MethodType where IsActive=1";
+            const string sql = "SELECT * FROM PaymentMethods where IsActive=1 ORDER BY MethodType ";
 
             using var connection = context.CreateConnection();
 
