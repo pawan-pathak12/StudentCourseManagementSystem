@@ -27,11 +27,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = @"
             INSERT INTO FeeAssessments (
-                EnrollmentId, CourseId, InvoiceId, FeeTemplateId, Amount, 
+                EnrollmentId, CourseId, FeeTemplateId, Amount, 
                 DueDate, FeeAssessmentStatus, IsActive, PaidDate, LateFeeAmount, LateFeeAppliedDate
             )
             VALUES (
-                @EnrollmentId, @CourseId, @InvoiceId, @FeeTemplateId, @Amount,
+                @EnrollmentId, @CourseId, @FeeTemplateId, @Amount,
                 @DueDate, @FeeAssessmentStatus, @IsActive, @PaidDate, @LateFeeAmount, @LateFeeAppliedDate
             );
             SELECT CAST(SCOPE_IDENTITY() as int);";
@@ -125,7 +125,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             UPDATE FeeAssessments 
             SET EnrollmentId = @EnrollmentId,
                 CourseId = @CourseId,
-                InvoiceId = @InvoiceId,
                 FeeTemplateId = @FeeTemplateId,
                 Amount = @Amount,
                 DueDate = @DueDate,

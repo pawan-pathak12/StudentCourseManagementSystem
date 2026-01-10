@@ -27,7 +27,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             {
                 EnrollmentId = 2,
                 CourseId = 2,
-                InvoiceId = 0,
                 FeeTemplateId = 0,
                 Amount = 15000.00m,
                 DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),
@@ -74,7 +73,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             {
                 EnrollmentId = 2,
                 CourseId = 2,
-                InvoiceId = 1,
                 FeeTemplateId = 1,
                 Amount = 15000.00m,
                 DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),
@@ -110,7 +108,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             {
                 EnrollmentId = 2,
                 CourseId = 2,
-                InvoiceId = 1,
                 FeeTemplateId = 1,
                 Amount = 15000.00m,
                 DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),

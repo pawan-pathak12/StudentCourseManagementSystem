@@ -98,12 +98,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         public async Task<bool> UpdateAsync(int id, Invoice invoice)
         {
-            if (id != invoice.InvoiceId)
-            {
-                logger.LogWarning("Update failed: ID mismatch. Provided ID: {ProvidedId}, Entity ID: {EntityId}",
-                    id, invoice.InvoiceId);
-                return false;
-            }
 
             const string sql = @"
                 UPDATE Invoices 

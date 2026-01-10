@@ -16,6 +16,7 @@ namespace StudentCourseManagement.Tests.Integration
                 .Build();
 
             DbContext = new StudentSysDbContext(Configuration);
+
         }
 
         public void Dispose()
