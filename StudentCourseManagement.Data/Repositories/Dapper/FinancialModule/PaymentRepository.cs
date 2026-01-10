@@ -25,11 +25,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             const string sql = @"
                 INSERT INTO Payments (
                     StudentId, InvoiceId, Amount, PaymentDate, PaymentMethodId,
-                    PaymentStatus, ReferenceNumber, Notes, ProcessedBy, CreatedDate
+                    PaymentStatus, ReferenceNumber, Notes, ProcessedBy, CreatedDate,IsActive
                 )
                 VALUES (
                     @StudentId, @InvoiceId, @Amount, @PaymentDate, @PaymentMethodId,
-                    @PaymentStatus, @ReferenceNumber, @Notes, @ProcessedBy, @CreatedDate
+                    @PaymentStatus, @ReferenceNumber, @Notes, @ProcessedBy, @CreatedDate,@IsActive
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -45,7 +45,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         public async Task<bool> DeleteAsync(int id)
         {
-            const string sql = " Update Payments set IsActive =0 WHERE PaymentId = @Id";
+            const string sql = " Update Payments set IsActive =0 WHERE PaymentId = @Id and IsActive=1";
 
             using var connection = context.CreateConnection();
 
@@ -64,7 +64,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         public async Task<IEnumerable<Payment>> GetAllAsync()
         {
 
-            const string sql = "SELECT * FROM Payments ORDER BY PaymentDate DESC where IsActive=1";
+            const string sql = "SELECT * FROM Payments where IsActive=1  ORDER BY PaymentDate DESC ";
 
             using var connection = context.CreateConnection();
 
@@ -115,9 +115,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                     PaymentMethodId = @PaymentMethodId,
                     PaymentStatus = @PaymentStatus,
                     ReferenceNumber = @ReferenceNumber,
+                    IsActive=@IsActive,
                     Notes = @Notes,
                     ProcessedBy = @ProcessedBy
-                WHERE PaymentId = @PaymentId";
+                WHERE PaymentId = @PaymentId and IsActive=1";
 
             using var connection = context.CreateConnection();
 

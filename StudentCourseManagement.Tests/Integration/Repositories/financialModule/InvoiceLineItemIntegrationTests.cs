@@ -138,7 +138,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             //Act 
             var result = await _invoiceLineItemRepository.UpdateAsync(invoiceLineItemId, updated);
 
-            //Assert
+
             // Assert
             Assert.IsTrue(result);
 

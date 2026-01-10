@@ -10,16 +10,23 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
-    public class InvoiceIntegrationTests
+    public class PaymentIntegrationTests
     {
+        #region Private ReadOnly Field
+
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
         private readonly EnrollmentRepository _enrollmentRepository;
         private readonly FeeAssessmentRepository _feeAssessmentRepository;
         private readonly InvoiceRepository _invoiceRepository;
         private readonly FeeTemplateRepository _feeTemplate;
+        private readonly PaymentRepository _paymentRepository;
+        private readonly PaymentMethodRepository _paymentMethodRepository;
 
-        public InvoiceIntegrationTests()
+        #endregion
+
+
+        public PaymentIntegrationTests()
         {
             var dbFixture = new DatabaseFixture();
 
@@ -29,6 +36,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var mockLoggerFeeAssessment = new Mock<ILogger<FeeAssessmentRepository>>();
             var mockLoggerFeeTemplate = new Mock<ILogger<FeeTemplateRepository>>();
             var mockLogger = new Mock<ILogger<InvoiceRepository>>();
+            var mockLoggerPayment = new Mock<ILogger<PaymentRepository>>();
+            var mockLoggerPaymentMethod = new Mock<ILogger<PaymentMethodRepository>>();
 
             _studentRepository = new StudentRepository(dbFixture.DbContext, mockLoggerStudent.Object);
             _courseRepository = new CourseRepository(dbFixture.DbContext, mockLoggerCourse.Object);
@@ -36,6 +45,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             _feeTemplate = new FeeTemplateRepository(dbFixture.DbContext, mockLoggerFeeTemplate.Object);
             _feeAssessmentRepository = new FeeAssessmentRepository(dbFixture.DbContext, mockLoggerFeeAssessment.Object);
             _invoiceRepository = new InvoiceRepository(dbFixture.DbContext, mockLogger.Object);
+            _paymentRepository = new PaymentRepository(dbFixture.DbContext, mockLoggerPayment.Object);
+            _paymentMethodRepository = new PaymentMethodRepository(dbFixture.DbContext, mockLoggerPaymentMethod.Object);
 
         }
 
@@ -53,106 +64,123 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
 
-            Assert.IsNotNull(invoiceId);
-            Assert.IsTrue(invoiceId > 0);
+            //Act 
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
 
+            //Assert    
+            Assert.IsTrue(paymentId > 0);
         }
 
         [TestMethod]
-        public async Task GettAllAsync_IfNotNullThen_ReturnListOfInvoice()
+        public async Task GettAllAsync_IfNotNullThen_ReturnListOfPayment()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            var studentId = await CreateStudentAsync();
-            var courseId = await CreateCourseAsync();
-            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
-            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
-            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
-            await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
-
-            var invocies = await _invoiceRepository.GetAllAsync();
-
-            Assert.IsTrue(invocies.Any());
-        }
-
-        [TestMethod]
-        public async Task GetByIdAsync_WithExistingId_ReturnsInvoice()
-        {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
-
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
 
-            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+            await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
 
-            Assert.IsNotNull(invoice);
+            //Act 
+            var payments = await _paymentRepository.GetAllAsync();
+
+
+            Assert.IsTrue(payments.Any());
+            Assert.IsNotNull(payments);
+
+        }
+
+        [TestMethod]
+        public async Task GetByIdAsync_WithExistingId_ReturnsPayments()
+        {
+            //Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+
+            //Act 
+            var payment = await _paymentRepository.GetByIdAsync(paymentId);
+
+            Assert.IsNotNull(payment);
         }
 
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
-
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
 
-            //Act 
-            var updateInvoiceData = new Invoice
+            var updatedPayment = new Payment
             {
+                PaymentId = paymentId,
+                StudentId = studentId,
                 InvoiceId = invoiceId,
-                InvoiceStatus = InvoiceStatus.Cancelled,
-                UpdatedAt = DateTimeOffset.UtcNow
+                PaymentMethodId = paymentMethodId,
+                IsActive = true,
+                Amount = 15000.00m,
+                PaymentDate = DateTimeOffset.UtcNow.AddDays(1),
+                PaymentStatus = PaymentStatus.Completed,
+                ReferenceNumber = "TXN-2026-XYZ789",
+                Notes = "Final installment, invoice fully settled",
+                ProcessedBy = "AdminUser02",
+                CreatedDate = DateTimeOffset.UtcNow
             };
+            //Act 
+            var result = await _paymentRepository.UpdateAsync(paymentId, updatedPayment);
 
-            var updatedInvoice = await _invoiceRepository.UpdateAsync(invoiceId, updateInvoiceData);
+            //Assert 
+            Assert.IsTrue(result);
 
-            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+            var payment = await _paymentRepository.GetByIdAsync(paymentId);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow, invoice.UpdatedAt);
-            Assert.AreEqual(InvoiceStatus.Cancelled, invoice.InvoiceStatus);
-
-            Assert.IsTrue(updatedInvoice);
-
+            Assert.AreEqual(updatedPayment.Notes, payment?.Notes);
+            Assert.AreEqual(updatedPayment.ProcessedBy, payment?.ProcessedBy);
         }
 
         [TestMethod]
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
-
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
 
-            var setIsActiveFalse = await _invoiceRepository.DeleteAsync(invoiceId);
+            //Act
+            var result = await _paymentRepository.DeleteAsync(paymentId);
 
-            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+            var payment = await _paymentRepository.GetByIdAsync(paymentId);
 
-            Assert.IsFalse(setIsActiveFalse);
+            //Assert 
+            Assert.IsTrue(result);
+            Assert.IsNull(payment);
 
-            Assert.AreEqual(false, invoice.IsActive);
 
         }
-
         #endregion
+
 
         #region Helper Method
 
@@ -254,6 +282,36 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 Discount = 0
             };
             return await _invoiceRepository.AddAsync(invoice);
+        }
+
+        private async Task<int> CreatePaymentAsync(int studentId, int invoiceId, int paymentMethodId)
+        {
+            var payment = new Payment
+            {
+                StudentId = studentId,              // link to Student (e.g., Sita Sharma)
+                InvoiceId = invoiceId,           // link to Invoice (e.g., INV-2026-001)
+                PaymentMethodId = paymentMethodId,        // e.g., 1 = Cash, 2 = Bank Transfer, 3 = Card
+                IsActive = true,
+                Amount = 7500.00m,          // partial payment
+                PaymentDate = new DateTimeOffset(2026, 01, 25, 14, 30, 0, TimeSpan.FromHours(5.75)),
+                PaymentStatus = PaymentStatus.PartiallyPaid, // assuming enum has Pending, Paid, PartiallyPaid
+                ReferenceNumber = "TXN-2026-ABC123",
+                Notes = "First installment of tuition fee",
+                ProcessedBy = "AdminUser01",
+                CreatedDate = DateTimeOffset.UtcNow
+            };
+            return await _paymentRepository.AddAsync(payment);
+        }
+
+        private async Task<int> CreatePaymentMethodAsync()
+        {
+            var paymentMethod = new PaymentMethod
+            {
+                PaymentMethodType = PaymentMethodType.Cash,
+                Provider = null,
+                IsActive = true
+            };
+            return await _paymentMethodRepository.AddAsync(paymentMethod);
         }
         #endregion
 
