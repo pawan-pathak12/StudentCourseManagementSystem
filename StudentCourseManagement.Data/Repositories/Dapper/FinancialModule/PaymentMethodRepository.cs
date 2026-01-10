@@ -23,10 +23,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         {
             const string sql = @"
                 INSERT INTO PaymentMethods (
-                    MethodType, Provider, IsActive
+                    PaymentMethodType, Provider, IsActive
                 )
                 VALUES (
-                    @MethodType, @Provider, @IsActive
+                    @PaymentMethodType, @Provider, @IsActive
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);"; // SQL Server
 
@@ -35,7 +35,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             var newId = await connection.QuerySingleAsync<int>(sql, paymentMethod);
 
             logger.LogInformation("Successfully added PaymentMethod with ID: {Id}, Type: {MethodType}",
-                newId, paymentMethod.MethodType);
+                newId, paymentMethod.PaymentMethodType);
 
             return newId;
         }
@@ -62,7 +62,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         public async Task<IEnumerable<PaymentMethod>> GetAllAsync()
         {
 
-            const string sql = "SELECT * FROM PaymentMethods ORDER BY MethodType where IsActive=1";
+            const string sql = "SELECT * FROM PaymentMethods where IsActive=1 ORDER BY MethodType ";
 
             using var connection = context.CreateConnection();
 
@@ -88,7 +88,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             else
             {
                 logger.LogInformation("Successfully retrieved PaymentMethod with ID: {Id}, Type: {MethodType}",
-                    id, method.MethodType);
+                    id, method.PaymentMethodType);
             }
 
             return method;
@@ -106,7 +106,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = @"
                 UPDATE PaymentMethods 
-                SET MethodType = @MethodType,
+                SET PaymentMethodType = @PaymentMethodType,
                     Provider = @Provider,
                     IsActive = @IsActive
                 WHERE PaymentMethodId = @PaymentMethodId";

@@ -7,6 +7,7 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public int InvoiceId { get; set; }
         public string InvoiceNumber { get; set; } = string.Empty;
         public int StudentId { get; set; }
+        public bool IsActive { get; set; }
         public int CourseId { get; set; }
         public int FeeAssessmentId { get; set; }
         public bool LateFeeApplied { get; set; } = false;

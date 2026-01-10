@@ -22,14 +22,15 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             logger.LogInformation("Adding new InvoiceLineItem for InvoiceId: {InvoiceId}, Description: {Description}, Amount: {Amount}",
                 invoiceLineItem.InvoiceId, invoiceLineItem.Description, invoiceLineItem.Amount);
 
+            invoiceLineItem.CreatedAt = DateTimeOffset.UtcNow;
             const string sql = @"
                 INSERT INTO InvoiceLineItems (
                     FeeTemplateId, CourseId, InvoiceId, Description, 
-                    Quantity, UnitPrice, Amount, CreatedAt
+                    Quantity, UnitPrice, Amount, CreatedAt,IsActive
                 )
                 VALUES (
                     @FeeTemplateId, @CourseId, @InvoiceId, @Description,
-                    @Quantity, @UnitPrice, @Amount, UTCNOW()
+                    @Quantity, @UnitPrice, @Amount, @CreatedAt,@IsActive
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 

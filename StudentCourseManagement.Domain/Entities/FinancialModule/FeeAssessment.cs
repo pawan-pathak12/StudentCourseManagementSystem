@@ -7,7 +7,6 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public int FeeAssessmentId { get; set; }
         public int EnrollmentId { get; set; }
         public int CourseId { get; set; }
-        public int InvoiceId { get; set; }
         public int FeeTemplateId { get; set; }
         public decimal Amount { get; set; }
         public DateTimeOffset? DueDate { get; set; }

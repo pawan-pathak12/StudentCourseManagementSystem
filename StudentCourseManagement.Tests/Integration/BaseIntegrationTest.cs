@@ -7,6 +7,7 @@
         protected BaseIntegrationTest(DatabaseFixture fixture)
         {
             _fixture = fixture;
+
         }
     }
 }

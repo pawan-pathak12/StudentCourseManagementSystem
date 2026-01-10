@@ -24,10 +24,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             const string sql = @"
                 INSERT INTO Invoices (
                     InvoiceNumber, StudentId, CourseId, FeeAssessmentId, LateFeeApplied, IssuedAt, DueDate, TotalAmount, InvoiceStatus, CreatedAt,
-                    AmountPaid, BalanceDue, UpdatedAt, Discount) VALUES
+                    AmountPaid, BalanceDue, UpdatedAt,IsActive, Discount) VALUES
                     (
                     @InvoiceNumber, @StudentId, @CourseId, @FeeAssessmentId, @LateFeeApplied, @IssuedAt, @DueDate, @TotalAmount, @InvoiceStatus, @CreatedAt,
-                    @AmountPaid, @BalanceDue, @UpdatedAt, @Discount
+                    @AmountPaid, @BalanceDue, @UpdatedAt,@IsActive, @Discount
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -98,12 +98,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         public async Task<bool> UpdateAsync(int id, Invoice invoice)
         {
-            if (id != invoice.InvoiceId)
-            {
-                logger.LogWarning("Update failed: ID mismatch. Provided ID: {ProvidedId}, Entity ID: {EntityId}",
-                    id, invoice.InvoiceId);
-                return false;
-            }
 
             const string sql = @"
                 UPDATE Invoices 
@@ -114,13 +108,14 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                     LateFeeApplied = @LateFeeApplied,
                     IssuedAt = @IssuedAt,
                     DueDate = @DueDate,
+                    IsActive=@IsActive
                     TotalAmount = @TotalAmount,
                     InvoiceStatus = @InvoiceStatus,
                     AmountPaid = @AmountPaid,
                     BalanceDue = @BalanceDue,
                     UpdatedAt = @UpdatedAt,
                     Discount = @Discount
-                WHERE InvoiceId = @InvoiceId";
+                WHERE InvoiceId = @InvoiceId ";
 
             using var connection = context.CreateConnection();
 
