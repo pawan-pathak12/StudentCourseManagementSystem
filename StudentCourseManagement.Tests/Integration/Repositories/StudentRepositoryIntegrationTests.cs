@@ -82,8 +82,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
             Assert.IsTrue(isUpdated);
             var student = await _repository.GetByIdAsync(studentId);
-            Assert.AreEqual(updateStudentData.Name, student.Name);
-            Assert.AreEqual(updateStudentData.Email, student.Email);
+            Assert.AreEqual(updateStudentData.Name, student?.Name);
+            Assert.AreEqual(updateStudentData.Email, student?.Email);
         }
 
         [TestMethod]

@@ -5,6 +5,7 @@ using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
 using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
+using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
@@ -27,123 +28,44 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task AddAsync_WithValidFeeTemplate_InsertsRowAndReturnsId()
         {
-            #region Arrange
-            var course = new Course
-            {
-                Code = "CS101",
-                Title = "Introduction to Programming",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(2),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(20)
-            };
+            // Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
 
-            var courseId = await _courseRepository.AddAsync(course);
+            //Act
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
-            var feeTemplate = new FeeTemplate
-            {
-                Name = "Undergraduate Tuition Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                Amount = 50000.00m,
-                RatePerCredit = 2500.00m,        // 
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null
-            };
 
-            #endregion
-            var templateId = await _feeTemplateRepository.AddAsync(feeTemplate);
-
-            Assert.IsNotNull(templateId);
-            Assert.AreNotEqual(0, templateId);
+            Assert.IsNotNull(feeTemplateId);
+            Assert.IsTrue(feeTemplateId > 0);
 
         }
 
         [TestMethod]
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfFeeTemplate()
         {
-            #region Arrange
-            var course = new Course
-            {
-                Code = "CS101",
-                Title = "Introduction to Programming 2",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(2),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(20)
-            };
+            // Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
-            var courseId = await _courseRepository.AddAsync(course);
-
-            var feeTemplate = new FeeTemplate
-            {
-                Name = " Tuition Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                Amount = 50000.00m,
-                RatePerCredit = 2500.00m,
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null
-            };
-            await _feeTemplateRepository.AddAsync(feeTemplate);
-            #endregion
 
             //Act 
             var feetemplates = await _feeTemplateRepository.GetAllAsync();
 
             //Assert 
-            Assert.IsNotNull(feetemplates);
+            Assert.IsTrue(feetemplates.Any());
             Assert.AreNotEqual(0, feetemplates.Count());
+
         }
 
         [TestMethod]
         public async Task GetByIdAsync_WithExistingId_ReturnsFeeTemplate()
         {
-            #region Arrange
-            var course = new Course
-            {
-                Code = "CS101",
-                Title = "Introduction to Programming 3",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(2),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(20)
-            };
-
-            var courseId = await _courseRepository.AddAsync(course);
-
-            var feeTemplate = new FeeTemplate
-            {
-                Name = " Tuition Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                Amount = 50000.00m,
-                RatePerCredit = 2500.00m,
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null
-            };
-
-            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
-
-            #endregion
+            // Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
             //act 
             var feeTempalateData = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
@@ -156,50 +78,31 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
-
             // Arrange
-            var course = new Course
-            {
-                Code = "CS201",
-                Title = "Data Structures",
-                Credits = 4,
-                Description = "DS course",
-                Instructor = "Dr. Kumar",
-                StartDate = DateTimeOffset.UtcNow.AddDays(10),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(3),
-                IsActive = true,
-                Capacity = 40,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(1),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(15)
-            };
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
 
-            var courseId = await _courseRepository.AddAsync(course);
+            //Act
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
-            var feeTemplate = new FeeTemplate
-            {
-                Name = "Original Fee Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.FlatAmount,
-                Amount = 40000m,
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow
-            };
-
-            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
             var updateData = new FeeTemplate
             {
+                FeeTemplateId = feeTemplateId,
                 Name = "Updated Fee Template",
                 Amount = 45000m,
-                UpdatedAt = DateTimeOffset.UtcNow
+                UpdatedAt = DateTimeOffset.UtcNow,
+                IsActive = true,
+                CourseId = courseId
             };
 
             // Act
             var isUpdated = await _feeTemplateRepository.UpdateAsync(feeTemplateId, updateData);
-            var updatedTemplate = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
 
             // Assert
             Assert.IsTrue(isUpdated);
+
+            var updatedTemplate = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
             Assert.IsNotNull(updatedTemplate);
             Assert.AreEqual("Updated Fee Template", updatedTemplate.Name);
             Assert.AreEqual(45000m, updatedTemplate.Amount);
@@ -209,44 +112,56 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
-            #region Arrange
+            // Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+
+            //Act
+            var isdeleted = await _feeTemplateRepository.DeleteAsync(feeTemplateId);
+
+            //Assert 
+            Assert.AreEqual(true, isdeleted);
+            var feeTemplate = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
+            Assert.IsNull(feeTemplate);
+
+        }
+        #endregion
+
+        #region Private Helper Methods 
+        private async Task<int> CreateCourseAsync()
+        {
             var course = new Course
             {
-                Code = "CS101",
-                Title = "Introduction to Programming 4",
+                Code = "CS1001",
+                Title = "Introduction to Programming",
                 Credits = 3,
                 Description = "Fundamentals of programming using C# and .NET Core.",
                 Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
+                StartDate = DateTimeOffset.UtcNow.AddDays(40),
                 EndDate = DateTimeOffset.UtcNow.AddMonths(2),
                 IsActive = true,
                 Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(2),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(20)
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(10),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25),
             };
 
-            var courseId = await _courseRepository.AddAsync(course);
-
+            return await _courseRepository.AddAsync(course);
+        }
+        private async Task<int> CreateFeeTemplateAsync(int courseId)
+        {
             var feeTemplate = new FeeTemplate
             {
-                Name = " Tuition Template 2",
+                Name = "Undergraduate Tuition Template",
                 CourseId = courseId,
                 CalculationType = CalculationType.RatePerCredit,
-                Amount = 50000.00m,
                 RatePerCredit = 2500.00m,
                 IsActive = true,
                 CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null
+                UpdatedAt = null,
+                Amount = 0
             };
-
-            #endregion
-
-            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
-
-            var isdeleted = await _feeTemplateRepository.DeleteAsync(feeTemplateId);
-
-            Assert.AreEqual(false, isdeleted);
-
+            return await _feeTemplateRepository.AddAsync(feeTemplate);
         }
         #endregion
     }
