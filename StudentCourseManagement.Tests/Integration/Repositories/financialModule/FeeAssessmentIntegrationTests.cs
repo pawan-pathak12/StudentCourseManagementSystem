@@ -1,21 +1,36 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
+using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
+using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
+using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
     public class FeeAssessmentIntegrationTests
     {
+        private readonly StudentRepository _studentRepository;
+        private readonly CourseRepository _courseRepository;
+        private readonly EnrollmentRepository _enrollmentRepository;
+        private readonly FeeTemplateRepository _feeTemplate;
         private readonly FeeAssessmentRepository _feeAssessment;
         public FeeAssessmentIntegrationTests()
         {
-            var fixture = new DatabaseFixture();
+            var dbFixture = new DatabaseFixture();
+            var mockLoggerStudent = new Mock<ILogger<StudentRepository>>();
+            var mockLoggerCourse = new Mock<ILogger<CourseRepository>>();
+            var mockLoggerEnrollment = new Mock<ILogger<EnrollmentRepository>>();
             var loggerMock = new Mock<ILogger<FeeAssessmentRepository>>();
+            var mockLoggerFeeTemplate = new Mock<ILogger<FeeTemplateRepository>>();
 
-            _feeAssessment = new FeeAssessmentRepository(fixture.DbContext, loggerMock.Object);
+            _studentRepository = new StudentRepository(dbFixture.DbContext, mockLoggerStudent.Object);
+            _courseRepository = new CourseRepository(dbFixture.DbContext, mockLoggerCourse.Object);
+            _enrollmentRepository = new EnrollmentRepository(dbFixture.DbContext, mockLoggerEnrollment.Object);
+            _feeTemplate = new FeeTemplateRepository(dbFixture.DbContext, mockLoggerFeeTemplate.Object);
+            _feeAssessment = new FeeAssessmentRepository(dbFixture.DbContext, loggerMock.Object);
         }
 
         #region CURD Operations 
@@ -23,109 +38,200 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task AddAsync_WithValidData_InsertData()
         {
-            var feeAssessment = new FeeAssessment
-            {
-                EnrollmentId = 2,
-                CourseId = 2,
-                FeeTemplateId = 0,
-                Amount = 15000.00m,
-                DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),
-                FeeAssessmentStatus = AssessmentStatus.Pending,
-                IsActive = true,
-                PaidDate = null,
-                LateFeeAmount = null,
-                LateFeeAppliedDate = null
-            };
+            //Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
-            var feeAssessmentId = await _feeAssessment.AddAsync(feeAssessment);
+            //Act 
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
 
+            //Assert 
             Assert.IsNotNull(feeAssessmentId);
-            Assert.AreNotEqual(0, feeAssessmentId);
+            Assert.IsTrue(feeAssessmentId > 0);
         }
 
         [TestMethod]
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfFeeAssessment()
         {
+            //Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+
+            //Act
             var feeAssessments = await _feeAssessment.GetAllAsync();
 
             Assert.IsNotNull(feeAssessments);
             Assert.AreNotEqual(0, feeAssessments.Count());
+            Assert.IsTrue(feeAssessments.Any());
         }
 
         [TestMethod]
         public async Task GetByIdAsync_IfNotNull_ReturnFeeAssessment()
         {
-            //assume feeAssessmentId =1 exists
-            int id = 1;
-            var feeAssesment = await _feeAssessment.GetByIdAsync(id);
+            //Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
 
+            //Act 
+            var feeAssesment = await _feeAssessment.GetByIdAsync(feeAssessmentId);
+
+            //Asset 
             Assert.IsNotNull(feeAssesment);
         }
         [TestMethod]
         public async Task UpdateAsync_WithValidInsert_ReturnTrue()
         {
-            /* requirement to pass this test : 
-           enrollment id =2 must exists
-          courseid =2 must exists , 
-          invoice id =1 , feetemplate =1 
-          */
-            var feeAssessment = new FeeAssessment
+            //Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+
+
+            var updateFeeAssessment = new FeeAssessment
             {
-                EnrollmentId = 2,
-                CourseId = 2,
-                FeeTemplateId = 1,
+                FeeAssessmentId = feeAssessmentId,
+                EnrollmentId = enrollmentId,
+                CourseId = courseId,
+                FeeTemplateId = feeTemplateId,
                 Amount = 15000.00m,
-                DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),
-                FeeAssessmentStatus = AssessmentStatus.Pending,
+                DueDate = DateTimeOffset.UtcNow.AddMonths(1),
+                FeeAssessmentStatus = AssessmentStatus.Generated,
                 IsActive = true,
                 PaidDate = null,
                 LateFeeAmount = null,
                 LateFeeAppliedDate = null
             };
+            //Act 
 
-            var feeAssementId = await _feeAssessment.AddAsync(feeAssessment);
+            var isUpdated = await _feeAssessment.UpdateAsync(feeAssessmentId, updateFeeAssessment);
 
-            var feeAssement2 = new FeeAssessment
-            {
-                FeeAssessmentStatus = AssessmentStatus.Generated
-            };
-
-            var isUpdated = await _feeAssessment.UpdateAsync(feeAssementId, feeAssement2);
-
+            //Assert 
             Assert.IsTrue(isUpdated);
+            var feeAssessment = await _feeAssessment.GetByIdAsync(feeAssessmentId);
+            Assert.AreEqual(updateFeeAssessment.FeeAssessmentStatus, feeAssessment?.FeeAssessmentStatus);
 
         }
 
         [TestMethod]
         public async Task DeleteAsync_WithExistingActiveId_ReturnsTrue()
         {
-            /* requirement to pass this test : 
-             enrollment id =2 must exists
-            courseid =2 must exists , 
-            invoice id =1 , feetemplate =1 
-            */
+            //Arrange
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+
+            //Act
+
+            var isDeleted = await _feeAssessment.DeleteAsync(feeAssessmentId);
+
+            //Assert 
+            Assert.IsTrue(isDeleted);
+            var feeAssessment = await _feeAssessment.GetByIdAsync(feeAssessmentId);
+            Assert.IsNull(feeAssessment);
+
+        }
+
+        #endregion
+
+        #region Private Helper Methods 
+
+        private async Task<int> CreateStudentAsync()
+        {
+            var student = new Student
+            {
+                Name = "Sita Sharma",
+                Email = "sita.sharma@example.com",
+                DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
+                Number = 9812345678,
+                IsActive = true,
+                Gender = "Female",
+                Address = "Biratnagar, Nepal"
+            };
+            return await _studentRepository.AddAsync(student);
+        }
+
+        private async Task<int> CreateCourseAsync()
+        {
+            var course = new Course
+            {
+                Code = "CS1001",
+                Title = "Introduction to Programming",
+                Credits = 3,
+                Description = "Fundamentals of programming using C# and .NET Core.",
+                Instructor = "Dr. Anil Sharma",
+                StartDate = DateTimeOffset.UtcNow.AddDays(40),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                IsActive = true,
+                Capacity = 50,
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(10),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25),
+            };
+
+            return await _courseRepository.AddAsync(course);
+        }
+        private async Task<int> CreateEnrollmentAsync(int studentId, int courseId)
+        {
+            var enrollment = new Enrollment
+            {
+                StudentId = studentId,
+                CourseId = courseId,
+                IsActive = true
+            };
+
+            return await _enrollmentRepository.AddAsync(enrollment);
+
+        }
+        private async Task<int> CreateFeeTemplateAsync(int courseId)
+        {
+            var feeTemplate = new FeeTemplate
+            {
+                Name = "Undergraduate Tuition Template",
+                CourseId = courseId,
+                CalculationType = CalculationType.RatePerCredit,
+                RatePerCredit = 2500.00m,
+                IsActive = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = null,
+                Amount = 0
+            };
+            return await _feeTemplate.AddAsync(feeTemplate);
+        }
+
+        private async Task<int> CreateFeeAssessmentAsync(int enrollmentid, int courseId, int FeeTemplateId)
+        {
             var feeAssessment = new FeeAssessment
             {
-                EnrollmentId = 2,
-                CourseId = 2,
-                FeeTemplateId = 1,
+                EnrollmentId = enrollmentid,
+                CourseId = courseId,
+                FeeTemplateId = FeeTemplateId,
                 Amount = 15000.00m,
-                DueDate = new DateTimeOffset(2026, 01, 20, 17, 0, 0, TimeSpan.FromHours(5.75)),
+                DueDate = DateTime.UtcNow.AddDays(30),
                 FeeAssessmentStatus = AssessmentStatus.Pending,
                 IsActive = true,
                 PaidDate = null,
                 LateFeeAmount = null,
                 LateFeeAppliedDate = null
             };
-
-            var feeAssementId = await _feeAssessment.AddAsync(feeAssessment);
-
-            var isDeleted = await _feeAssessment.DeleteAsync(feeAssementId);
-
-            Assert.IsTrue(isDeleted);
-
+            return await _feeAssessment.AddAsync(feeAssessment);
         }
-
         #endregion
     }
 }
