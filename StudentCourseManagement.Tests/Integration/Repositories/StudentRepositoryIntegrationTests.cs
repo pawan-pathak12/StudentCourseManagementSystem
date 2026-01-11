@@ -70,7 +70,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             {
                 StudentId = studentId,
                 Name = "pawan",
-                IsActive = false,
+                IsActive = true,
                 Address = " ",
                 Email = "emnail",
                 Gender = "M",
@@ -79,6 +79,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             };
 
             var isUpdated = await _repository.UpdateAsync(updateStudentData);
+
+            //Assert 
 
             Assert.IsTrue(isUpdated);
             var student = await _repository.GetByIdAsync(studentId);

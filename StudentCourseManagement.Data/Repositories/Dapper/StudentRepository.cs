@@ -80,11 +80,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             if (rows > 0)
             {
                 _logger.LogInformation($"Updated Student with Id{student.StudentId}");
-                return true;
+
             }
 
             _logger.LogWarning($"Failed to Update student record with id {student.StudentId}");
-            return false;
+            return rows > 0;
 
         }
 

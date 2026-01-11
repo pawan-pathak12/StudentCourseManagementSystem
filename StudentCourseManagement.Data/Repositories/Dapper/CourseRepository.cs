@@ -88,19 +88,19 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                     Capacity = @Capacity,
                     EnrollmentStartDate = @EnrollmentStartDate,
                     EnrollmentEndDate = @EnrollmentEndDate
-                WHERE CourseId = @CourseId AND IsActive = 1;";
+                WHERE CourseId = @CourseId ;";
 
             course.CourseId = id;
 
             using var connection = _dbContext.CreateConnection();
             _logger.LogInformation($"Repo : Updating record of course with Id : {id}");
             var rowsAffected = await connection.ExecuteAsync(sql, course);
-            if (rowsAffected > 0)
+            if (rowsAffected < 0)
             {
-                return true;
+                _logger.LogInformation($"Repo :Failed to  Update record of course with Id : {id}");
             }
-            _logger.LogInformation($"Repo :Failed to  Update record of course with Id : {id}");
-            return false;
+
+            return rowsAffected > 0;
 
         }
 
@@ -115,11 +115,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
             if (rowsAffected > 0)
             {
                 _logger.LogInformation($"Repo :softly Deleted course record with Id {id}");
-                return true;
+
             }
 
             _logger.LogInformation($"Repo :Failed to Delete course record with Id {id}");
-            return false;
+            return rowsAffected > 0;
 
         }
 

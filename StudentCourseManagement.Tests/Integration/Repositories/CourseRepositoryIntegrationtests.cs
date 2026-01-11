@@ -81,8 +81,9 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             var isUpdated = await _repository.UpdateAsync(courseId, updateCourseData);
 
             Assert.IsTrue(isUpdated);
+
             var course = await _repository.GetByIdAsync(courseId);
-            Assert.AreEqual(updateCourseData.Code, course.Code);
+            Assert.AreEqual(updateCourseData.Code, course?.Code);
         }
 
         [TestMethod]
@@ -153,7 +154,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         }
         #endregion
 
-        #region Private Helpet Methods 
+        #region Private Helper Methods 
 
         private async Task<int> CreateCourseAsync()
         {
