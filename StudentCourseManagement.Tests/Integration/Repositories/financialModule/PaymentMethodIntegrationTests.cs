@@ -43,7 +43,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             Assert.IsTrue(payments.Any());
         }
 
-
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {

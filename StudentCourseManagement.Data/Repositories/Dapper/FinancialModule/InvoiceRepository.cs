@@ -108,7 +108,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                     LateFeeApplied = @LateFeeApplied,
                     IssuedAt = @IssuedAt,
                     DueDate = @DueDate,
-                    IsActive=@IsActive
+                    IsActive=@IsActive,
                     TotalAmount = @TotalAmount,
                     InvoiceStatus = @InvoiceStatus,
                     AmountPaid = @AmountPaid,

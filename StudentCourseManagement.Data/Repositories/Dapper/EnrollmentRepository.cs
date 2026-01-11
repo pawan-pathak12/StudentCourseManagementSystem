@@ -142,11 +142,16 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<bool> ExistsAsync(int studentId, int courseId)
         {
             using var connection = _dbContext.CreateConnection();
-            const string sql = @"select distinct case when StudentId =@StudentId and CourseId=@CourseId  then 1 end
-                                from Enrollments";
+            const string sql = @"select case 
+                           when exists (
+                               select 1 from Enrollments 
+                               where StudentId = @StudentId and CourseId = @CourseId
+                           ) 
+                           then 1 else 0 end";
 
             _logger.LogInformation(
-                "Checking if enrollment exists for StudentId {StudentId} in CourseId {CourseId}", studentId, courseId);
+                "Checking if enrollment exists for StudentId {StudentId} in CourseId {CourseId}",
+                studentId, courseId);
 
             var result = await connection.ExecuteScalarAsync<int>(sql, new { StudentId = studentId, CourseId = courseId });
             return result == 1;

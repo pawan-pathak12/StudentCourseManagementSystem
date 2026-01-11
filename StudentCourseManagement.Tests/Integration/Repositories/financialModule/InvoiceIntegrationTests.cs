@@ -114,17 +114,24 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             {
                 InvoiceId = invoiceId,
                 InvoiceStatus = InvoiceStatus.Cancelled,
-                UpdatedAt = DateTimeOffset.UtcNow
+                UpdatedAt = DateTimeOffset.UtcNow,
+                StudentId = studentId,
+                FeeAssessmentId = feeAssessmentId,
+                CourseId = courseId,
+                IsActive = true
             };
 
-            var updatedInvoice = await _invoiceRepository.UpdateAsync(invoiceId, updateInvoiceData);
+            var result = await _invoiceRepository.UpdateAsync(invoiceId, updateInvoiceData);
+
+            //Assert 
+            Assert.IsTrue(result);
 
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
-            Assert.AreEqual(DateTimeOffset.UtcNow, invoice.UpdatedAt);
-            Assert.AreEqual(InvoiceStatus.Cancelled, invoice.InvoiceStatus);
+            Assert.AreEqual(updateInvoiceData.UpdatedAt, invoice?.UpdatedAt);
+            Assert.AreEqual(InvoiceStatus.Cancelled, invoice?.InvoiceStatus);
 
-            Assert.IsTrue(updatedInvoice);
+
 
         }
 
@@ -146,9 +153,9 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
-            Assert.IsFalse(setIsActiveFalse);
+            Assert.IsTrue(setIsActiveFalse);
 
-            Assert.AreEqual(false, invoice.IsActive);
+            Assert.IsNull(invoice);
 
         }
 

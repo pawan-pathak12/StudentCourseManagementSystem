@@ -2,6 +2,7 @@
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Domain.Entities;
+using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories
 {
@@ -20,37 +21,33 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task AddAsync_WithValidCourse_InsertData()
         {
-            var course = new Course
-            {
-                Code = "CS101",
-                Title = "Introduction to Programming",
-                Credits = 3,
-                Description = "Learn the basics of programming using C# and .NET.",
-                Instructor = "Dr. Anil Kumar",
-                StartDate = new DateTimeOffset(2025, 1, 15, 9, 0, 0, TimeSpan.Zero),
-                EndDate = new DateTimeOffset(2025, 5, 15, 17, 0, 0, TimeSpan.Zero),
-                Capacity = 50,
-                EnrollmentStartDate = new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero),
-                EnrollmentEndDate = new DateTimeOffset(2025, 1, 10, 23, 59, 59, TimeSpan.Zero)
-            };
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            var courseId = await _repository.AddAsync(course);
+
+            var courseId = await CreateCourseAsync();
+
 
             Assert.IsNotNull(courseId);
+            Assert.IsTrue(courseId > 0);
             Assert.AreNotEqual(0, courseId);
         }
 
         [TestMethod]
         public async Task GetAllAsync_IfNotNullThrn_ReturnsListOfCourses()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            await CreateCourseAsync();
             var courses = await _repository.GetAllAsync();
 
             Assert.IsNotNull(courses);
+            Assert.IsTrue(courses.Any());
         }
 
         [TestMethod]
         public async Task GetByIdAsync_WithExistingId_ReturnsCourse()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             //assume id 1 exists 
             int id = 2;
             var course = await _repository.GetByIdAsync(id);
@@ -61,31 +58,47 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue()
         {
-            var id = 2;
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
 
-            var course = new Course
+            var updateCourseData = new Course
             {
-                CourseId = id,
-                Code = "tesitng 2",
-                Title = "Introduction to Programming",
+                CourseId = courseId,
+                Code = "CS1012",
+                Title = "Introduction to Programming 2",
                 Credits = 3,
-                IsActive = true
+                Description = "Fundamentals of programming using C# and .NET Core.",
+                Instructor = "Dr. Anil Sharma",
+                StartDate = DateTimeOffset.UtcNow.AddDays(40),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                IsActive = true,
+                Capacity = 50,
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(5),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(30),
 
             };
-            var isUpdated = await _repository.UpdateAsync(id, course);
+
+            var isUpdated = await _repository.UpdateAsync(courseId, updateCourseData);
 
             Assert.IsTrue(isUpdated);
+
+            var course = await _repository.GetByIdAsync(courseId);
+            Assert.AreEqual(updateCourseData.Code, course?.Code);
         }
 
         [TestMethod]
         public async Task DeleteAsync_WithActiveExistingId_ReturnTrue()
         {
-            // assme id 1 exists 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            int id = 2;
-            var isDeleted = await _repository.DeleteAsync(id);
+            var courseId = await CreateCourseAsync();
+
+
+            var isDeleted = await _repository.DeleteAsync(courseId);
 
             Assert.IsTrue(isDeleted);
+            var course = await _repository.GetByIdAsync(courseId);
+            Assert.IsNull(course);
         }
         #endregion
 
@@ -94,9 +107,12 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task CodeExistsAsync_IfCodeExists_ReturnTrue()
         {
-            string code = "tesitng 2";
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            var codeExists = await _repository.CodeExistsAsync(code);
+            var courseId = await CreateCourseAsync();
+
+            var course = await _repository.GetByIdAsync(courseId);
+            var codeExists = await _repository.CodeExistsAsync(course.Code);
 
             Assert.IsTrue(codeExists);
 
@@ -106,6 +122,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task TitleExistsAsync_IfExists_ReturnTrue()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             string title = "Introduction to Programming";
 
             var titleExists = await _repository.TitleExistsAsync(title);
@@ -119,26 +137,43 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task CheckEnrollmentDateAsync_WithEnrollmentDateOut_ReturnsFalse()
         {
-            //Arrange 
-            var course = new Course
-            {
-                Title = "C# Master class 2",
-                Capacity = 11,
-                EnrollmentStartDate = new DateTimeOffset(2025, 12, 01, 8, 0, 0, TimeSpan.FromHours(5.75)),
-                EnrollmentEndDate = new DateTimeOffset(2025, 12, 15, 17, 0, 0, TimeSpan.FromHours(5.75)),
-                IsActive = true
-            };
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            var courseId = await _repository.AddAsync(course);
+
+
+            var courseId = await CreateCourseAsync();
 
             // pick any date outside the enrollment date window 
-            var testDate = new DateTimeOffset(2025, 11, 25, 10, 0, 0, TimeSpan.FromHours(5.75));
+            var testDate = DateTimeOffset.UtcNow.AddMonths(4);
 
 
             var isValid = await _repository.CheckEnrollmentDateAsync(courseId, testDate);
 
             Assert.IsFalse(isValid);
 
+        }
+        #endregion
+
+        #region Private Helper Methods 
+
+        private async Task<int> CreateCourseAsync()
+        {
+            var course = new Course
+            {
+                Code = "CS101",
+                Title = "Introduction to Programming",
+                Credits = 3,
+                Description = "Fundamentals of programming using C# and .NET Core.",
+                Instructor = "Dr. Anil Sharma",
+                StartDate = new DateTimeOffset(2026, 02, 01, 9, 0, 0, TimeSpan.FromHours(5.75)),
+                EndDate = new DateTimeOffset(2026, 05, 30, 17, 0, 0, TimeSpan.FromHours(5.75)),
+                IsActive = true,
+                Capacity = 50,
+                EnrollmentStartDate = new DateTimeOffset(2026, 01, 15, 8, 0, 0, TimeSpan.FromHours(5.75)),
+                EnrollmentEndDate = new DateTimeOffset(2026, 01, 31, 17, 0, 0, TimeSpan.FromHours(5.75))
+            };
+
+            return await _repository.AddAsync(course);
         }
         #endregion
     }
