@@ -55,7 +55,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             var exisitngCourse = _courses.Find(x => x.CourseId == id);
             if (exisitngCourse == null)
             {
-                return Task.FromResult(true);
+                return Task.FromResult(false);
             }
             _mapper.Map(course, exisitngCourse);
 
