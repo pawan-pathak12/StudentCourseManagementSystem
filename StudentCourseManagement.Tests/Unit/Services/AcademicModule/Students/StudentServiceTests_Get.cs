@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Unit.Services.Students
+namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
 {
     [TestClass]
     public class StudentServiceTests_Get : StudentServiceTestBase

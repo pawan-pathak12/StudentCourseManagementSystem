@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Unit.Services.Enrollments
+namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {
     [TestClass]
     public class EnrollmentServiceTests_Create : EnrollmentServiceTestBase

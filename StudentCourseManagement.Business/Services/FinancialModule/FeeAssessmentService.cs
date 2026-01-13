@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
@@ -9,15 +10,38 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
     {
         private readonly IFeeAssessmentRepository _feeAssessmentRepository;
         private readonly ILogger<FeeAssessmentService> _logger;
+        private readonly ICourseRepository _courseRepository;
+        private readonly IEnrollmentRepository _enrollmentRepository;
+        private readonly IFeeTemplateRepository _feeTemplateRepository;
 
-        public FeeAssessmentService(IFeeAssessmentRepository feeAssessmentRepository, ILogger<FeeAssessmentService> logger)
+
+        public FeeAssessmentService(IFeeAssessmentRepository feeAssessmentRepository, ILogger<FeeAssessmentService> logger, ICourseRepository courseRepository,
+            IEnrollmentRepository enrollmentRepository, IFeeTemplateRepository feeTemplateRepository)
         {
             this._feeAssessmentRepository = feeAssessmentRepository;
             this._logger = logger;
+            this._courseRepository = courseRepository;
+            this._enrollmentRepository = enrollmentRepository;
+            this._feeTemplateRepository = feeTemplateRepository;
         }
         #region CURD Operations 
         public async Task<bool> CreateAsync(FeeAssessment feeAssessment)
         {
+            var course = await _courseRepository.GetByIdAsync(feeAssessment.CourseId);
+            if (course == null)
+            {
+                return false;
+            }
+            var enrollment = await _enrollmentRepository.GetByIdAsync(feeAssessment.EnrollmentId);
+            if (enrollment == null)
+            {
+                return false;
+            }
+            var feeTemplate = await _feeTemplateRepository.GetByIdAsync(feeAssessment.FeeTemplateId);
+            if (feeTemplate == null)
+            {
+                return false;
+            }
             await _feeAssessmentRepository.AddAsync(feeAssessment);
             return true;
         }

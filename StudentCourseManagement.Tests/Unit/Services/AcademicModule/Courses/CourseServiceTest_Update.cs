@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Tests.Unit.Common;
 
-namespace StudentCourseManagement.Tests.Unit.Services.Courses
+namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Courses
 {
     [TestClass]
     public class CourseServiceTest_Update : CourseServiceTestBase
