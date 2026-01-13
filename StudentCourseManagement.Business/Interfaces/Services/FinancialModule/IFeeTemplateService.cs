@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
 
-namespace StudentCourseManagement.Business.Mapping.FinancialModule
+namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
 {
     public interface IFeeTemplateService
     {

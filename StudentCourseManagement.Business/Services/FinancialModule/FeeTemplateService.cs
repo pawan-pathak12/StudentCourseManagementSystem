@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
-using StudentCourseManagement.Business.Mapping.FinancialModule;
+using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Services.FinancialModule
