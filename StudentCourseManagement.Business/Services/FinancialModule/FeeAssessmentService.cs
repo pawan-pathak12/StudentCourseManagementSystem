@@ -58,6 +58,13 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
         public async Task<bool> UpdateAsync(int feeAssessmentId, FeeAssessment feeAssessment)
         {
+            var assessment = await _feeAssessmentRepository.GetByIdAsync(feeAssessmentId);
+            if (assessment == null)
+            {
+                _logger.LogWarning($"Update Failed : FeeAssessent with Id {feeAssessmentId} not found");
+                return false;
+            }
+
             if (feeAssessmentId != feeAssessment.FeeAssessmentId)
             {
                 _logger.LogWarning($"Id mismatched");
@@ -68,6 +75,12 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
         public async Task<bool> DeleteAsync(int feeAssessmentId)
         {
+            var assessment = await _feeAssessmentRepository.GetByIdAsync(feeAssessmentId);
+            if (assessment == null)
+            {
+                _logger.LogWarning($"Delete failed : FeeAssessent with Id {feeAssessmentId} not found");
+                return false;
+            }
             return await _feeAssessmentRepository.DeleteAsync(feeAssessmentId);
         }
 
