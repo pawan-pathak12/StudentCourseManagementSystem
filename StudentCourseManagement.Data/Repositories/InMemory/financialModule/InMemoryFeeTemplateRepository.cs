@@ -43,7 +43,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
 
         public Task<FeeTemplate?> GetByIdAsync(int id)
         {
-            var feeTemplate = _feeTemplate.Find(x => x.FeeTemplateId == id);
+            var feeTemplate = _feeTemplate.Find(x => x.FeeTemplateId == id && x.IsActive == true);
             return Task.FromResult(feeTemplate);
         }
 
