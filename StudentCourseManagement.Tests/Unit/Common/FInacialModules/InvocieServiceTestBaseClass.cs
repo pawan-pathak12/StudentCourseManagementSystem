@@ -27,6 +27,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
                 cfg.AddProfile<StudentProfile>();
                 cfg.AddProfile<CourseProfile>();
                 cfg.AddProfile<FeeAssessmentProfile>();
+                cfg.AddProfile<InvoiceProfile>();
             });
             IMapper mapper = config.CreateMapper();
 
