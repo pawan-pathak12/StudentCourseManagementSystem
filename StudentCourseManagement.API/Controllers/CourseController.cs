@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using StudentCourseManagement.API.DTOs;
 using StudentCourseManagement.Business.DTOs.Courses;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
@@ -105,7 +106,6 @@ namespace StudentCourseManagement.API.Controllers
         }
         #endregion
 
-        // PUT: api/course/5  (Full update)
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto updateCourseDto)
         {
@@ -141,7 +141,6 @@ namespace StudentCourseManagement.API.Controllers
             }
         }
 
-        // DELETE: api/course/5  (Soft delete)
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

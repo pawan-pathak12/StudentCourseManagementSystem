@@ -68,7 +68,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
                 Title = "Introduction to Programming 2",
                 Credits = 3,
                 Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
+                Instructor = "Dr. Pawan Sharma",
                 StartDate = DateTimeOffset.UtcNow.AddDays(40),
                 EndDate = DateTimeOffset.UtcNow.AddMonths(2),
                 IsActive = true,
@@ -84,15 +84,15 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
             var course = await _repository.GetByIdAsync(courseId);
             Assert.AreEqual(updateCourseData.Code, course?.Code);
+            Assert.AreEqual(updateCourseData.Instructor, course?.Instructor);
         }
 
         [TestMethod]
-        public async Task DeleteAsync_WithActiveExistingId_ReturnTrue()
+        public async Task DeleteAsync_WithActiveExistingCourseId_ReturnTrue()
         {
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             var courseId = await CreateCourseAsync();
-
 
             var isDeleted = await _repository.DeleteAsync(courseId);
 

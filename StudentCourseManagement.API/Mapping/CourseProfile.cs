@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs;
 using StudentCourseManagement.Business.DTOs.Courses;
 using StudentCourseManagement.Domain.Entities;
 
@@ -11,8 +12,7 @@ namespace StudentCourseManagement.Business.Mapping
             CreateMap<Course, Course>();
             CreateMap<Course, CreateCourseDto>().ReverseMap();
             CreateMap<Course, UpdateCourseDto>().ReverseMap();
-            CreateMap<Course, CourseResponseDto>().ReverseMap();
-
+            CreateMap<CourseResponseDto, Course>().ReverseMap();
 
         }
     }

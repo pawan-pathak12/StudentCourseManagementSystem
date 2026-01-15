@@ -22,11 +22,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         public async Task<int> AddAsync(Course course)
         {
             string sql = @"
-                INSERT INTO Courses ( Code, Title, Credits, Description, Instructor,StartDate, EndDate, Capacity,
-                    EnrollmentStartDate, EnrollmentEndDate) VALUES (
+                INSERT INTO Courses ( Code, Title, Credits, Description, Instructor, StartDate, EndDate, Capacity,
+                    EnrollmentStartDate, EnrollmentEndDate, IsActive) VALUES (
                     @Code, @Title, @Credits, @Description, @Instructor,
                     @StartDate, @EndDate, @Capacity,
-                    @EnrollmentStartDate, @EnrollmentEndDate
+                    @EnrollmentStartDate, @EnrollmentEndDate, @IsActive
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -89,7 +89,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                     EnrollmentStartDate = @EnrollmentStartDate,
                     EnrollmentEndDate = @EnrollmentEndDate
                 WHERE CourseId = @CourseId ;";
-
             course.CourseId = id;
 
             using var connection = _dbContext.CreateConnection();

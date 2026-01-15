@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.API.DTOs.FInancialModule.InvoiceLineItems;
+using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.API.Controllers.FinancialModules
@@ -9,11 +10,11 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
     [ApiController]
     public class InvoiceLineItemController : ControllerBase
     {
-        private readonly InvoiceLineItemService _lineItemService;
+        private readonly IInvoiceLineItemService _lineItemService;
         private readonly IMapper _mapper;
         private readonly ILogger<InvoiceLineItemController> _logger;
 
-        public InvoiceLineItemController(InvoiceLineItemService lineItemService, IMapper mapper, ILogger<InvoiceLineItemController> logger)
+        public InvoiceLineItemController(IInvoiceLineItemService lineItemService, IMapper mapper, ILogger<InvoiceLineItemController> logger)
         {
             this._lineItemService = lineItemService;
             this._mapper = mapper;

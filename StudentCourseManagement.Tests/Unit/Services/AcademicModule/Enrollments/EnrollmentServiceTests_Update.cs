@@ -29,16 +29,18 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
                 StudentId = 1
             };
 
-            var enrollmentId = await _service.CreateAsync(enrollment);
+            var enrollmentId = await _repository.AddAsync(enrollment);
 
             var enrollment2 = new Enrollment
             {
                 EnrollmentId = 1,
-                IsActive = false,
-                CancellationReason = "testing "
+                IsActive = true,
+                CancellationReason = "testing ",
+                CourseId = enrollment.CourseId,
+                StudentId = enrollment.StudentId
             };
 
-            var isUpdated = await _service.UpdateAsync(1, enrollment2);
+            var isUpdated = await _service.UpdateAsync(enrollmentId, enrollment2);
 
             Assert.IsTrue(isUpdated);
         }
@@ -47,8 +49,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
         [TestMethod]
         public async Task Update_WihNonExisitngEnrollmentId_Returnsfalse()
         {
-            //let Assume Enrollment with ID 1111 dont exists 
-
+            //let Assume Enrollment with ID 1111 dont exists
             var enrollmentId = 1111;
 
             var enrollment = new Enrollment

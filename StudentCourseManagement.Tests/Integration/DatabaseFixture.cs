@@ -21,8 +21,7 @@ namespace StudentCourseManagement.Tests.Integration
 
         public void Dispose()
         {
-            // Optional: cleanup DB if needed
-            // DbContext.Dispose();  (only if your DbContext implements IDisposable)
+
         }
     }
 }

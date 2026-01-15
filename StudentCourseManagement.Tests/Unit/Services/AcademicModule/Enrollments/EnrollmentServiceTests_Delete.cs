@@ -9,35 +9,33 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
         [TestMethod]
         public async Task Delete_WithExistingEnrollmentId_ReturnTrue()
         {
-
-
             //Arrange 
             var student = new Student
             {
                 Name = "Ram",
-                Address = "haldibari"
+                Address = "haldibari",
+                IsActive = true
             };
 
             var course = new Course
             {
                 Capacity = 10,
-                Code = "CA002"
+                Code = "CA002",
+                IsActive = true
             };
             await _studentRepository.AddAsync(student);
             await _courseRepository.AddAsync(course);
             var enrollment = new Enrollment
             {
                 StudentId = 1,
-                CourseId = 1
+                CourseId = 1,
+                IsActive = true
             };
 
-            await _service.CreateAsync(enrollment);
-
-            //assume enrollment id =1 exists 
-            int id = 1;
+            var enrollmentId = await _repository.AddAsync(enrollment);
 
             //Act 
-            var isDeleted = await _service.DeleteAsync(id);
+            var isDeleted = await _service.DeleteAsync(enrollmentId);
 
             Assert.IsTrue(isDeleted);
 
