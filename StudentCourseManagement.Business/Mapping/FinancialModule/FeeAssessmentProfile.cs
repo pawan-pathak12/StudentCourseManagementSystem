@@ -8,6 +8,7 @@ namespace StudentCourseManagement.Business.Mapping.FinancialModule
         public FeeAssessmentProfile()
         {
             CreateMap<FeeAssessment, FeeAssessment>();
+
         }
     }
 }
