@@ -20,7 +20,8 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
                 InvoiceId = invoiceId,
                 FeeTemplateId = feeTemplateId,
                 CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 1333
+                Amount = 1333,
+                IsActive = true
             };
 
             //act 
