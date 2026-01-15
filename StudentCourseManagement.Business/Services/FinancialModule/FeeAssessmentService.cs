@@ -3,6 +3,7 @@ using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Business.Services.FinancialModule
 {
@@ -24,6 +25,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             this._enrollmentRepository = enrollmentRepository;
             this._feeTemplateRepository = feeTemplateRepository;
         }
+
         #region CURD Operations 
         public async Task<bool> CreateAsync(FeeAssessment feeAssessment)
         {
@@ -42,6 +44,8 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 return false;
             }
+            feeAssessment.IsActive = true;
+            feeAssessment.FeeAssessmentStatus = AssessmentStatus.Generated;
             await _feeAssessmentRepository.AddAsync(feeAssessment);
             return true;
         }
