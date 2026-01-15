@@ -36,7 +36,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             if (!isCreated)
             {
                 _logger.LogWarning($"Failed to create Invoice for feeAssessmentId {invoice.FeeAssessmentId}");
-                return BadRequest("Failed to create FeeTemplate");
+                return BadRequest("Failed to create Invoice");
             }
 
             return CreatedAtAction(nameof(GetById), new { id = invoice.InvoiceId }, invoice);
@@ -101,5 +101,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             return Ok("Delete successful");
         }
         #endregion
+
     }
 }

@@ -1,0 +1,103 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using StudentCourseManagement.API.DTOs.FInancialModule.InvoiceLineItems;
+using StudentCourseManagement.Domain.Entities.FinancialModule;
+
+namespace StudentCourseManagement.API.Controllers.FinancialModules
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class InvoiceLineItemController : ControllerBase
+    {
+        private readonly InvoiceLineItemService _lineItemService;
+        private readonly IMapper _mapper;
+        private readonly ILogger<InvoiceLineItemController> _logger;
+
+        public InvoiceLineItemController(InvoiceLineItemService lineItemService, IMapper mapper, ILogger<InvoiceLineItemController> logger)
+        {
+            this._lineItemService = lineItemService;
+            this._mapper = mapper;
+            this._logger = logger;
+        }
+        #region HttpPost Endpoint
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateInvoiceLineItemDto lineItemDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var invoiceLineItem = _mapper.Map<InvoiceLineItem>(lineItemDto);
+            var isCreated = await _lineItemService.CreateAsync(invoiceLineItem);
+
+            if (!isCreated)
+            {
+                _logger.LogWarning($"Failed to create InvoiceLineItem for Invoice Id {invoiceLineItem.InvoiceId}");
+                return BadRequest("Failed to create InvoiceLineItem");
+            }
+
+            return CreatedAtAction(nameof(GetById), new { id = invoiceLineItem.InvoiceId }, invoiceLineItem);
+        }
+        #endregion
+
+        #region HttpGet Endpoint
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var invoiceLineItems = await _lineItemService.GetAllAsync();
+            return Ok(invoiceLineItems);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            var invoiceLineItem = await _lineItemService.GetByIdAsync(id);
+            if (invoiceLineItem == null)
+            {
+                _logger.LogWarning($"InvoiceLineItem with Id {id} not found");
+                return NotFound();
+            }
+            return Ok(invoiceLineItem);
+        }
+        #endregion
+
+        #region HttpPut Endpoint
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateInvoiceLineItemDto updateInvoiceLineItemDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var invoiceLineItem = _mapper.Map<InvoiceLineItem>(updateInvoiceLineItemDto);
+            var isUpdated = await _lineItemService.UpdateAsync(id, invoiceLineItem);
+
+            if (!isUpdated)
+            {
+                _logger.LogWarning($"Failed to update InvoiceLineItem with Id {id}");
+                return BadRequest("Update failed");
+            }
+
+            return Ok("Update successful");
+        }
+        #endregion
+
+        #region HttpDelete Endpoint
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        {
+            var isDeleted = await _lineItemService.DeleteAsync(id);
+
+            if (!isDeleted)
+            {
+                _logger.LogWarning($"Failed to delete InvoiceLineItem with Id {id}");
+                return BadRequest("Delete failed");
+            }
+
+            return Ok("Delete successful");
+        }
+        #endregion
+    }
+}
