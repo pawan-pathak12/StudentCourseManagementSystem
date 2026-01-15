@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs.FInancialModule.PaymentMethods;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Mapping.FinancialModule
@@ -8,6 +9,8 @@ namespace StudentCourseManagement.Business.Mapping.FinancialModule
         public PaymentMethodProfile()
         {
             CreateMap<PaymentMethod, PaymentMethod>();
+            CreateMap<PaymentMethod, CreatePaymentMethodDto>().ReverseMap();
+            CreateMap<PaymentMethod, UpdatePaymentMethodDto>().ReverseMap();
         }
     }
 }
