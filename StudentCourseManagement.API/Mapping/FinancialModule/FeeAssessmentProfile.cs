@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Mapping.FinancialModule
@@ -8,6 +9,9 @@ namespace StudentCourseManagement.Business.Mapping.FinancialModule
         public FeeAssessmentProfile()
         {
             CreateMap<FeeAssessment, FeeAssessment>();
+            CreateMap<FeeAssessment, CreateFeeAssessmentDto>().ReverseMap();
+            CreateMap<FeeAssessment, UpdateFeeAssessmentDto>().ReverseMap();
+
 
         }
     }

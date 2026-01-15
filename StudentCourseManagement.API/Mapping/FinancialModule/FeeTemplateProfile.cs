@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs.FInancialModule.feeTemplates;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Mapping.FinancialModule
@@ -8,6 +9,8 @@ namespace StudentCourseManagement.Business.Mapping.FinancialModule
         public FeeTemplateProfile()
         {
             CreateMap<FeeTemplate, FeeTemplate>();
+            CreateMap<FeeTemplate, CreateFeeTemplateDto>().ReverseMap();
+            CreateMap<FeeTemplate, UpdateFeeTemplateDto>().ReverseMap();
         }
     }
 }

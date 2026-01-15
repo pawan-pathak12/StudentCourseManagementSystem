@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs.FInancialModule.InvoiceLineItems;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Mapping.FinancialModule
@@ -8,6 +9,8 @@ namespace StudentCourseManagement.Business.Mapping.FinancialModule
         public InvoiceLineItemProfile()
         {
             CreateMap<InvoiceLineItem, InvoiceLineItem>();
+            CreateMap<InvoiceLineItem, CreateInvoiceLineItemDto>().ReverseMap();
+            CreateMap<InvoiceLineItem, UpdateInvoiceLineItemDto>().ReverseMap();
         }
     }
 }
