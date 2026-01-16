@@ -15,6 +15,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
 
         #region Phase -3 required method
         Task<string> GenerateInvoiceNumberAsync();
+        Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId);
 
         #endregion
     }

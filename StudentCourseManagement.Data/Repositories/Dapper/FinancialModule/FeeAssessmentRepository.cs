@@ -179,6 +179,29 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             return result;
         }
+
+        public async Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId)
+        {
+            _logger.LogInformation("Retrieving FeeAssessment with Enrollment ID: {Id}", enrollmentId);
+
+            const string sql = "SELECT * FROM FeeAssessments WHERE EnrollmentId = @Id and IsActive=1";
+
+            using var connection = _context.CreateConnection();
+
+
+            var feeAssessment = await connection.QueryFirstOrDefaultAsync<FeeAssessment>(sql, new { Id = enrollmentId });
+
+            if (feeAssessment == null)
+            {
+                _logger.LogWarning("FeeAssessment with Enrollment ID: {Id} not found", enrollmentId);
+            }
+            else
+            {
+                _logger.LogError("Error retrieving FeeAssessment with Enrollment ID: {Id}", enrollmentId);
+            }
+
+            return feeAssessment;
+        }
         #endregion
 
     }

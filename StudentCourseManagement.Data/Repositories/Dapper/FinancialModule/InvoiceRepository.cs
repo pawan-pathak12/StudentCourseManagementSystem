@@ -139,7 +139,26 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         public Task<string> GenerateInvoiceNumberAsync()
         {
             string invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
-            return Task.FromResult(invoiceNumber;
+            return Task.FromResult(invoiceNumber);
+        }
+        public async Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId)
+        {
+            const string sql = "SELECT * FROM Invoices WHERE IsActive =1 and  FeeAssessmentId = @Id";
+
+            using var connection = context.CreateConnection();
+
+            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = feeAssessmentId);
+            if (invoice == null)
+            {
+                logger.LogWarning("Invoice with FeeAssessment ID: {Id} not found", feeAssessmentId);
+            }
+            else
+            {
+                logger.LogInformation("Successfully retrieved Invoice with FeeAssessment ID: {Id} ",
+                    feeAssessmentId);
+            }
+
+            return invoice;
         }
 
 

@@ -15,7 +15,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
 
         #region Phase -3 required method 
         Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId);
-
+        Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId);
         #endregion
 
     }

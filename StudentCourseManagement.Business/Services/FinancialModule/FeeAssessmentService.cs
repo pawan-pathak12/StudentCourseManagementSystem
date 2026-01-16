@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
@@ -94,7 +95,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
         #endregion
 
         #region Phase -3 Automated FeeeAssessment 
-        public async Task<bool> AssessFee(int enrollmentId)
+        public async Task<(bool success, string? ErrorMessage)> AssessFee(int enrollmentId)
         {
             #region Business Logic Check
 
@@ -103,7 +104,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             if (enrollment == null)
             {
                 _logger.LogWarning("FeeAssessment creation failed: Enrollment with Id {EnrollmentId} not found.", enrollmentId);
-                return false;
+                return (false, $"Enrollment with Id {enrollmentId} not found.");
             }
 
             // 2. Enrollment status must be comfirmed
@@ -113,7 +114,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 _logger.LogWarning("FeeAssessment creation failed: Enrollment Id {EnrollmentId} has invalid status {Status}.",
                     enrollmentId, enrollment.EnrollmentStatus);
-                return false;
+                return (false, $"Enrollment status must be Confirmed. Current status: {enrollment.EnrollmentStatus}");
             }
 
             // 3. There shouldnt be an existing FeeAssessment
@@ -122,7 +123,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 _logger.LogWarning("FeeAssessment creation failed: Enrollment Id {EnrollmentId} already has an existing FeeAssessment.",
                     enrollmentId);
-                return false;
+                return (false, $"Their is already feeAssessment for Enrollment Id {enrollmentId} ");
             }
 
             // 4. FeeTemplate must exist for the course
@@ -131,7 +132,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 _logger.LogWarning("FeeAssessment creation failed: No active FeeTemplate found for Course Id {CourseId}.",
                     enrollment.CourseId);
-                return false;
+                return (false, $"No active FeeTemplate found for Course Id {enrollment.CourseId}");
             }
 
             // 5. FeeTemplate must be active
@@ -139,7 +140,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 _logger.LogWarning("FeeAssessment creation failed: FeeTemplate Id {FeeTemplateId} for Course Id {CourseId} is inactive.",
                     feeTemplate.FeeTemplateId, enrollment.CourseId);
-                return false;
+                return (false, $"FeeTemplate Id {feeTemplate.FeeTemplateId}for Course Id {{CourseId}} is inactive.");
             }
 
             #endregion
@@ -205,7 +206,57 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
                 scope.Complete();
             }
-            return true;
+            return (true, null);
+        }
+
+        public async Task<FeeAssessmentResultDto?> GetFeeAssessmentDetailsByEnrollmentIdAsync(int enrollmentId)
+        {
+            //get feeassessmnet from enrollment Id 
+            var feeAssessment = await _feeAssessmentRepository.GetByEnrolmentIdAsync(enrollmentId);
+            if (feeAssessment == null)
+            {
+                return null;
+            }
+
+            //get invoice from feeAssessment Id 
+            var invoice = await _invoiceRepository.GetByFeeAssessmentIdAsync(feeAssessment.FeeAssessmentId);
+            if (invoice == null)
+            {
+                return null;
+            }
+
+            //get enrollment 
+            var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
+            if (enrollment == null)
+            {
+                return null;
+            }
+            //get feeTemplate from enroll course ID 
+            var feeTemplate = await _feeTemplateRepository.GetActiveByCourseId(enrollment.CourseId);
+            if (feeTemplate == null)
+            {
+                return null;
+            }
+            return new FeeAssessmentResultDto
+            {
+                Success = true,
+                Message = "Fee assessment retrieved successfully.",
+
+                FeeAssessmentId = feeAssessment.FeeAssessmentId,
+                AssessedAmount = feeAssessment.Amount,
+                CalculationType = feeTemplate?.CalculationType.ToString() ?? "Unknown",
+                AssessmentDate = feeAssessment.AssessmentDate,
+                DueDate = feeAssessment.DueDate,
+
+                InvoiceId = invoice?.InvoiceId,
+                InvoiceNumber = invoice?.InvoiceNumber,
+                TotalAmount = invoice?.TotalAmount,
+                BalanceDue = invoice?.BalanceDue,
+
+                EnrollmentId = enrollmentId,
+                StudentId = enrollment?.StudentId,
+                CourseId = enrollment?.CourseId
+            };
         }
 
         #endregion

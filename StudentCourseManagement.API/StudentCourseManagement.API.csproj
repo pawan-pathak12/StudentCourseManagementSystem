@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StudentCourseManagement.Application.DTOs\StudentCourseManagement.Application.DTOs.csproj" />
     <ProjectReference Include="..\StudentCourseManagement.Business\StudentCourseManagement.Business.csproj" />
     <ProjectReference Include="..\StudentCourseManagement.Data\StudentCourseManagement.Data.csproj" />
   </ItemGroup>
