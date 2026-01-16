@@ -12,7 +12,7 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public DateTimeOffset? DueDate { get; set; }
         public AssessmentStatus FeeAssessmentStatus { get; set; }
         public bool IsActive { get; set; }
-
+        public DateTimeOffset AssessmentDate { get; set; }
         public DateTimeOffset? PaidDate { get; set; }      // When fully paid
         public decimal? LateFeeAmount { get; set; }        // Late fee amount (10%)
         public DateTimeOffset? LateFeeAppliedDate { get; set; } // When late fee was add
