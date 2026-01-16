@@ -208,7 +208,6 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             }
             return (true, null);
         }
-
         public async Task<FeeAssessmentResultDto?> GetFeeAssessmentDetailsByEnrollmentIdAsync(int enrollmentId)
         {
             //get feeassessmnet from enrollment Id 
