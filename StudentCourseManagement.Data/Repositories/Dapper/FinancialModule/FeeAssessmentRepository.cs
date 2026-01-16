@@ -155,5 +155,54 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         #endregion
 
+        #region Phase -3 required method 
+        public async Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId)
+        {
+            const string sql = @"SELECT CASE WHEN EXISTS (
+                                SELECT 1 
+                                FROM FeeAssessments 
+                                WHERE EnrollmentId = @EnrollmentId
+                            ) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END;";
+
+            using var connection = _context.CreateConnection();
+
+            var result = await connection.ExecuteScalarAsync<bool>(sql, new { EnrollmentId = enrollmentId });
+
+            if (!result)
+            {
+                _logger.LogWarning("FeeAssessment with Enrollment ID: {Id} not found", enrollmentId);
+            }
+            else
+            {
+                _logger.LogInformation("Successfully retrieved FeeAssessment with Enrollment Id : {Id}", enrollmentId);
+            }
+
+            return result;
+        }
+
+        public async Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId)
+        {
+            _logger.LogInformation("Retrieving FeeAssessment with Enrollment ID: {Id}", enrollmentId);
+
+            const string sql = "SELECT * FROM FeeAssessments WHERE EnrollmentId = @Id and IsActive=1";
+
+            using var connection = _context.CreateConnection();
+
+
+            var feeAssessment = await connection.QueryFirstOrDefaultAsync<FeeAssessment>(sql, new { Id = enrollmentId });
+
+            if (feeAssessment == null)
+            {
+                _logger.LogWarning("FeeAssessment with Enrollment ID: {Id} not found", enrollmentId);
+            }
+            else
+            {
+                _logger.LogError("Error retrieving FeeAssessment with Enrollment ID: {Id}", enrollmentId);
+            }
+
+            return feeAssessment;
+        }
+        #endregion
+
     }
 }

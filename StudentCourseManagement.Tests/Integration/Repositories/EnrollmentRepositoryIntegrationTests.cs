@@ -167,6 +167,24 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         }
         #endregion
 
+        #region Phase -3 Required Method 
+        [TestMethod]
+        public async Task UpdateFeeAssessedDateAsync_WithExistingEnrollmentId_ReturnTrue()
+        {
+            //Arrange 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+
+            //act
+            var result = await _enrollmentRepository.UpdateFeeAssessedDateAsync(enrollmentId);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
         #region Private Helper Methods 
 
         private async Task<int> CreateStudentAsync()
@@ -209,7 +227,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             {
                 StudentId = studentId,
                 CourseId = courseId,
-                IsActive = true
+                IsActive = true,
+                FeeAssessmentDate = null
             };
 
             return await _enrollmentRepository.AddAsync(enrollment);

@@ -18,7 +18,9 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
         protected InMemoryEnrollmentRepository _enrollmentRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
         protected InMemoryFeeAssessmentRepository _assessmentRepository;
+        protected InMemorryInvoiceRepository _invoiceRepository;
         protected IFeeAssessmentService _feeAssessmentService;
+
 
 
         [TestInitialize]
@@ -32,6 +34,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
                 cfg.AddProfile<EnrollmentProfile>();
                 cfg.AddProfile<FeeTemplateProfile>();
                 cfg.AddProfile<FeeAssessmentProfile>();
+                cfg.AddProfile<InvoiceProfile>();
                 // add other profiles as needed
             });
 
@@ -46,9 +49,10 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
             _assessmentRepository = new InMemoryFeeAssessmentRepository(mapper);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
 
             // Initialize service
-            _feeAssessmentService = new FeeAssessmentService(_assessmentRepository, loggerMockFeeAss.Object, _courseRepository, _enrollmentRepository, _feeTemplateRepository);
+            _feeAssessmentService = new FeeAssessmentService(_assessmentRepository, loggerMockFeeAss.Object, _courseRepository, _enrollmentRepository, _feeTemplateRepository, _invoiceRepository);
         }
     }
 }

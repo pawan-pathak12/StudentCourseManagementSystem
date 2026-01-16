@@ -50,16 +50,12 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             }
             return Task.FromResult(enrollments);
         }
-
         public Task<Enrollment?> GetByIdAsync(int id)
         {
             var enrollment = _enrollments
                 .FirstOrDefault(e => e.EnrollmentId == id && e.IsActive);
             return Task.FromResult(enrollment);
         }
-
-
-
         public Task<bool> UpdateAsync(int id, Enrollment enrollment)
         {
             var existing = _enrollments
@@ -101,7 +97,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
         }
 
+        #endregion
 
+
+        #region Phase -3 Required Method
+        public Task<bool> UpdateFeeAssessedDateAsync(int enrollmentId)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

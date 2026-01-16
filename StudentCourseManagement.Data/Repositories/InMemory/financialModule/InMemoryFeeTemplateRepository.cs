@@ -59,5 +59,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
             return true;
         }
         #endregion
+
+        #region Phase-3
+        public Task<FeeTemplate?> GetActiveByCourseId(int courseId)
+        {
+            throw new NotImplementedException();
+
+        }
+        #endregion
     }
 }

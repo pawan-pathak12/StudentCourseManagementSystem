@@ -8,6 +8,7 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public int StudentId { get; set; }
         public int InvoiceId { get; set; }
         public int PaymentMethodId { get; set; }
+        public int RefundedPaymentId { get; set; }  // fk to self
         public bool IsActive { get; set; }
         public decimal Amount { get; set; }
         public DateTimeOffset PaymentDate { get; set; }

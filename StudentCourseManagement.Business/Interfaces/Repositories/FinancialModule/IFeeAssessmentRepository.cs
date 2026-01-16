@@ -12,5 +12,11 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         Task<bool> DeleteAsync(int id);
 
         #endregion
+
+        #region Phase -3 required method 
+        Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId);
+        Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId);
+        #endregion
+
     }
 }

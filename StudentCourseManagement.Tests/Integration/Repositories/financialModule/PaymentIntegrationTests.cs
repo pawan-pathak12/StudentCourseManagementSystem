@@ -294,7 +294,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 IsActive = true,
                 Amount = 7500.00m,          // partial payment
                 PaymentDate = new DateTimeOffset(2026, 01, 25, 14, 30, 0, TimeSpan.FromHours(5.75)),
-                PaymentStatus = PaymentStatus.PartiallyPaid, // assuming enum has Pending, Paid, PartiallyPaid
                 ReferenceNumber = "TXN-2026-ABC123",
                 Notes = "First installment of tuition fee",
                 ProcessedBy = "AdminUser01",
@@ -308,7 +307,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var paymentMethod = new PaymentMethod
             {
                 PaymentMethodType = PaymentMethodType.Cash,
-                Provider = null,
+                Name = "Method 1",
                 IsActive = true
             };
             return await _paymentMethodRepository.AddAsync(paymentMethod);

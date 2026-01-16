@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
         #region CURD Operations
 
         public async Task<int> AddAsync(Invoice invoice)
@@ -130,6 +131,36 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             logger.LogWarning("No rows updated for Invoice ID: {Id} (possibly not found or no changes)", id);
             return false;
         }
+
+        #endregion
+
+        #region Phase -3 required method 
+
+        public Task<string> GenerateInvoiceNumberAsync()
+        {
+            string invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
+            return Task.FromResult(invoiceNumber);
+        }
+        public async Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId)
+        {
+            const string sql = "SELECT * FROM Invoices WHERE IsActive =1 and  FeeAssessmentId = @Id";
+
+            using var connection = context.CreateConnection();
+
+            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = feeAssessmentId });
+            if (invoice == null)
+            {
+                logger.LogWarning("Invoice with FeeAssessment ID: {Id} not found", feeAssessmentId);
+            }
+            else
+            {
+                logger.LogInformation("Successfully retrieved Invoice with FeeAssessment ID: {Id} ",
+                    feeAssessmentId);
+            }
+
+            return invoice;
+        }
+
 
         #endregion
 

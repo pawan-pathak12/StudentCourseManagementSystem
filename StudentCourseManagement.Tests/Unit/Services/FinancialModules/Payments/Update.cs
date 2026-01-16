@@ -117,7 +117,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var method = new PaymentMethod
             {
                 PaymentMethodType = PaymentMethodType.Cash,
-                Provider = "TestProvider",
+                Name = "Cash",
                 IsActive = true
             };
             return await _paymentMethodRepository.AddAsync(method);

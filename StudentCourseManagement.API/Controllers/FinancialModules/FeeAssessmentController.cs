@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments;
+using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.FeeAssessments;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
@@ -22,6 +22,24 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
 
         #region HttpPost Endpoint
+
+        #region Automated 
+        [HttpPost("assess/{enrollmentId}")]
+        public async Task<IActionResult> AssessFee(int enrollmentId)
+        {
+            var (success, errorMessage) = await _feeAssessmentService.AssessFee(enrollmentId);
+
+            if (success)
+            {
+                var result = await _feeAssessmentService.GetFeeAssessmentDetailsByEnrollmentIdAsync(enrollmentId);
+                return Ok(result);
+            }
+
+            return BadRequest(new { Message = errorMessage });
+        }
+        #endregion
+
+        #region Manual 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateFeeAssessmentDto createFeeAssessment)
         {
@@ -42,6 +60,8 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
             return CreatedAtAction(nameof(GetById), new { id = feeAssessment.FeeAssessmentId }, feeAssessment);
         }
+        #endregion
+
         #endregion
 
         #region HttpGet Endpoint

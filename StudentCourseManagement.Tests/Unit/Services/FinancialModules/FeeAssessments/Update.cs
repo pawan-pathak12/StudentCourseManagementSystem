@@ -30,7 +30,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
                 EnrollmentId = 1,
                 Amount = 1000,
                 IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.PaidPartial,
+                FeeAssessmentStatus = AssessmentStatus.PartiallyPaid,
                 DueDate = DateTimeOffset.UtcNow.AddDays(30)
             };
 
@@ -56,7 +56,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
                 EnrollmentId = 1,
                 Amount = 1000,
                 IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.PaidPartial,
+                FeeAssessmentStatus = AssessmentStatus.PartiallyPaid,
                 DueDate = DateTimeOffset.UtcNow.AddDays(30)
             };
 

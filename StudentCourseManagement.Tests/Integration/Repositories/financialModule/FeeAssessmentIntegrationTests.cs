@@ -109,7 +109,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 FeeTemplateId = feeTemplateId,
                 Amount = 15000.00m,
                 DueDate = DateTimeOffset.UtcNow.AddMonths(1),
-                FeeAssessmentStatus = AssessmentStatus.Generated,
+                FeeAssessmentStatus = AssessmentStatus.Assessed,
                 IsActive = true,
                 PaidDate = null,
                 LateFeeAmount = null,
@@ -148,6 +148,49 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             Assert.IsNull(feeAssessment);
 
         }
+
+        #endregion
+
+        #region Phase -3 required method 
+        [TestMethod]
+        public async Task ExistsByEnrollmentIdAsync_WithExistingEnrollmentId_ReturnsTrue()
+        {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+
+            //Act 
+            var result = await _feeAssessment.ExistsByEnrollmentIdAsync(enrollmentId);
+
+            //Assert 
+            Assert.IsTrue(result);
+
+        }
+        [TestMethod]
+        public async Task GetByEnrolmentIdAsync_WithExistingEnrollmentId_ReturnFeeAssessment()
+        {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+
+            //Act 
+            var result = await _feeAssessment.GetByEnrolmentIdAsync(enrollmentId);
+
+            //Assert 
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.CourseId, courseId);
+        }
+
 
         #endregion
 
