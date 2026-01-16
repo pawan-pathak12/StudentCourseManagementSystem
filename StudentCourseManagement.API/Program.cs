@@ -24,6 +24,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddBusinessLayer();
 builder.Services.AddDataLayer(builder.Configuration);
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

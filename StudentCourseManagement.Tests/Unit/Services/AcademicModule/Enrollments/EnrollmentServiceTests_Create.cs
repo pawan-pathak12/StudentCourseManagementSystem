@@ -8,8 +8,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
     {
 
         [TestMethod]
-        public async Task CreateAsync_WithNewLogic_CreateEnrollment()
+        public async Task CreateAsync_WithValidData_ReturnsTrue()
         {
+            //Arrange 
             var student = new Student
             {
                 Address = "testing"
@@ -17,20 +18,26 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 
             var course = new Course
             {
-                Capacity = 1
+                Capacity = 10,
+                IsActive = true,
+                Title = "Testing",
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
+            var studentId = await _studentRepository.AddAsync(student);
+            var courseId = await _courseRepository.AddAsync(course);
 
             var enrollment = new Enrollment
             {
-                StudentId = 1,
-                CourseId = 1
+                StudentId = studentId,
+                CourseId = courseId
             };
-
-            await _studentRepository.AddAsync(student);
-            await _courseRepository.AddAsync(course);
+            //Act 
 
             var isCreated = await _service.CreateAsync(enrollment);
-
+            //Assert 
             Assert.IsTrue(isCreated);
         }
 
@@ -175,35 +182,55 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             {
                 Title = "Database Management Systems",
                 Capacity = 25,
-                IsActive = true
+                IsActive = true,
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
 
             var course2 = new Course
             {
                 Title = "Digital Logic Design",
                 Capacity = 30,
-                IsActive = true
+                IsActive = true,
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
 
             var course3 = new Course
             {
                 Title = "Web Development Fundamentals",
                 Capacity = 20,
-                IsActive = true
+                IsActive = true,
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
 
             var course4 = new Course
             {
                 Title = "Artificial Intelligence Basics",
                 Capacity = 15,
-                IsActive = true
+                IsActive = true,
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
 
             var course5 = new Course
             {
                 Title = "C Programming master class",
                 Capacity = 11,
-                IsActive = true
+                IsActive = true,
+                StartDate = DateTimeOffset.UtcNow.AddDays(45),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25)
             };
 
             await _courseRepository.AddAsync(course1);
@@ -219,7 +246,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 
             for (int i = 1; i <= 6; i++)
             {
-                var enrollment = new Enrollment { StudentId = 2, CourseId = i };
+                var enrollment = new Enrollment { StudentId = 3, CourseId = i };
                 var isCreated = await _service.CreateAsync(enrollment);
 
                 if (i < 6)

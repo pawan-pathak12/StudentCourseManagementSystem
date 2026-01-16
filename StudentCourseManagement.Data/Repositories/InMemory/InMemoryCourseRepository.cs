@@ -43,7 +43,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
         public Task<Course> GetByIdAsync(int id)
         {
-            var exisitngCourse = _courses.Find(x => x.CourseId == id);
+            var exisitngCourse = _courses.Find(x => x.CourseId == id && x.IsActive == true);
 
             return Task.FromResult(exisitngCourse);
         }

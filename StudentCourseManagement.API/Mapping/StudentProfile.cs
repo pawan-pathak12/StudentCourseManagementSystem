@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentCourseManagement.API.DTOs;
 using StudentCourseManagement.Business.DTOs.Student;
 using StudentCourseManagement.Domain.Entities;
 
