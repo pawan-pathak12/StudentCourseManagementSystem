@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             this.context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
+
         #region CURD Operations
 
         public async Task<int> AddAsync(Invoice invoice)
@@ -130,6 +131,17 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             logger.LogWarning("No rows updated for Invoice ID: {Id} (possibly not found or no changes)", id);
             return false;
         }
+
+        #endregion
+
+        #region Phase -3 required method 
+
+        public Task<string> GenerateInvoiceNumberAsync()
+        {
+            string invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
+            return Task.FromResult(invoiceNumber;
+        }
+
 
         #endregion
 

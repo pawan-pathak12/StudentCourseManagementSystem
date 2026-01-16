@@ -20,5 +20,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
         //get count of enrollment in how many courses 
         Task<int> GetEnrollmentCountByStudent(int studentId);
         #endregion
+
+        Task UpdateFeeAssessedDateAsync(int enrollmentId);
     }
 }

@@ -12,5 +12,10 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         Task<bool> DeleteAsync(int id);
 
         #endregion
+
+        #region Phase -3 required method
+        Task<string> GenerateInvoiceNumberAsync();
+
+        #endregion
     }
 }

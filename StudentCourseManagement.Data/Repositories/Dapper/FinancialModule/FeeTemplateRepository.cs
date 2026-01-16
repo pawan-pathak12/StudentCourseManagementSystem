@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             this.logger = logger;
         }
 
+        #region CURD Operations 
         public async Task<int> AddAsync(FeeTemplate feeTemplate)
         {
             logger.LogInformation("Repo : Adding new FeeTemplate: {Name}, CourseId: {CourseId}, Amount: {Amount}",
@@ -129,5 +130,34 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             logger.LogWarning("No rows updated for FeeTemplate ID: {Id} (possibly not found or no changes)", id);
             return false;
         }
+
+        #endregion
+
+        #region Phase -3 Required Methods 
+
+        public async Task<FeeTemplate?> GetActiveByCourseId(int courseId)
+        {
+            const string sql = @"select f.* 
+                            from FeeTemplates f
+                            join Courses c on f.CourseId = @Id
+                            where c.IsActive =1
+                            ";
+
+            using var connection = context.CreateConnection();
+
+            var template = await connection.QuerySingleOrDefaultAsync<FeeTemplate>(sql, new { Id = courseId });
+
+            if (template == null)
+            {
+                logger.LogWarning("FeeTemplate with course ID: {Id} not found", courseId);
+            }
+            else
+            {
+                logger.LogInformation("Successfully retrieved FeeTemplate with course ID: {Id}", courseId);
+            }
+
+            return template;
+        }
+        #endregion
     }
 }

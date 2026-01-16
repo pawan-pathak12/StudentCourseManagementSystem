@@ -14,5 +14,9 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
 
         #endregion
 
+        #region Phase-3
+        Task<FeeTemplate?> GetActiveByCourseId(int courseId);
+        #endregion
+
     }
 }

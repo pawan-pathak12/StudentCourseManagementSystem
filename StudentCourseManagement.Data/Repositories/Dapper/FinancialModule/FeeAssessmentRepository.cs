@@ -155,5 +155,31 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         #endregion
 
+        #region Phase -3 required method 
+        public async Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId)
+        {
+            const string sql = @"SELECT CASE WHEN EXISTS (
+                                SELECT 1 
+                                FROM FeeAssessments 
+                                WHERE EnrollmentId = @EnrollmentId
+                            ) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END;";
+
+            using var connection = _context.CreateConnection();
+
+            var result = await connection.ExecuteScalarAsync<bool>(sql, new { Id = enrollmentId });
+
+            if (!result)
+            {
+                _logger.LogWarning("FeeAssessment with Enrollment ID: {Id} not found", enrollmentId);
+            }
+            else
+            {
+                _logger.LogInformation("Successfully retrieved FeeAssessment with Enrollment Id : {Id}", enrollmentId);
+            }
+
+            return result;
+        }
+        #endregion
+
     }
 }

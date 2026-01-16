@@ -184,5 +184,13 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
         #endregion
 
+        public async Task UpdateFeeAssessedDateAsync(int enrollmentId)
+        {
+            var connection = _dbContext.CreateConnection();
+            var query = "Update Enrollments set FeeAssessedDate=@Date where EnrollmentId=@Id";
+            await connection.ExecuteAsync(query, new { Id = enrollmentId, Date = DateTime.UtcNow });
+        }
+
+
     }
 }
