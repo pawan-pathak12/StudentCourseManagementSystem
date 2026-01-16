@@ -1,4 +1,4 @@
-﻿namespace StudentCourseManagement.API.DTOs.FInancialModule.feeTemplates
+﻿namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.feeTemplates
 {
     public class UpdateFeeTemplateDto
     {

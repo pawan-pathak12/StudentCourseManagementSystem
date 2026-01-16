@@ -147,7 +147,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             using var connection = context.CreateConnection();
 
-            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = feeAssessmentId);
+            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = feeAssessmentId });
             if (invoice == null)
             {
                 logger.LogWarning("Invoice with FeeAssessment ID: {Id} not found", feeAssessmentId);

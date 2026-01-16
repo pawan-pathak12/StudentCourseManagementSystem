@@ -1,4 +1,4 @@
-﻿namespace StudentCourseManagement.API.DTOs.FInancialModule.PaymentMethods
+﻿namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.PaymentMethods
 {
     public class CreatePaymentMethodDto
     {

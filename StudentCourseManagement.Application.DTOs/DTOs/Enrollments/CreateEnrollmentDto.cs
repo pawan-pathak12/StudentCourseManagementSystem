@@ -1,4 +1,4 @@
-﻿namespace StudentCourseManagement.Business.DTOs.Enrollments
+﻿namespace StudentCourseManagement.Application.DTOs.DTOs.Enrollments
 {
     public class CreateEnrollmentDto
     {

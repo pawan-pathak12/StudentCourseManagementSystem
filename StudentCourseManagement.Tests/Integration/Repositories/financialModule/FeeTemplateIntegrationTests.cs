@@ -128,6 +128,23 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         }
         #endregion
 
+        #region Phase 3 required method
+        [TestMethod]
+        public async Task GetActiveByCourseld_ExistingCourse_ReturnsFeeTemplate()
+        {
+            //Arrange 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
+            var templateId = await CreateFeeTemplateAsync(courseId);
+
+            //act 
+            var result = await _feeTemplateRepository.GetActiveByCourseId(courseId);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType<FeeTemplate>(result);
+        }
+        #endregion
+
         #region Private Helper Methods 
         private async Task<int> CreateCourseAsync()
         {

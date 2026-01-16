@@ -23,10 +23,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         {
             const string sql = @"
                 INSERT INTO PaymentMethods (
-                    PaymentMethodType, Provider, IsActive
+                    PaymentMethodType, Name, IsActive
                 )
                 VALUES (
-                    @PaymentMethodType, @Provider, @IsActive
+                    @PaymentMethodType, @Name, @IsActive
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);"; // SQL Server
 
@@ -107,7 +107,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             const string sql = @"
                 UPDATE PaymentMethods 
                 SET PaymentMethodType = @PaymentMethodType,
-                    Provider = @Provider,
+                    Name = @Name,
                     IsActive = @IsActive
                 WHERE PaymentMethodId = @PaymentMethodId";
 

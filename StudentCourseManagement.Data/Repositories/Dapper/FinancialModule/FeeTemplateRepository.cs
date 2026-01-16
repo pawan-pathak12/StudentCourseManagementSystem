@@ -137,11 +137,12 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         public async Task<FeeTemplate?> GetActiveByCourseId(int courseId)
         {
-            const string sql = @"select f.* 
-                            from FeeTemplates f
-                            join Courses c on f.CourseId = @Id
-                            where c.IsActive =1
-                            ";
+            const string sql = @"
+                            SELECT f.*
+                            FROM FeeTemplates f
+                            INNER JOIN Courses c ON f.CourseId = c.CourseId
+                            WHERE c.IsActive = 1
+                              AND c.CourseId = @Id";
 
             using var connection = context.CreateConnection();
 
@@ -149,11 +150,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             if (template == null)
             {
-                logger.LogWarning("FeeTemplate with course ID: {Id} not found", courseId);
+                logger.LogWarning("FeeTemplate with CourseId {Id} not found or inactive.", courseId);
             }
             else
             {
-                logger.LogInformation("Successfully retrieved FeeTemplate with course ID: {Id}", courseId);
+                logger.LogInformation("Successfully retrieved FeeTemplate with CourseId {Id}.", courseId);
             }
 
             return template;

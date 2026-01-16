@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments
+namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.FeeAssessments
 {
     public class UpdateFeeAssessmentDto
     {

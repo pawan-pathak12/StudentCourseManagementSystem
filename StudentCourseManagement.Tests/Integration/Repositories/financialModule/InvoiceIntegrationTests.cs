@@ -161,6 +161,30 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
         #endregion
 
+        #region Phase 3 required methods 
+        [TestMethod]
+        public async Task GetByFeeAssessmentIdAsync_WithExistingFeeAssessmentId_ReturnsFeeAssessment()
+        {
+            //Arrange 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feetemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
+
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+
+            //act
+            var result = await _invoiceRepository.GetByFeeAssessmentIdAsync(feeAssessmentId);
+            //assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType<Invoice>(result);
+
+        }
+        #endregion
+
         #region Helper Method
 
         private async Task<int> CreateStudentAsync()

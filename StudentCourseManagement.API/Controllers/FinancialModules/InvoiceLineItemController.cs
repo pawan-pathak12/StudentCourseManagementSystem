@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.API.DTOs.FInancialModule.InvoiceLineItems;
+using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.InvoiceLineItems;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 

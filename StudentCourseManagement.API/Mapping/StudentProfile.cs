@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using StudentCourseManagement.API.DTOs;
-using StudentCourseManagement.Business.DTOs.Student;
+using StudentCourseManagement.Application.DTOs.DTOs.Students;
 using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.Business.Mapping

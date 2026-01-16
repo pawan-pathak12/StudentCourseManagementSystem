@@ -21,6 +21,6 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
         Task<int> GetEnrollmentCountByStudent(int studentId);
         #endregion
 
-        Task UpdateFeeAssessedDateAsync(int enrollmentId);
+        Task<bool> UpdateFeeAssessedDateAsync(int enrollmentId);
     }
 }

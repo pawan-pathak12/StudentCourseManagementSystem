@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments;
+using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.FeeAssessments;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
@@ -204,6 +204,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
                 var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
+                _logger.LogInformation($"Sucessfully created FeeAssessment and Invoice for Enrollment Id {enrollmentId}");
                 scope.Complete();
             }
             return (true, null);
@@ -236,6 +237,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             {
                 return null;
             }
+            _logger.LogInformation($"Returning FeeAssessmentResultDto for enrollment Id {enrollmentId} ");
             return new FeeAssessmentResultDto
             {
                 Success = true,

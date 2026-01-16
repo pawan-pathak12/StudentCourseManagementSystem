@@ -1,4 +1,4 @@
-﻿namespace StudentCourseManagement.API.DTOs
+﻿namespace StudentCourseManagement.Application.DTOs.DTOs.Students
 {
     public class StudentResponseDto
     {

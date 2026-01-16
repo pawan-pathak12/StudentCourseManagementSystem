@@ -166,7 +166,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             using var connection = _context.CreateConnection();
 
-            var result = await connection.ExecuteScalarAsync<bool>(sql, new { Id = enrollmentId });
+            var result = await connection.ExecuteScalarAsync<bool>(sql, new { EnrollmentId = enrollmentId });
 
             if (!result)
             {

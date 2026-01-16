@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudentCourseManagement.API.DTOs.FInancialModule.InvoiceLineItems
+namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.InvoiceLineItems
 {
     public class CreateInvoiceLineItemDto
     {

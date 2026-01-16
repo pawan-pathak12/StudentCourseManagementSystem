@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudentCourseManagement.API.DTOs.FInancialModule.Payments
+namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Payments
 {
     public class CreatePaymentDto
     {

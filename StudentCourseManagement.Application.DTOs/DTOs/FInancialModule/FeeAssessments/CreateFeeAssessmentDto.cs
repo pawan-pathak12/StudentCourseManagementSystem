@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudentCourseManagement.API.DTOs.FInancialModule.FeeAssessments
+namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.FeeAssessments
 {
     public class CreateFeeAssessmentDto
     {

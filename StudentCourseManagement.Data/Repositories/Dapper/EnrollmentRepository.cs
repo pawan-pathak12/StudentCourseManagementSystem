@@ -184,11 +184,20 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
         }
         #endregion
 
-        public async Task UpdateFeeAssessedDateAsync(int enrollmentId)
+        public async Task<bool> UpdateFeeAssessedDateAsync(int enrollmentId)
         {
             var connection = _dbContext.CreateConnection();
-            var query = "Update Enrollments set FeeAssessedDate=@Date where EnrollmentId=@Id";
-            await connection.ExecuteAsync(query, new { Id = enrollmentId, Date = DateTime.UtcNow });
+            var query = "Update Enrollments set FeeAssessmentDate=@Date where EnrollmentId=@Id";
+            var rowsAffected = await connection.ExecuteAsync(query, new { Id = enrollmentId, Date = DateTime.UtcNow });
+            if (rowsAffected > 0)
+            {
+                _logger.LogInformation("Repo: Enrollment FeeAssessmnet Date with ID {EnrollmentId} updated successfully", enrollmentId);
+            }
+            else
+            {
+                _logger.LogWarning("Repo: Enrollment with ID {EnrollmentId} not found or already inactive during update", enrollmentId);
+            }
+            return rowsAffected > 0;
         }
 
 

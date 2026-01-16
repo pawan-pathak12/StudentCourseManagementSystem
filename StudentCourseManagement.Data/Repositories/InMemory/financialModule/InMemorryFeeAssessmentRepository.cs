@@ -64,5 +64,17 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         }
 
         #endregion
+
+        #region Phase -3 required method 
+        public Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId)
+        {
+            throw new NotImplementedException();
+
+        }
+        #endregion
     }
 }

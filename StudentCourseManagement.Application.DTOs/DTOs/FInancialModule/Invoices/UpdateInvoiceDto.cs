@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.API.DTOs.FInancialModule.Invoices
+namespace StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Invoices
 {
     public class UpdateInvoiceDto
     {

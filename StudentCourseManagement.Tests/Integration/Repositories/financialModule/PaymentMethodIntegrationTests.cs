@@ -55,7 +55,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 PaymentMethodId = paymentMethodId,
                 IsActive = true,
                 PaymentMethodType = PaymentMethodType.Cash,
-                Provider = "New Updated Provider"
+                Name = "New Updated name"
             };
 
 
@@ -66,7 +66,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             Assert.IsTrue(result);
             var paymentMethod = await _paymentMethodRepository.GetByIdAsync(paymentMethodId);
 
-            Assert.AreEqual(updated.Provider, paymentMethod?.Provider);
+            Assert.AreEqual(updated.Name, paymentMethod?.Name);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var paymentMethod = new PaymentMethod
             {
                 PaymentMethodType = PaymentMethodType.Cash,
-                Provider = "nothing",
+                Name = "nothing",
                 IsActive = true
             };
 

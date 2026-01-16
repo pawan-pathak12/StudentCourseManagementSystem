@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Business.DTOs.Enrollments
+namespace StudentCourseManagement.Application.DTOs.DTOs.Enrollments
 {
     public class UpdateEnrollmentDto
     {

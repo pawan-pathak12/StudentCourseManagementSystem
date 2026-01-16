@@ -58,5 +58,19 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         }
         #endregion
 
+        #region Phase -3 required method
+        public Task<string> GenerateInvoiceNumberAsync()
+        {
+            throw new NotImplementedException();
+
+        }
+        public Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId)
+        {
+            throw new NotImplementedException();
+
+        }
+
+        #endregion
+
     }
 }
