@@ -161,7 +161,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             {
-                // 7. create feeAssessment first --left to calculate amount 
+                // 7. create feeAssessment first 
                 var feeAssessment = new FeeAssessment
                 {
                     EnrollmentId = enrollmentId,
@@ -179,11 +179,11 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
                 var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-                // 8. update enrollment after feeAssessment 
+                // 8. update enrollment after feeAssessment is creaed 
                 enrollment.FeeAssessmentDate = DateTimeOffset.UtcNow;
                 await _enrollmentRepository.UpdateFeeAssessedDateAsync(enrollmentId);
 
-                // 9. create invoice after feeAssessment 
+                // 9. create invoice after feeAssessment is created
                 var invoice = new Invoice
                 {
                     InvoiceNumber = await _invoiceRepository.GenerateInvoiceNumberAsync(),

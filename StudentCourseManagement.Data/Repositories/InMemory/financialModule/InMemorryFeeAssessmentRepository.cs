@@ -68,11 +68,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         #region Phase -3 required method 
         public Task<bool> ExistsByEnrollmentIdAsync(int enrollmentId)
         {
-            throw new NotImplementedException();
+            var feeAssessment = _feeAssessment.Exists(x => x.EnrollmentId == enrollmentId);
+            return Task.FromResult(feeAssessment);
         }
-        public Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId)
+        public Task<FeeAssessment?> GetByEnrolmentIdAsync(int enrollmentId)
         {
-            throw new NotImplementedException();
+            var feeAssessment = _feeAssessment.Find(x => x.EnrollmentId == enrollmentId);
+            return Task.FromResult(feeAssessment);
 
         }
         #endregion
