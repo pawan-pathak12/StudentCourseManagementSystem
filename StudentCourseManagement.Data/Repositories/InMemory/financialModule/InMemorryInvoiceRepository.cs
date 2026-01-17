@@ -61,14 +61,17 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         #region Phase -3 required method
         public Task<string> GenerateInvoiceNumberAsync()
         {
-            throw new NotImplementedException();
+            string invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
+            return Task.FromResult(invoiceNumber);
 
         }
-        public Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId)
+        public Task<Invoice?> GetByFeeAssessmentIdAsync(int feeAssessmentId)
         {
-            throw new NotImplementedException();
+            var invoice = _invoice.Find(x => x.FeeAssessmentId == feeAssessmentId);
+            return Task.FromResult(invoice);
 
         }
+
 
         #endregion
 

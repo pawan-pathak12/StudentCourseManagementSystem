@@ -103,7 +103,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
         #region Phase -3 Required Method
         public Task<bool> UpdateFeeAssessedDateAsync(int enrollmentId)
         {
-            throw new NotImplementedException();
+            var enrollment = _enrollments.Find(x => x.EnrollmentId == enrollmentId);
+            if (enrollment == null)
+            {
+                return Task.FromResult(false);
+            }
+            enrollment.FeeAssessmentDate = DateTimeOffset.UtcNow;
+            return Task.FromResult(true);
+
         }
         #endregion
     }

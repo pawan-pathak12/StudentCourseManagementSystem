@@ -63,7 +63,8 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         #region Phase-3
         public Task<FeeTemplate?> GetActiveByCourseId(int courseId)
         {
-            throw new NotImplementedException();
+            var feeTemplate = _feeTemplate.Find(x => x.CourseId == courseId);
+            return Task.FromResult(feeTemplate);
 
         }
         #endregion
