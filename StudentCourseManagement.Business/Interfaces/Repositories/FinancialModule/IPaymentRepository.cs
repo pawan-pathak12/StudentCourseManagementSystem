@@ -12,5 +12,10 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         Task<bool> DeleteAsync(int id);
 
         #endregion
+        #region Required Method for Phase 4 : payment processing 
+        Task<Payment> GetByInvoiceIdAsync(int invoiceId);
+
+        #endregion
+
     }
 }

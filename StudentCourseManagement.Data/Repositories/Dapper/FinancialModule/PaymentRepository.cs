@@ -17,6 +17,8 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        #region CURD Operations
+
         public async Task<int> AddAsync(Payment payment)
         {
             logger.LogInformation("Adding new Payment for InvoiceId: {InvoiceId}, StudentId: {StudentId}, Amount: {Amount}",
@@ -133,5 +135,29 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             logger.LogWarning("Update failed for Payment ID: {Id} ", id);
             return false;
         }
+
+        #endregion
+
+        #region Phase 4  : 
+        public async Task<Payment> GetByInvoiceIdAsync(int invoiceId)
+        {
+            const string sql = @"select p.*
+                            from Payments p
+                            inner join Invoices i on p.InvoiceId = i.InvoiceId
+                            where i.InvoiceId =@InvoiceId
+                            and i.IsActive =1 
+                            and p.IsActive=1";
+            using var connection = context.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<Payment>(sql, new { InvoiceId = invoiceId });
+            if (result != null)
+            {
+                logger.LogWarning($"Feteched Payment record with invoice Id {invoiceId}");
+            }
+            return result;
+
+        }
+
+        #endregion
+
     }
 }

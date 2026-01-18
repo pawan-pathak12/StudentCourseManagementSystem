@@ -16,7 +16,6 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public DateTimeOffset? DueDate { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
-
         public bool LateFeeApplied { get; set; } = false;
         public DateTimeOffset IssuedAt { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }

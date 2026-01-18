@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
@@ -202,6 +203,52 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             return feeAssessment;
         }
+        #endregion
+
+        #region Phase -4 : Paymnent Processing Required Methods 
+        public async Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
+        {
+            const string sql = @"select  f.*
+                            from Invoices  i
+                            inner join FeeAssessments f on i.FeeAssessmentId = f.FeeAssessmentId
+                            where i.InvoiceId= @InvoiceId and ( i.IsActive=1 and f.IsActive=1)";
+            using var connection = _context.CreateConnection();
+
+            var feeAssessment = await connection.QueryFirstOrDefaultAsync<FeeAssessment>(sql, new { InvoiceId = invoiceId });
+
+            if (feeAssessment == null)
+            {
+                _logger.LogWarning("No FeeAssessment record found for InvoiceId {InvoiceId}", invoiceId);
+            }
+            else
+            {
+                _logger.LogInformation("Successfully fetched FeeAssessment record for InvoiceId {InvoiceId}", invoiceId);
+            }
+
+            return feeAssessment;
+
+        }
+
+        public async Task<bool> UpdatePaymentStatusAsync(int invoiceId)
+        {
+            const string sql = @" UPDATE FeeAssessments
+                            SET AssessmentStatus = @AssessmentStatus
+                            WHERE InvoiceId = @InvoiceId AND IsActive = 1";
+
+            using var connection = _context.CreateConnection();
+
+            var result = await connection.ExecuteAsync(sql, new
+            {
+                InvoiceId = invoiceId,
+                AssessmentStatus = AssessmentStatus.Paid
+            });
+
+            _logger.LogInformation("FeeAssessment AssessmentStatus set to {Status} for InvoiceId {InvoiceId}",
+                AssessmentStatus.Paid, invoiceId);
+
+            return result > 0;
+        }
+
         #endregion
 
     }

@@ -126,5 +126,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         }
         #endregion
 
+        public async Task<PaymentMethod?> GetByNameAsync(string paymentMethodName)
+        {
+            // while quering use lower to compare result
+            return null;
+        }
     }
 }

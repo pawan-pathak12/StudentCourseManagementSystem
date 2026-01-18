@@ -23,6 +23,8 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpPost Endpoint
         [HttpPost]
+
+        #region Manual 
         public async Task<IActionResult> Create([FromBody] CreatePaymentDto paymentDto)
         {
             if (!ModelState.IsValid)
@@ -41,6 +43,22 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
             return CreatedAtAction(nameof(GetById), new { id = payment.InvoiceId }, payment);
         }
+        #endregion
+
+        #region Automated 
+        [HttpPost("process-payment")]
+        public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentDto processPayment)
+        {
+            var (success, errorMessage) = await _paymentService.ProcessPaymentAsync(processPayment.InvoiceId, processPayment.PaymentMethodId, processPayment.PaidAmount);
+            if (success)
+            {
+                var result = await _paymentService.GetPaymentDetailsByInvoiceIdAsync(processPayment.InvoiceId);
+                return Ok(result);
+            }
+            return BadRequest(new { message = errorMessage });
+        }
+        #endregion
+
         #endregion
 
         #region HttpGet Endpoint

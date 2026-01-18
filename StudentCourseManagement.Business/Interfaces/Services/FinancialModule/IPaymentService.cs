@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
+﻿using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Payments;
+using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
 {
@@ -12,6 +13,9 @@ namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
         Task<bool> DeleteAsync(int PaymentId);
 
         #endregion
+
+        Task<(bool success, string ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount);
+        Task<PaymentResultDto> GetPaymentDetailsByInvoiceIdAsync(int invoiceId);
 
 
     }
