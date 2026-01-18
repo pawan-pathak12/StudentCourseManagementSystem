@@ -1,5 +1,4 @@
-﻿// Application Layer - Service
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Payments;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
@@ -111,7 +110,7 @@ public class PaymentService : IPaymentService
         }
 
         //2.invoice status must be payable 
-        if (!(invoice.InvoiceStatus == InvoiceStatus.Issued) || !(invoice.InvoiceStatus == InvoiceStatus.PartiallyPaid))
+        if (invoice.InvoiceStatus != InvoiceStatus.Issued && invoice.InvoiceStatus != InvoiceStatus.PartiallyPaid)
         {
             _logger.LogWarning("Payment processing failed: Invoice {InvoiceId} has non-payable status {Status}.", invoiceId, invoice.InvoiceStatus);
             return (false, $"Invoice {invoiceId} is not payable.");
@@ -122,7 +121,7 @@ public class PaymentService : IPaymentService
         if (paymentMethodData == null)
         {
             _logger.LogWarning("Payment processing failed: Payment method with Id {PaymentMethodId} not found.", paymentMethodId);
-            return (false, $"Payment method {paymentMethodId} not found.")
+            return (false, $"Payment method {paymentMethodId} not found.");
         }
 
         //4. Payment method must be active 
@@ -133,7 +132,7 @@ public class PaymentService : IPaymentService
         }
 
         //5.Enter amount must be positive
-        if (paidAmount < 0)
+        if (paidAmount <= 0)
         {
             _logger.LogWarning("Payment processing failed: Invalid paid amount {PaidAmount} for Invoice {InvoiceId}.", paidAmount, invoiceId);
             return (false, $"Paid amount must be positive.");
@@ -151,55 +150,78 @@ public class PaymentService : IPaymentService
 
         #endregion
 
-
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        var payment = new Payment
         {
-            var payment = new Payment
+            InvoiceId = invoiceId,
+            PaymentMethodId = paymentMethodId,
+            Amount = paidAmount,
+            PaymentDate = DateTimeOffset.UtcNow,
+            PaymentStatus = PaymentStatus.Completed,
+            IsActive = true,
+            CreatedDate = DateTimeOffset.UtcNow,
+        };
+
+        var paymentId = await _paymentRepository.AddAsync(payment);
+
+        //update invoice 
+        invoice.AmountPaid = invoice.AmountPaid + payment.Amount;
+        invoice.BalanceDue = invoice.TotalAmount - invoice.AmountPaid;
+
+        if (invoice.BalanceDue <= 0)
+        {
+            invoice.InvoiceStatus = InvoiceStatus.Paid;
+        }
+        else
+        {
+            invoice.InvoiceStatus = InvoiceStatus.PartiallyPaid;
+        }
+
+        await _invoiceRepository.UpdateAsync(invoice.InvoiceId, invoice);
+
+        //Update FeeAssessment only if fully paid 
+        if (invoice.InvoiceStatus == InvoiceStatus.Paid)
+        {
+            var feeAssessment = await _feeAssessmentRepository.GetByInvoiceIdAsync(invoiceId);
+            if (feeAssessment != null)
             {
-                InvoiceId = invoiceId,
-                PaymentMethodId = paymentMethodId,
-                Amount = paidAmount,
-                PaymentDate = DateTimeOffset.UtcNow,
-                PaymentStatus = PaymentStatus.Completed,
-                IsActive = true,
-                CreatedDate = DateTimeOffset.UtcNow,
-            };
-
-            var paymentId = await _paymentRepository.AddAsync(payment);
-
-            //update invoice 
-            invoice.AmountPaid = invoice.AmountPaid + payment.Amount;
-            invoice.BalanceDue = invoice.TotalAmount - payment.Amount;
-
-            if (invoice.BalanceDue <= 0)
-            {
-                invoice.InvoiceStatus = InvoiceStatus.Paid;
+                feeAssessment.PaidDate = DateTimeOffset.UtcNow;
+                feeAssessment.FeeAssessmentStatus = AssessmentStatus.Paid;
+                await _feeAssessmentRepository.UpdateAsync(feeAssessment.FeeAssessmentId, feeAssessment);
             }
             else
             {
-                invoice.InvoiceStatus = InvoiceStatus.PartiallyPaid;
-            }
-
-            await _invoiceRepository.UpdateAsync(invoice.InvoiceId, invoice);
-
-            //Update FeeAssessment only if fully paid 
-            if (invoice.InvoiceStatus == InvoiceStatus.Paid)
-            {
-                var feeAssessment = await _feeAssessmentRepository.GetByInvoiceIdAsync(invoiceId);
-                feeAssessment.PaidDate = DateTimeOffset.UtcNow;
-                feeAssessment.FeeAssessmentStatus = AssessmentStatus.Paid;
-
-                await _feeAssessmentRepository.UpdateAsync(feeAssessment.FeeAssessmentId, feeAssessment);
+                _logger.LogWarning("FeeAssessment not found for Invoice {InvoiceId}. Skipping FeeAssessment update.", invoiceId);
             }
             scope.Complete();
         }
         return (true, null);
-
     }
-
     public async Task<PaymentResultDto> GetPaymentDetailsByInvoiceIdAsync(int invoiceId)
     {
+        var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+        if (invoice == null)
+        {
+            return null;
+        }
+        var payment = await _paymentRepository.GetByInvoiceIdAsync(invoiceId);
+        if (payment == null)
+        {
+            return null;
+        }
 
+
+        return new PaymentResultDto
+        {
+            InvoiceId = invoice.InvoiceId,
+            TotalAmount = invoice.TotalAmount,
+            BalanceDue = invoice.BalanceDue,
+            FeeAssessmentId = invoice.FeeAssessmentId,
+            PaidAmount = invoice.AmountPaid,
+            InvoiceStatus = invoice.InvoiceStatus,
+            PaymentId = payment.PaymentId,
+            PaymentMethodId = payment.PaymentMethodId
+        };
     }
     #endregion
 }
