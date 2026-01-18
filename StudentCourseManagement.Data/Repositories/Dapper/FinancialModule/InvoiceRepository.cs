@@ -3,18 +3,19 @@ using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
     public class InvoiceRepository : IInvoiceRepository
     {
 
-        private readonly StudentSysDbContext context;
+        private readonly StudentSysDbContext _context;
         private readonly ILogger<InvoiceRepository> logger;
 
         public InvoiceRepository(StudentSysDbContext context, ILogger<InvoiceRepository> logger)
         {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -32,7 +33,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var newId = await connection.QuerySingleAsync<int>(sql, invoice);
 
@@ -47,7 +48,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = "Update Invoices set IsActive =0 WHERE InvoiceId = @Id";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
 
@@ -66,7 +67,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = "SELECT * FROM Invoices where IsActive=1";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var invoices = await connection.QueryAsync<Invoice>(sql);
 
@@ -80,7 +81,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = "SELECT * FROM Invoices WHERE IsActive =1 and  InvoiceId = @Id";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = id });
 
@@ -118,7 +119,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                     Discount = @Discount
                 WHERE InvoiceId = @InvoiceId ";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var affectedRows = await connection.ExecuteAsync(sql, invoice);
 
@@ -145,7 +146,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         {
             const string sql = "SELECT * FROM Invoices WHERE IsActive =1 and  FeeAssessmentId = @Id";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { Id = feeAssessmentId });
             if (invoice == null)
@@ -161,6 +162,37 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             return invoice;
         }
 
+
+        #endregion
+
+
+        #region Phase -4 : Paymnent Processing Required Methods 
+
+        public async Task<bool> UpdatePaymentInfoAsync(int invoiceId, decimal paidAmount, decimal balanceDue, InvoiceStatus status)
+        {
+            const string sql = @"
+        UPDATE Invoices
+        SET AmountPaid = @AmountPaid,
+            BalanceDue = @BalanceDue,
+            InvoiceStatus = @Status,
+            UpdatedAt = @UpdatedAt
+        WHERE InvoiceId = @InvoiceId AND IsActive = 1";
+
+            using var connection = _context.CreateConnection();
+
+            var result = await connection.ExecuteAsync(sql, new
+            {
+                InvoiceId = invoiceId,
+                AmountPaid = paidAmount,
+                BalanceDue = balanceDue,
+                Status = status,
+                UpdatedAt = DateTimeOffset.UtcNow
+            });
+
+            logger.LogInformation("Invoice with Id {InvoiceId} payment info updated successfully", invoiceId);
+
+            return result > 0;
+        }
 
         #endregion
 

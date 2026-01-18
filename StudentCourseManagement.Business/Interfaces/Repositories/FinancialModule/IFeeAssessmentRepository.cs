@@ -18,5 +18,11 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         Task<FeeAssessment?> GetByEnrolmentIdAsync(int enrollmentId);
         #endregion
 
+        #region Phase -4 : Paymnent Processing Required Methods 
+        Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId);
+        Task<bool> UpdatePaymentStatusAsync(int invoiceId);
+
+        #endregion
+
     }
 }
