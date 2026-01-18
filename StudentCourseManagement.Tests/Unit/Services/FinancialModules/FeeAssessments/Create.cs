@@ -177,7 +177,14 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             await CreateFeeTemplate(courseId);
-            var enrollmentId = await CreateEnrollment(studentId, courseId);
+            var enrollment = new Enrollment
+            {
+                StudentId = studentId,
+                CourseId = courseId,
+                IsActive = true,
+                EnrollmentStatus = EnrollmentStatus.Cancelled
+            };
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
 
             //Act
             var result = await _feeAssessmentService.AssessFee(enrollmentId);
