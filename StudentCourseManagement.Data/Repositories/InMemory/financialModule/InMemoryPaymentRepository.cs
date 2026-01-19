@@ -44,6 +44,8 @@ public class InMemoryPaymentRepository : IPaymentRepository
         return Task.FromResult(payment);
     }
 
+
+
     public Task<bool> UpdateAsync(int id, Payment payment)
     {
         var existing = _payments.FirstOrDefault(x => x.PaymentId == id && x.IsActive);
@@ -53,6 +55,16 @@ public class InMemoryPaymentRepository : IPaymentRepository
         }
         _mapper.Map(payment, existing);
         return Task.FromResult(true);
+    }
+
+
+    #endregion
+
+    #region Phase 4 : 
+    public Task<Payment?> GetByInvoiceIdAsync(int invoiceId)
+    {
+        var payment = _payments.Find(x => x.InvoiceId == invoiceId && x.IsActive);
+        return Task.FromResult(payment);
     }
     #endregion
 }

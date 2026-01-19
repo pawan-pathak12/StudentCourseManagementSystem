@@ -76,6 +76,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfPayment()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             //Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
@@ -99,6 +101,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task GetByIdAsync_WithExistingId_ReturnsPayments()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             //Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
@@ -118,6 +122,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             //Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
@@ -158,6 +164,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
             //Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
@@ -181,6 +189,30 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         }
         #endregion
 
+        #region Phase 4 required methods 
+        [TestMethod]
+        public async Task GetByInvoiceIdAsync_WithExistingInvoiceId_ReturnPaymentData()
+        {
+            //Arrange 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+
+            //Act 
+            var result = await _paymentRepository.GetByInvoiceIdAsync(invoiceId);
+            //Assert 
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType<Payment>(result);
+        }
+        #endregion
+
 
         #region Helper Method
 
@@ -188,7 +220,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         {
             var student = new Student
             {
-                Name = "Sita Sharma",
+                Name = "Sita Sharma 1",
                 Email = "sita.sharma@example.com",
                 DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
                 Number = 9812345678,
@@ -204,7 +236,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var course = new Course
             {
                 Code = "CS1001",
-                Title = "Introduction to Programming",
+                Title = "Introduction to Programming 1",
                 Credits = 3,
                 Description = "Fundamentals of programming using C# and .NET Core.",
                 Instructor = "Dr. Anil Sharma",
@@ -223,7 +255,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var enrollment = new Enrollment
             {
                 StudentId = studentId,
-                CourseId = courseId
+                CourseId = courseId,
+                IsActive = true
             };
 
             return await _enrollmentRepository.AddAsync(enrollment);
@@ -288,11 +321,11 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         {
             var payment = new Payment
             {
-                StudentId = studentId,              // link to Student (e.g., Sita Sharma)
-                InvoiceId = invoiceId,           // link to Invoice (e.g., INV-2026-001)
-                PaymentMethodId = paymentMethodId,        // e.g., 1 = Cash, 2 = Bank Transfer, 3 = Card
+                StudentId = studentId,
+                InvoiceId = invoiceId,
+                PaymentMethodId = paymentMethodId,
                 IsActive = true,
-                Amount = 7500.00m,          // partial payment
+                Amount = 7500.00m,
                 PaymentDate = new DateTimeOffset(2026, 01, 25, 14, 30, 0, TimeSpan.FromHours(5.75)),
                 ReferenceNumber = "TXN-2026-ABC123",
                 Notes = "First installment of tuition fee",

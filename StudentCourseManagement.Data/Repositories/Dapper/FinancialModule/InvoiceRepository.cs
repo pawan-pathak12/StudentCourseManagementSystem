@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
@@ -142,7 +141,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             string invoiceNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper()}";
             return Task.FromResult(invoiceNumber);
         }
-        public async Task<Invoice> GetByFeeAssessmentIdAsync(int feeAssessmentId)
+        public async Task<Invoice?> GetByFeeAssessmentIdAsync(int feeAssessmentId)
         {
             const string sql = "SELECT * FROM Invoices WHERE IsActive =1 and  FeeAssessmentId = @Id";
 
@@ -166,35 +165,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         #endregion
 
 
-        #region Phase -4 : Paymnent Processing Required Methods 
 
-        public async Task<bool> UpdatePaymentInfoAsync(int invoiceId, decimal paidAmount, decimal balanceDue, InvoiceStatus status)
-        {
-            const string sql = @"
-        UPDATE Invoices
-        SET AmountPaid = @AmountPaid,
-            BalanceDue = @BalanceDue,
-            InvoiceStatus = @Status,
-            UpdatedAt = @UpdatedAt
-        WHERE InvoiceId = @InvoiceId AND IsActive = 1";
-
-            using var connection = _context.CreateConnection();
-
-            var result = await connection.ExecuteAsync(sql, new
-            {
-                InvoiceId = invoiceId,
-                AmountPaid = paidAmount,
-                BalanceDue = balanceDue,
-                Status = status,
-                UpdatedAt = DateTimeOffset.UtcNow
-            });
-
-            logger.LogInformation("Invoice with Id {InvoiceId} payment info updated successfully", invoiceId);
-
-            return result > 0;
-        }
-
-        #endregion
 
     }
 }

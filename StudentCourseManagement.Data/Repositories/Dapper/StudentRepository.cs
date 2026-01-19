@@ -25,7 +25,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                     VALUES (@Name, @Email, @DOB, @Number, @IsActive, @Gender, @Address);
                         SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            return await connection.ExecuteAsync(sql, student);
+            return await connection.QuerySingleOrDefaultAsync<int>(sql, student);
         }
 
         public async Task<bool> DeleteAsync(int id)

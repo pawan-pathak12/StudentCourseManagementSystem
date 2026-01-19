@@ -6,6 +6,7 @@ using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
 using StudentCourseManagement.Data.Repositories.InMemory;
 using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
+using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
@@ -16,6 +17,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
         protected InMemorryInvoiceRepository _invoiceRepository;
         protected InMemoryPaymentMethodRepository _paymentMethodRepository;
         protected InMemoryPaymentRepository _paymentRepository;
+        protected InMemoryFeeAssessmentRepository _feeAssessmentRepository;
         protected IPaymentService _paymentService;
         [TestInitialize]
         public void Setup()
@@ -26,6 +28,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
                 cfg.AddProfile<InvoiceProfile>();
                 cfg.AddProfile<PaymentProfile>();
                 cfg.AddProfile<PaymentMethodProfile>();
+                cfg.AddProfile<FeeAssessmentProfile>();
             });
 
             var mapper = config.CreateMapper();
@@ -35,8 +38,9 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             _invoiceRepository = new InMemorryInvoiceRepository(mapper);
             _paymentMethodRepository = new InMemoryPaymentMethodRepository(mapper);
             _paymentRepository = new InMemoryPaymentRepository(mapper);
+            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper);
 
-            _paymentService = new PaymentService(_paymentRepository, mockLoggerPayment.Object, _studentRepository, _paymentMethodRepository, _invoiceRepository);
+            _paymentService = new PaymentService(_paymentRepository, mockLoggerPayment.Object, _studentRepository, _paymentMethodRepository, _invoiceRepository, _feeAssessmentRepository);
 
         }
     }

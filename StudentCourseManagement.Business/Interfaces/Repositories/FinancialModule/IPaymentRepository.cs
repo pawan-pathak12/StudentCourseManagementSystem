@@ -13,7 +13,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
 
         #endregion
         #region Required Method for Phase 4 : payment processing 
-        Task<Payment> GetByInvoiceIdAsync(int invoiceId);
+        Task<Payment?> GetByInvoiceIdAsync(int invoiceId);
 
         #endregion
 

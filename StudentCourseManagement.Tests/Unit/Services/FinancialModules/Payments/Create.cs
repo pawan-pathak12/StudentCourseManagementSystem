@@ -8,6 +8,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
     [TestClass]
     public class Create : PaymentServiceTestBase
     {
+        #region Manually Payment tests 
         [TestMethod]
         public async Task CreateAsync_WithValidData_ReturnsTrue()
         {
@@ -120,6 +121,103 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             // Assert
             Assert.IsFalse(result);
         }
+
+        #endregion
+
+        #region Payment Processing Tests 
+        [TestMethod]
+        public async Task ProcessPaymentAsync_WithValidData_ReturnsTrue()
+        {
+
+        }
+
+        [TestMethod]
+        public async Task ProcessPaymentAsync_WithNoExistingInvoiceId_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+
+        }
+
+        [TestMethod]
+        public async Task ProcessPaymentAsync_IfInvoiceIsNotPayable_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+        [TestMethod]
+        public async Task ProcessPaymentAsync_IfPaymentMethodNotFound_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+        [TestMethod]
+        public async Task ProcessPaymentAsync_IdPaymentMethodIsInActive_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+
+        [TestMethod]
+        public async Task ProcessPaymentAsync_IfEnterAmountIsNeagtiveOrZero_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+
+        [TestMethod]
+        public async Task ProcessPaymentAsync_PaidAmountIsGreaterThenBalanceDue_ReturnsFalse()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+        [TestMethod]
+        public async Task ProcessPayment_PartialPayment_UpdatesInvoiceCorrectly()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+
+        [TestMethod]
+        public async Task ProcessPayment_FullPayment_UpdatesInvoiceCorrectly()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+        [TestMethod]
+        public async Task ProcessPaymentAsync_IfFullyPaid_UpdateFeeAssessmentSuccessfully()
+        {
+            //Arrange
+
+            //Act 
+
+            //Assert 
+        }
+        #endregion
 
         #region Private Helper Methods
         private async Task<int> CreateStudentAsync()
