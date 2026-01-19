@@ -141,7 +141,7 @@ public class PaymentService : IPaymentService
         //6. Amount to pay should be lower then balance due 
         if (paidAmount > invoice.BalanceDue)
         {
-            _logger.LogWarning("Payment processing failed: Paid amount {PaidAmount} exceeds balance due {BalanceDue} for Invoice {InvoiceId}.", paidAmount, invoice.BalanceDue, invoiceId);
+            _logger.LogWarning("Payment processing failed: Paid amount {PaidAmount} is greater then balance due {BalanceDue} for Invoice {InvoiceId}.", paidAmount, invoice.BalanceDue, invoiceId);
             return (false, $"Paid amount exceeds balance due.");
 
         }

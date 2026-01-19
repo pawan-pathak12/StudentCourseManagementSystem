@@ -7,11 +7,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
     public class InMemoryFeeAssessmentRepository : IFeeAssessmentRepository
     {
         private readonly List<FeeAssessment> _feeAssessment;
+        private readonly List<Invoice> _invoices;
         private readonly IMapper _mapper;
 
         public InMemoryFeeAssessmentRepository(IMapper mapper)
         {
             _feeAssessment = new List<FeeAssessment>();
+            _invoices = new List<Invoice>();
             _mapper = mapper;
         }
 
@@ -79,9 +81,20 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         }
         #endregion
 
-        public Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
+        #region Phase -4 : payment Processing required method
+        public async Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
         {
-            throw new NotImplementedException();
+            var query = from i in _invoices
+                        join f in _feeAssessment
+                            on i.FeeAssessmentId equals f.FeeAssessmentId
+                        where i.InvoiceId == invoiceId && i.IsActive && f.IsActive
+                        select f;
+
+            return await Task.FromResult(query.FirstOrDefault());
         }
+
+
+
+        #endregion
     }
 }
