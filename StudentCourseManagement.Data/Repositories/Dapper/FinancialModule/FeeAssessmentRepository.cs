@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
@@ -40,7 +39,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             using var connection = _context.CreateConnection();
 
             var id = await connection.QuerySingleAsync<int>(sql, feeAssessment);
-            if (id == 0 || id == null)
+            if (id == 0)
             {
                 _logger.LogWarning("Error adding FeeAssessment for EnrollmentId: {EnrollmentId}", feeAssessment.EnrollmentId);
 
@@ -181,7 +180,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             return result;
         }
 
-        public async Task<FeeAssessment> GetByEnrolmentIdAsync(int enrollmentId)
+        public async Task<FeeAssessment?> GetByEnrolmentIdAsync(int enrollmentId)
         {
             _logger.LogInformation("Retrieving FeeAssessment with Enrollment ID: {Id}", enrollmentId);
 
@@ -229,25 +228,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         }
 
-        public async Task<bool> UpdatePaymentStatusAsync(int invoiceId)
-        {
-            const string sql = @" UPDATE FeeAssessments
-                            SET AssessmentStatus = @AssessmentStatus
-                            WHERE InvoiceId = @InvoiceId AND IsActive = 1";
-
-            using var connection = _context.CreateConnection();
-
-            var result = await connection.ExecuteAsync(sql, new
-            {
-                InvoiceId = invoiceId,
-                AssessmentStatus = AssessmentStatus.Paid
-            });
-
-            _logger.LogInformation("FeeAssessment AssessmentStatus set to {Status} for InvoiceId {InvoiceId}",
-                AssessmentStatus.Paid, invoiceId);
-
-            return result > 0;
-        }
 
         #endregion
 

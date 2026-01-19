@@ -56,4 +56,11 @@ public class InMemoryPaymentMethodRepository : IPaymentMethodRepository
         return Task.FromResult(true);
     }
     #endregion
+
+    public Task<PaymentMethod?> GetByNameAsync(string paymentMethodName)
+    {
+        throw new NotImplementedException();
+    }
+
+
 }

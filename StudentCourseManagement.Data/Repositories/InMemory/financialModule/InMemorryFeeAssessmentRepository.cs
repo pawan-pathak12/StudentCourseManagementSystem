@@ -78,5 +78,10 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
 
         }
         #endregion
+
+        public Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

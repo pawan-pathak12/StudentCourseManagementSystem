@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         private readonly EnrollmentRepository _enrollmentRepository;
         private readonly FeeTemplateRepository _feeTemplate;
         private readonly FeeAssessmentRepository _feeAssessment;
+        private readonly InvoiceRepository _invoiceRepository;
         public FeeAssessmentIntegrationTests()
         {
             var dbFixture = new DatabaseFixture();
@@ -25,12 +26,14 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var mockLoggerEnrollment = new Mock<ILogger<EnrollmentRepository>>();
             var loggerMock = new Mock<ILogger<FeeAssessmentRepository>>();
             var mockLoggerFeeTemplate = new Mock<ILogger<FeeTemplateRepository>>();
+            var mockLoggerInvoice = new Mock<ILogger<InvoiceRepository>>();
 
             _studentRepository = new StudentRepository(dbFixture.DbContext, mockLoggerStudent.Object);
             _courseRepository = new CourseRepository(dbFixture.DbContext, mockLoggerCourse.Object);
             _enrollmentRepository = new EnrollmentRepository(dbFixture.DbContext, mockLoggerEnrollment.Object);
             _feeTemplate = new FeeTemplateRepository(dbFixture.DbContext, mockLoggerFeeTemplate.Object);
             _feeAssessment = new FeeAssessmentRepository(dbFixture.DbContext, loggerMock.Object);
+            _invoiceRepository = new InvoiceRepository(dbFixture.DbContext, mockLoggerInvoice.Object);
         }
 
         #region CURD Operations 
@@ -194,13 +197,43 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
         #endregion
 
+        #region Phase -4 Required Method 
+        [TestMethod]
+        public async Task GetByInvoiceIdAsync_IfExistingInvoiceIdExists_ReturnFeeAssessmentData()
+        {
+            //Arrange 
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(courseId, studentId);
+            var feetemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
+            var invoice = new Invoice
+            {
+                FeeAssessmentId = feeAssessmentId,
+                CourseId = courseId,
+                IsActive = true,
+                StudentId = studentId
+            };
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+
+            //Act 
+            var result = await _feeAssessment.GetByInvoiceIdAsync(invoiceId);
+            //Assert 
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType<FeeAssessment>(result);
+        }
+
+        #endregion
+
         #region Private Helper Methods 
 
         private async Task<int> CreateStudentAsync()
         {
             var student = new Student
             {
-                Name = "Sita Sharma",
+                Name = "Sita Sharma  1",
                 Email = "sita.sharma@example.com",
                 DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
                 Number = 9812345678,
@@ -216,7 +249,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var course = new Course
             {
                 Code = "CS1001",
-                Title = "Introduction to Programming",
+                Title = "Introduction to Programming 1",
                 Credits = 3,
                 Description = "Fundamentals of programming using C# and .NET Core.",
                 Instructor = "Dr. Anil Sharma",
