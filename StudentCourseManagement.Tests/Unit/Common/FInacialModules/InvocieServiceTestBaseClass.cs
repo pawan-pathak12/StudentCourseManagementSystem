@@ -33,7 +33,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 
             _studentRepository = new InMemoryStudentRepository();
             _courseRepository = new InMemoryCourseRepository(mapper);
-            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper);
+            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
             _invoiceRepository = new InMemorryInvoiceRepository(mapper);
 
             var mockLogger = new Mock<ILogger<InvoiceService>>();

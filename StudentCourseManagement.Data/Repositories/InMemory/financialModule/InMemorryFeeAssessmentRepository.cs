@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
@@ -9,12 +10,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         private readonly List<FeeAssessment> _feeAssessment;
         private readonly List<Invoice> _invoices;
         private readonly IMapper _mapper;
+        private readonly InMemorryInvoiceRepository _invoiceRepository;
 
-        public InMemoryFeeAssessmentRepository(IMapper mapper)
+        public InMemoryFeeAssessmentRepository(IMapper mapper, InMemorryInvoiceRepository invoiceRepository)
         {
             _feeAssessment = new List<FeeAssessment>();
             _invoices = new List<Invoice>();
             _mapper = mapper;
+            this._invoiceRepository = invoiceRepository;
         }
 
         #region CRUD Operation
@@ -84,13 +87,9 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         #region Phase -4 : payment Processing required method
         public async Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
         {
-            var query = from i in _invoices
-                        join f in _feeAssessment
-                            on i.FeeAssessmentId equals f.FeeAssessmentId
-                        where i.InvoiceId == invoiceId && i.IsActive && f.IsActive
-                        select f;
+            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
-            return await Task.FromResult(query.FirstOrDefault());
+            return _feeAssessment.FirstOrDefault(f => f.FeeAssessmentId == invoice?.FeeAssessmentId && f.IsActive == true);
         }
 
 

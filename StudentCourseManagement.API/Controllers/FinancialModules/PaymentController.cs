@@ -22,9 +22,8 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
 
         #region HttpPost Endpoint
-        [HttpPost]
-
         #region Manual 
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePaymentDto paymentDto)
         {
             if (!ModelState.IsValid)
@@ -33,12 +32,12 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             }
 
             var payment = _mapper.Map<Payment>(paymentDto);
-            var isCreated = await _paymentService.CreateAsync(payment);
+            var (success, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);
 
-            if (!isCreated)
+            if (!success)
             {
                 _logger.LogWarning($"Failed to create Payment for Student Id {payment.StudentId}");
-                return BadRequest("Failed to create Payment");
+                return BadRequest($"Error Message : {errorMessage}");
             }
 
             return CreatedAtAction(nameof(GetById), new { id = payment.InvoiceId }, payment);

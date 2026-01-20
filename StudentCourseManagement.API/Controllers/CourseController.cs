@@ -37,16 +37,16 @@ namespace StudentCourseManagement.API.Controllers
             try
             {
                 var course = _mapper.Map<Course>(createCourseDto);
-                var isCreaated = await _courseService.CreateAsync(course);
-                if (!isCreaated)
+                var (success, errorMessage, courseId) = await _courseService.CreateAsync(course);
+                if (!success)
                 {
-                    return BadRequest("failed to create course");
+                    return BadRequest($"Error Message : {errorMessage}");
                 }
                 var responseDto = _mapper.Map<CourseResponseDto>(course);
 
                 _logger.LogInformation("Course created successfully ");
 
-                return Ok(responseDto);
+                return CreatedAtAction(nameof(GetById), new { id = courseId }, createCourseDto);
             }
             catch (Exception ex)
             {

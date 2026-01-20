@@ -4,7 +4,7 @@ namespace StudentCourseManagement.Business.Interfaces.Services
 {
     public interface ICourseService
     {
-        Task<bool> CreateAsync(Course course);
+        Task<(bool success, string? errorMessage, int id)> CreateAsync(Course course);
         Task<IEnumerable<Course>> GetAllAsync();
         Task<Course?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(int id, Course course);

@@ -62,7 +62,12 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
         public async Task<IEnumerable<Invoice>> GetAllAsync()
         {
-            return await _invoiceRepository.GetAllAsync();
+            var invoices = await _invoiceRepository.GetAllAsync();
+            if (!invoices.Any() || invoices == null)
+            {
+                return Enumerable.Empty<Invoice>();
+            }
+            return invoices;
         }
 
         public async Task<Invoice?> GetByIdAsync(int invoiceId)

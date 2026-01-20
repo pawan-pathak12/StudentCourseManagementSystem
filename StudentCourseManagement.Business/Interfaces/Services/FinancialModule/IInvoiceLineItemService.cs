@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
     public interface IInvoiceLineItemService
     {
         #region CURD Operations 
-        Task<bool> CreateAsync(InvoiceLineItem invoiceLineItem);
+        Task<(bool success, string? errorMessage, int id)> CreateAsync(InvoiceLineItem invoiceLineItem);
         Task<IEnumerable<InvoiceLineItem>> GetAllAsync();
         Task<InvoiceLineItem?> GetByIdAsync(int InvoiceLineItemId);
         Task<bool> UpdateAsync(int InvoiceLineItemID, InvoiceLineItem invoiceLineItem);

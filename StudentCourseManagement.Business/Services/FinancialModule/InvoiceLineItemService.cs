@@ -24,31 +24,31 @@ public class InvoiceLineItemService : IInvoiceLineItemService
     }
 
     #region CRUD Operations
-    public async Task<bool> CreateAsync(InvoiceLineItem lineItem)
+    public async Task<(bool success, string? errorMessage, int id)> CreateAsync(InvoiceLineItem lineItem)
     {
         var course = await _courseRepository.GetByIdAsync(lineItem.CourseId);
         if (course == null)
         {
             _logger.LogWarning("Failed to create InvoiceLineItem: Course with Id {CourseId} not found", lineItem.CourseId);
-            return false;
+            return (false, $"", 0);
         }
 
         var feeTemplate = await _feeTemplateRepository.GetByIdAsync(lineItem.FeeTemplateId);
         if (feeTemplate == null)
         {
             _logger.LogWarning("Failed to create InvoiceLineItem: FeeTemplate with Id {FeeTemplateId} not found", lineItem.FeeTemplateId);
-            return false;
+            return (false, $"", 0);
         }
 
         var invoice = await _invoiceRepository.GetByIdAsync(lineItem.InvoiceId);
         if (invoice == null)
         {
             _logger.LogWarning("Failed to create InvoiceLineItem: Invoice with Id {InvoiceId} not found", lineItem.InvoiceId);
-            return false;
+            return (false, $"", 0);
         }
 
-        await _lineItemRepository.AddAsync(lineItem);
-        return true;
+        var lineItemId = await _lineItemRepository.AddAsync(lineItem);
+        return (true, null, lineItemId);
     }
 
     public async Task<bool> DeleteAsync(int lineItemId)
@@ -64,7 +64,12 @@ public class InvoiceLineItemService : IInvoiceLineItemService
 
     public async Task<IEnumerable<InvoiceLineItem>> GetAllAsync()
     {
-        return await _lineItemRepository.GetAllAsync();
+        var lineIltems = await _lineItemRepository.GetAllAsync();
+        if (!lineIltems.Any() || lineIltems == null)
+        {
+            return Enumerable.Empty<InvoiceLineItem>();
+        }
+        return lineIltems;
     }
 
     public async Task<InvoiceLineItem?> GetByIdAsync(int lineItemId)

@@ -16,23 +16,23 @@ namespace StudentCourseManagement.Business.Services
             this._logger = logger;
         }
 
-        public async Task<bool> CreateAsync(Course course)
+        public async Task<(bool success, string? errorMessage, int id)> CreateAsync(Course course)
         {
             var codeExists = await _courseRepository.CodeExistsAsync(course.Code);
             if (codeExists)
             {
                 _logger.LogWarning($"Repo : Failed to create course : Code {course.Code} already exists ");
-                return false;
+                return (false, $"Code {course.Code} already exists ", 0);
             }
             var titleExists = await _courseRepository.TitleExistsAsync(course.Title);
             if (titleExists)
             {
                 _logger.LogWarning($"Repo : Failed to create course : title {course.Title} already exists ");
-                return false;
+                return (false, $"tilte {course.Title} already exists", 0);
             }
             _logger.LogInformation($"Repo : Course created suc+-cessfully with title : {course.Title}");
-            await _courseRepository.AddAsync(course);
-            return true;
+            var courseId = await _courseRepository.AddAsync(course);
+            return (true, null, courseId);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -43,7 +43,12 @@ namespace StudentCourseManagement.Business.Services
 
         public async Task<IEnumerable<Course>> GetAllAsync()
         {
-            return await _courseRepository.GetAllAsync();
+            var courses = await _courseRepository.GetAllAsync();
+            if (!courses.Any() || courses == null)
+            {
+                return Enumerable.Empty<Course>();
+            }
+            return courses;
         }
 
         public async Task<Course?> GetByIdAsync(int id)

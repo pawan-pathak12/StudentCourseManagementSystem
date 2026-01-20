@@ -36,13 +36,13 @@ namespace StudentCourseManagement.API.Controllers
             try
             {
                 var enrollment = _mapper.Map<Enrollment>(createDto);
-                var isCreated = await _enrollmentService.CreateAsync(enrollment);
-                if (!isCreated)
+                var (success, errorMessage, enrollmentId) = await _enrollmentService.CreateAsync(enrollment);
+                if (!success)
                 {
-                    return BadRequest("Enrollment creation fails");
+                    return BadRequest($"Error Message : {errorMessage}");
                 }
                 var responseDto = _mapper.Map<EnrollmentResponseDto>(enrollment);
-                return Ok(responseDto);
+                return CreatedAtAction(nameof(GetById), new { id = enrollmentId }, createDto);
             }
             catch (Exception ex)
             {

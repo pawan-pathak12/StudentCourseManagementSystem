@@ -32,7 +32,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
             using var connection = _dbContext.CreateConnection();
             _logger.LogInformation($"Repo : adding new record of course");
-            var newId = await connection.QuerySingleAsync<int>(sql, course);
+            var newId = await connection.QuerySingleOrDefaultAsync<int>(sql, course);
 
             if (newId > 0)
             {

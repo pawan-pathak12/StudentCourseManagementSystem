@@ -28,34 +28,34 @@ public class PaymentService : IPaymentService
     }
 
     #region CRUD Operations
-    public async Task<bool> CreateAsync(Payment payment)
+    public async Task<(bool success, string? errorMessage, int id)> CreateAsync(Payment payment)
     {
         var student = await _studentRepository.GetByIdAsync(payment.StudentId);
         if (student == null)
         {
             _logger.LogWarning("Payment creation failed: Student with Id {StudentId} not found", payment.StudentId);
-            return false;
+            return (false, $"Student with Id {{StudentId}} not found\", payment.StudentId", 0);
         }
 
         var paymentMethod = await _paymentMethodRepository.GetByIdAsync(payment.PaymentMethodId);
         if (paymentMethod == null)
         {
             _logger.LogWarning("Payment creation failed: PaymentMethod with Id {PaymentMethodId} not found", payment.PaymentMethodId);
-            return false;
+            return (false, $" PaymentMethod with Id {{PaymentMethodId}} not found\", payment.PaymentMethodId", 0);
         }
 
         var invoice = await _invoiceRepository.GetByIdAsync(payment.InvoiceId);
         if (invoice == null)
         {
             _logger.LogWarning("Payment creation failed: Invoice with Id {InvoiceId} not found", payment.InvoiceId);
-            return false;
+            return (false, $"Invoice with Id {{InvoiceId}} not found\", payment.InvoiceId", 0);
         }
 
-        await _paymentRepository.AddAsync(payment);
+        var paymentId = await _paymentRepository.AddAsync(payment);
 
         _logger.LogInformation("Payment created successfully for StudentId {StudentId}, InvoiceId {InvoiceId}, PaymentMethodId {PaymentMethodId}",
             payment.StudentId, payment.InvoiceId, payment.PaymentMethodId);
-        return true;
+        return (true, null, paymentId);
     }
 
     public async Task<bool> DeleteAsync(int paymentId)
@@ -71,7 +71,12 @@ public class PaymentService : IPaymentService
 
     public async Task<IEnumerable<Payment>> GetAllAsync()
     {
-        return await _paymentRepository.GetAllAsync();
+        var payments = await _paymentRepository.GetAllAsync();
+        if (!payments.Any() || payments == null)
+        {
+            return Enumerable.Empty<Payment>();
+        }
+        return payments;
     }
 
     public async Task<Payment?> GetByIdAsync(int paymentId)
@@ -97,7 +102,7 @@ public class PaymentService : IPaymentService
     #endregion
 
     #region Automated Payment Processing 
-    public async Task<(bool success, string ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount)
+    public async Task<(bool success, string? ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount)
     {
         #region Validation
 
@@ -117,7 +122,7 @@ public class PaymentService : IPaymentService
         }
 
         //3. paymentMethod Must exists 
-        var paymentMethodData = await _paymentMethodRepository.GetByIdAsync(paymentMethodId);
+        var paymentMethodData = await _paymentMethodRepository.GetByIdAsync(paymentMethodId);  //gets payment method with condition : id ==id and IsActive==true
         if (paymentMethodData == null)
         {
             _logger.LogWarning("Payment processing failed: Payment method with Id {PaymentMethodId} not found.", paymentMethodId);
@@ -197,7 +202,7 @@ public class PaymentService : IPaymentService
         }
         return (true, null);
     }
-    public async Task<PaymentResultDto> GetPaymentDetailsByInvoiceIdAsync(int invoiceId)
+    public async Task<PaymentResultDto?> GetPaymentDetailsByInvoiceIdAsync(int invoiceId)
     {
         var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
         if (invoice == null)

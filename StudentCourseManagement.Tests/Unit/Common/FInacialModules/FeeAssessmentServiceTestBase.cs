@@ -13,13 +13,13 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
     public class FeeAssessmentServiceTestBase
     {
-        protected InMemoryStudentRepository _studentRepository;
-        protected InMemoryCourseRepository _courseRepository;
-        protected InMemoryEnrollmentRepository _enrollmentRepository;
-        protected InMemoryFeeTemplateRepository _feeTemplateRepository;
-        protected InMemoryFeeAssessmentRepository _assessmentRepository;
-        protected InMemorryInvoiceRepository _invoiceRepository;
-        protected IFeeAssessmentService _feeAssessmentService;
+        protected InMemoryStudentRepository? _studentRepository;
+        protected InMemoryCourseRepository? _courseRepository;
+        protected InMemoryEnrollmentRepository? _enrollmentRepository;
+        protected InMemoryFeeTemplateRepository? _feeTemplateRepository;
+        protected InMemoryFeeAssessmentRepository? _assessmentRepository;
+        protected InMemorryInvoiceRepository? _invoiceRepository;
+        protected IFeeAssessmentService? _feeAssessmentService;
 
 
 
@@ -48,7 +48,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             _courseRepository = new InMemoryCourseRepository(mapper);
             _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
-            _assessmentRepository = new InMemoryFeeAssessmentRepository(mapper);
+            _assessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
             _invoiceRepository = new InMemorryInvoiceRepository(mapper);
 
             // Initialize service

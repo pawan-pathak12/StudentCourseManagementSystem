@@ -31,32 +31,48 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
         }
 
         #region CURD Operations 
-        public async Task<bool> CreateAsync(FeeAssessment feeAssessment)
+        public async Task<(bool success, string? errorMessage, int id)> CreateAsync(FeeAssessment feeAssessment)
         {
             var course = await _courseRepository.GetByIdAsync(feeAssessment.CourseId);
             if (course == null)
             {
-                return false;
+                _logger.LogWarning("FeeAssessment creation failed: Course with Id {CourseId} not found.", feeAssessment.CourseId);
+                return (false, $"Course with Id {feeAssessment.CourseId} not found.", 0);
             }
+
             var enrollment = await _enrollmentRepository.GetByIdAsync(feeAssessment.EnrollmentId);
             if (enrollment == null)
             {
-                return false;
+                _logger.LogWarning("FeeAssessment creation failed: Enrollment with Id {EnrollmentId} not found.", feeAssessment.EnrollmentId);
+                return (false, $"Enrollment with Id {feeAssessment.EnrollmentId} not found.", 0);
             }
+
             var feeTemplate = await _feeTemplateRepository.GetByIdAsync(feeAssessment.FeeTemplateId);
             if (feeTemplate == null)
             {
-                return false;
+                _logger.LogWarning("FeeAssessment creation failed: FeeTemplate with Id {FeeTemplateId} not found.", feeAssessment.FeeTemplateId);
+                return (false, $"FeeTemplate with Id {feeAssessment.FeeTemplateId} not found.", 0);
             }
+
             feeAssessment.IsActive = true;
             feeAssessment.FeeAssessmentStatus = AssessmentStatus.Assessed;
-            await _feeAssessmentRepository.AddAsync(feeAssessment);
-            return true;
+            feeAssessment.AssessmentDate = DateTimeOffset.UtcNow;
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            _logger.LogInformation("FeeAssessment created successfully with Id {FeeAssessmentId} for Course {CourseId}, Enrollment {EnrollmentId}, FeeTemplate {FeeTemplateId}.",
+                feeAssessmentId, feeAssessment.CourseId, feeAssessment.EnrollmentId, feeAssessment.FeeTemplateId);
+
+            return (true, null, feeAssessmentId);
         }
 
         public async Task<IEnumerable<FeeAssessment>> GetAllAsync()
         {
-            return await _feeAssessmentRepository.GetAllAsync();
+            var feeAssessments = await _feeAssessmentRepository.GetAllAsync();
+            if (!feeAssessments.Any() || feeAssessments == null)
+            {
+                return Enumerable.Empty<FeeAssessment>();
+            }
+            return feeAssessments;
         }
 
         public async Task<FeeAssessment?> GetByIdAsync(int feeAssessmentId)
