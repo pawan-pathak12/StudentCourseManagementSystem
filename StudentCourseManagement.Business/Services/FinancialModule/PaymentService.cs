@@ -97,7 +97,7 @@ public class PaymentService : IPaymentService
     #endregion
 
     #region Automated Payment Processing 
-    public async Task<(bool success, string ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount)
+    public async Task<(bool success, string? ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount)
     {
         #region Validation
 
@@ -117,7 +117,7 @@ public class PaymentService : IPaymentService
         }
 
         //3. paymentMethod Must exists 
-        var paymentMethodData = await _paymentMethodRepository.GetByIdAsync(paymentMethodId);
+        var paymentMethodData = await _paymentMethodRepository.GetByIdAsync(paymentMethodId);  //gets payment method with condition : id ==id and IsActive==true
         if (paymentMethodData == null)
         {
             _logger.LogWarning("Payment processing failed: Payment method with Id {PaymentMethodId} not found.", paymentMethodId);
@@ -197,7 +197,7 @@ public class PaymentService : IPaymentService
         }
         return (true, null);
     }
-    public async Task<PaymentResultDto> GetPaymentDetailsByInvoiceIdAsync(int invoiceId)
+    public async Task<PaymentResultDto?> GetPaymentDetailsByInvoiceIdAsync(int invoiceId)
     {
         var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
         if (invoice == null)

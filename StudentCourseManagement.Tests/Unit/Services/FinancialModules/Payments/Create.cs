@@ -124,21 +124,36 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
 
         #endregion
 
-        #region Payment Processing Tests 
+        #region Phase 4 : Payment Processing Tests 
         [TestMethod]
         public async Task ProcessPaymentAsync_WithValidData_ReturnsTrue()
         {
+            //Arrange
+            int studentId = 1;
+            var invoiceId = await CreateInvoiceAsync(studentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var amountPaid = 1000;
+            //Act 
+            var (success, errorMessage) = await _paymentService.ProcessPaymentAsync(invoiceId, paymentMethodId, amountPaid);
 
+            //Assert 
+            Assert.IsTrue(success);
+            Assert.IsNull(errorMessage);
         }
 
         [TestMethod]
         public async Task ProcessPaymentAsync_WithNoExistingInvoiceId_ReturnsFalse()
         {
             //Arrange
-
+            int invoiceId = 999999;
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var amountPaid = 1000;
             //Act 
+            var (success, errorMessage) = await _paymentService.ProcessPaymentAsync(invoiceId, paymentMethodId, amountPaid);
 
             //Assert 
+            Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
 
         }
 
@@ -146,10 +161,60 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
         public async Task ProcessPaymentAsync_IfInvoiceIsNotPayable_ReturnsFalse()
         {
             //Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
+            var feeTemplate = new FeeTemplate
+            {
+                CourseId = courseId,
+                CalculationType = CalculationType.FlatAmount,
+                Amount = 2000,
+                IsActive = true,
+                Name = "Lab fee",
+                RatePerCredit = 0
+            };
+
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessment
+            {
+                CourseId = courseId,
+                EnrollmentId = enrollmentId,
+                FeeTemplateId = feeTemplateId,
+                IsActive = true,
+                FeeAssessmentStatus = AssessmentStatus.Assessed,
+                Amount = feeTemplate.Amount,
+                DueDate = DateTimeOffset.UtcNow.AddDays(10),
+            };
+
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new Invoice
+            {
+                CourseId = courseId,
+                StudentId = studentId,
+                FeeAssessmentId = feeAssessmentId,
+                BalanceDue = feeAssessment.Amount,
+                AmountPaid = 0,
+                InvoiceNumber = $"INV-.....",
+                IsActive = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                InvoiceStatus = InvoiceStatus.Cancelled,
+                TotalAmount = feeTemplate.Amount,
+                DueDate = feeAssessment.DueDate,
+            };
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            decimal amountPaid = 1000;
 
             //Act 
+            var (sucess, errorMessage) = await _paymentService.ProcessPaymentAsync(invoiceId, paymentMethodId, amountPaid);
 
             //Assert 
+            Assert.IsFalse(sucess);
+            Assert.IsNotNull(errorMessage);
         }
         [TestMethod]
         public async Task ProcessPaymentAsync_IfPaymentMethodNotFound_ReturnsFalse()
@@ -220,6 +285,25 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
         #endregion
 
         #region Private Helper Methods
+        private async Task<int> CreateCourseAsync()
+        {
+            var course = new Course
+            {
+                Code = "A112A",
+                Title = "Introduction to Computer Science",
+                Credits = 3,
+                Description = "Basic concepts of programming, algorithms, and problem-solving.",
+                Instructor = "Dr. Sharma",
+                StartDate = DateTimeOffset.UtcNow.AddDays(25),
+                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
+                IsActive = true,
+                Capacity = 20,
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(5),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(15)
+            };
+
+            return await _courseRepository.AddAsync(course);
+        }
         private async Task<int> CreateStudentAsync()
         {
             var student = new Student
@@ -252,7 +336,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
                 AmountPaid = 0,
                 BalanceDue = 0,
                 UpdatedAt = DateTimeOffset.UtcNow,
-                Discount = 0
+                Discount = 0,
             };
             return await _invoiceRepository.AddAsync(invoice);
         }

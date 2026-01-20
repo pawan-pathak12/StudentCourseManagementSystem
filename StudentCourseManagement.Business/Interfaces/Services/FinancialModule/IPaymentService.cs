@@ -14,8 +14,8 @@ namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
 
         #endregion
 
-        Task<(bool success, string ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount);
-        Task<PaymentResultDto> GetPaymentDetailsByInvoiceIdAsync(int invoiceId);
+        Task<(bool success, string? ErrorMessage)> ProcessPaymentAsync(int invoiceId, int paymentMethodId, decimal paidAmount);
+        Task<PaymentResultDto?> GetPaymentDetailsByInvoiceIdAsync(int invoiceId);
 
 
     }
