@@ -31,15 +31,15 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             }
 
             var invoiceLineItem = _mapper.Map<InvoiceLineItem>(lineItemDto);
-            var isCreated = await _lineItemService.CreateAsync(invoiceLineItem);
+            var (success, errorMessage, lineItemId) = await _lineItemService.CreateAsync(invoiceLineItem);
 
-            if (!isCreated)
+            if (!success)
             {
                 _logger.LogWarning($"Failed to create InvoiceLineItem for Invoice Id {invoiceLineItem.InvoiceId}");
-                return BadRequest("Failed to create InvoiceLineItem");
+                return BadRequest($"Error Meaage : {errorMessage}");
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = invoiceLineItem.InvoiceId }, invoiceLineItem);
+            return CreatedAtAction(nameof(GetById), new { id = lineItemId }, invoiceLineItem);
         }
         #endregion
 

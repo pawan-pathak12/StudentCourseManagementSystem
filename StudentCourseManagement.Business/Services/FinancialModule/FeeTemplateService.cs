@@ -20,16 +20,16 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
         }
 
         #region CURD Operation
-        public async Task<bool> CreateAsync(FeeTemplate feeTemplate)
+        public async Task<(bool success, string? errorMessage, int id)> CreateAsync(FeeTemplate feeTemplate)
         {
             var course = await _courseRepository.GetByIdAsync(feeTemplate.CourseId);
             if (course == null)
             {
                 _logger.LogWarning($"Course with Id {feeTemplate.CourseId} is inactive or not found");
-                return false;
+                return (true, $"Course with Id {feeTemplate.CourseId} is inactive or not found", 0);
             }
-            await _feeTemplateRepository.AddAsync(feeTemplate);
-            return true;
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+            return (true, null, feeTemplateId);
         }
 
         public async Task<bool> DeleteAsync(int feeTemplateId)
@@ -45,7 +45,12 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
         public async Task<IEnumerable<FeeTemplate>> GetAllAsync()
         {
-            return await _feeTemplateRepository.GetAllAsync();
+            var feeTemplates = await _feeTemplateRepository.GetAllAsync();
+            if (!feeTemplates.Any() || feeTemplates == null)
+            {
+                return Enumerable.Empty<FeeTemplate>();
+            }
+            return feeTemplates;
         }
 
         public async Task<FeeTemplate?> GetByIdAsync(int feeTemplateId)

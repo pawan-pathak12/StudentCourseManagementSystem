@@ -12,15 +12,15 @@ namespace StudentCourseManagement.Business.Services
         {
             _repository = repository;
         }
-        public async Task<bool> CreateAsync(Student student)
+        public async Task<(bool success, string? errorMessage, int id)> CreateAsync(Student student)
         {
             var emailExists = await _repository.EmailExistsAsync(student.Email);
             if (emailExists)
             {
-                return false;
+                return (false, $"Email already Exists", 0);
             }
-            await _repository.AddAsync(student);
-            return true;
+            var studentId = await _repository.AddAsync(student);
+            return (true, null, studentId);
         }
 
         public async Task<bool> DeleteAsync(int id)
@@ -43,7 +43,7 @@ namespace StudentCourseManagement.Business.Services
             var students = await _repository.GetAllAsync();
             if (!students.Any() || students == null)
             {
-                return null;
+                return Enumerable.Empty<Student>();
             }
             return students;
         }

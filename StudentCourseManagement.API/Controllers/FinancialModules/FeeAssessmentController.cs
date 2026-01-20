@@ -49,16 +49,16 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             }
 
             var feeAssessment = _mapper.Map<FeeAssessment>(createFeeAssessment);
-            var isCreated = await _feeAssessmentService.CreateAsync(feeAssessment);
+            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
 
-            if (!isCreated)
+            if (!success)
             {
                 _logger.LogWarning("Failed to create FeeAssessment for EnrollmentId {EnrollmentId}, CourseId {CourseId}",
                     feeAssessment.EnrollmentId, feeAssessment.CourseId);
-                return BadRequest("Failed to create FeeAssessment");
+                return BadRequest($"Error Meaage : {errorMessage}");
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = feeAssessment.FeeAssessmentId }, feeAssessment);
+            return CreatedAtAction(nameof(GetById), new { id = feeAssessmentId }, createFeeAssessment);
         }
         #endregion
 

@@ -35,7 +35,12 @@ public class PaymentMethodService : IPaymentMethodService
 
     public async Task<IEnumerable<PaymentMethod>> GetAllAsync()
     {
-        return await _paymentMethodRepository.GetAllAsync();
+        var paymentMethod = await _paymentMethodRepository.GetAllAsync();
+        if (!paymentMethod.Any() || paymentMethod == null)
+        {
+            return Enumerable.Empty<PaymentMethod>();
+        }
+        return paymentMethod;
     }
 
     public async Task<PaymentMethod?> GetByIdAsync(int paymentMethodId)

@@ -6,7 +6,7 @@ namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
     public interface IPaymentService
     {
         #region CURD Operations 
-        Task<bool> CreateAsync(Payment payment);
+        Task<(bool success, string? errorMessage, int id)> CreateAsync(Payment payment);
         Task<IEnumerable<Payment>> GetAllAsync();
         Task<Payment?> GetByIdAsync(int PaymentId);
         Task<bool> UpdateAsync(int paymentId, Payment payment);

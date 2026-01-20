@@ -30,15 +30,14 @@ namespace StudentCourseManagement.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
         {
             var student = _mapper.Map<Student>(createStudentDto);
-            var isCreated = await _studentService.CreateAsync(student);
-            if (!isCreated)
+            var (success, errorMessage, studentId) = await _studentService.CreateAsync(student);
+            if (!success)
             {
-                return BadRequest();
+                return BadRequest($"Error Message : {errorMessage}");
             }
 
             _logger.LogInformation("API Response : Created now student data");
-            return Ok("Student Record Added");
-
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = studentId }, createStudentDto);
         }
         #endregion
 

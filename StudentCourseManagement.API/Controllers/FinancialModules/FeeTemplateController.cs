@@ -30,12 +30,12 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             }
 
             var feeTemplate = _mapper.Map<FeeTemplate>(createFeeTemplate);
-            var isCreated = await _feeTemplateService.CreateAsync(feeTemplate);
+            var (succes, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
 
-            if (!isCreated)
+            if (!succes)
             {
                 _logger.LogWarning($"Failed to create feeTemplate for courseId {feeTemplate.CourseId}");
-                return BadRequest("Failed to create FeeTemplate");
+                return BadRequest($"Error Meaage : {errorMessage}");
             }
 
             return CreatedAtAction(nameof(GetById), new { id = feeTemplate.FeeTemplateId }, feeTemplate);
