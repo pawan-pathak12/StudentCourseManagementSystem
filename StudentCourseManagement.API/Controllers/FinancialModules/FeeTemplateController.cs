@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.FInancialModule.feeTemplates;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
@@ -22,6 +23,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
         #region HttpPost Endpoint
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateFeeTemplateDto createFeeTemplate)
         {
             if (!ModelState.IsValid)
@@ -44,6 +46,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpGet Endpoint
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             var feeTemplates = await _feeTemplateService.GetAllAsync();
@@ -51,6 +54,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var feeTemplate = await _feeTemplateService.GetByIdAsync(id);
@@ -65,6 +69,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpPut Endpoint
         [HttpPut("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFeeTemplateDto updateFeeTemplate)
         {
             if (!ModelState.IsValid)
@@ -87,6 +92,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpDelete Endpoint
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             var isDeleted = await _feeTemplateService.DeleteAsync(id);

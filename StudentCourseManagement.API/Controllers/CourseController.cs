@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.Courses;
 using StudentCourseManagement.Business.Interfaces.Services;
@@ -26,6 +27,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region httpPost
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
         {
             if (!ModelState.IsValid)
@@ -60,6 +62,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region httpget
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -80,6 +83,7 @@ namespace StudentCourseManagement.API.Controllers
 
         // GET: api/course/5
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -106,6 +110,7 @@ namespace StudentCourseManagement.API.Controllers
         #endregion
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto updateCourseDto)
         {
             if (!ModelState.IsValid)
@@ -141,6 +146,7 @@ namespace StudentCourseManagement.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try

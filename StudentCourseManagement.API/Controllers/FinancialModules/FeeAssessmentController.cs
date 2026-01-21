@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.FInancialModule.FeeAssessments;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
@@ -25,6 +26,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region Automated 
         [HttpPost("assess/{enrollmentId}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> AssessFee(int enrollmentId)
         {
             var (success, errorMessage) = await _feeAssessmentService.AssessFee(enrollmentId);
@@ -41,6 +43,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region Manual 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateFeeAssessmentDto createFeeAssessment)
         {
             if (!ModelState.IsValid)
@@ -66,6 +69,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpGet Endpoint
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             var feeAssessments = await _feeAssessmentService.GetAllAsync();
@@ -73,6 +77,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var feeAssessment = await _feeAssessmentService.GetByIdAsync(id);
@@ -87,6 +92,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpPut Endpoint
         [HttpPut("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFeeAssessmentDto updateFeeAssessment)
         {
             if (!ModelState.IsValid)
@@ -109,6 +115,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpDelete Endpoint
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             var isDeleted = await _feeAssessmentService.DeleteAsync(id);

@@ -23,10 +23,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
                 IsActive = true
             };
             //Act 
-            var result = await _feeTemplateService.CreateAsync(feeTemplate);
+            var (sucess, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
 
             //Assert 
-            Assert.IsTrue(result);
+            Assert.IsTrue(sucess);
 
             var feeTemplateData = await _feeTemplateRepository.GetByIdAsync(1);
             Assert.IsNotNull(feeTemplateData);
@@ -45,10 +45,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
             };
 
             //Act
-            var result = await _feeTemplateService.CreateAsync(feeTemplate);
+            var (sucess, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
 
             //Assert 
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
 
         }
 

@@ -48,10 +48,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
             };
 
             //Act 
-            var isCreated = await _studentService.CreateAsync(student2);
+            var (success, errorMessage, studentId) = await _studentService.CreateAsync(student2);
 
             //Assert 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace StudentCourseManagement.Business.Services
                 audience: jwtSettings["Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(
-                    double.Parse(jwtSettings["ExpiresMinutes"]!)
+                    double.Parse(jwtSettings["ExpiresInMinutes"]!)
                     ),
                 signingCredentials: creds
                 );

@@ -34,9 +34,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
                 UpdatedAt = DateTimeOffset.UtcNow,
                 Discount = 0
             };
-            var result = await _invoiceService.CreateAsync(invoice);
+            var (sucess, errorMessage, invoiceId) = await _invoiceService.CreateAsync(invoice);
 
-            Assert.IsTrue(result);
+            Assert.IsTrue(sucess);
 
         }
         [TestMethod]
@@ -76,9 +76,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
                 Discount = 0
             };
             //Act 
-            var result = await _invoiceService.CreateAsync(invoice);
+            var (sucess, errorMessage, invoiceId) = await _invoiceService.CreateAsync(invoice);
             //result
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
         }
         [TestMethod]
         public async Task CreateAsync_IfNStudentIdMissing_ReturnsFalse()
@@ -118,9 +118,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
                 CourseId = courseId
             };
             //Act 
-            var result = await _invoiceService.CreateAsync(invoice);
+            var (sucess, errorMessage, invoiceId) = await _invoiceService.CreateAsync(invoice);
             //result
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
 
         }
         [TestMethod]
@@ -149,9 +149,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
                 CourseId = courseId
             };
             //Act 
-            var result = await _invoiceService.CreateAsync(invoice);
+            var (sucess, errorMessage, invoiceId) = await _invoiceService.CreateAsync(invoice);
             //result
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
         }
 
         #region Private Helper Methods

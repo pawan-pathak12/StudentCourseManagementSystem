@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.FInancialModule.InvoiceLineItems;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
@@ -23,6 +24,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpPost Endpoint
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateInvoiceLineItemDto lineItemDto)
         {
             if (!ModelState.IsValid)
@@ -45,6 +47,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpGet Endpoint
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             var invoiceLineItems = await _lineItemService.GetAllAsync();
@@ -52,6 +55,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var invoiceLineItem = await _lineItemService.GetByIdAsync(id);
@@ -66,6 +70,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpPut Endpoint
         [HttpPut("{id}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateInvoiceLineItemDto updateInvoiceLineItemDto)
         {
             if (!ModelState.IsValid)
@@ -88,6 +93,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
 
         #region HttpDelete Endpoint
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
             var isDeleted = await _lineItemService.DeleteAsync(id);

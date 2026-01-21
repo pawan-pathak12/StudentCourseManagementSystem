@@ -33,10 +33,11 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
 
             //Act 
 
-            var result = await _feeAssessmentService.CreateAsync(feeAssessment);
+            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
 
             //Assert 
-            Assert.IsTrue(result);
+            Assert.IsTrue(success);
+            Assert.IsNull(errorMessage);
 
             var saved = await _feeAssessmentService.GetByIdAsync(1);
             Assert.IsNotNull(saved);
@@ -75,10 +76,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
 
             //Act 
 
-            var result = await _feeAssessmentService.CreateAsync(feeAssessment);
+            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
 
             //Assert 
-            Assert.IsFalse(result);
+            Assert.IsFalse(success);
 
             var saved = await _feeAssessmentService.GetByIdAsync(feeAssessment.FeeAssessmentId + 1);
             Assert.IsNull(saved);
@@ -99,10 +100,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             };
 
             //Act 
-            var isCreated = await _feeAssessmentService.CreateAsync(feeAssessment);
+            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
 
             //Assert 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
         }
 
         [TestMethod]
@@ -121,10 +122,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             };
 
             //Act 
-            var isCreated = await _feeAssessmentService.CreateAsync(feeAssessment);
+            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
 
             //Assert 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
 
         }
         #endregion

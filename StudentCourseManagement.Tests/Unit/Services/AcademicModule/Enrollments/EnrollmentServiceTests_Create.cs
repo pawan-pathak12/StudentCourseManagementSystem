@@ -36,9 +36,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             };
             //Act 
 
-            var isCreated = await _service.CreateAsync(enrollment);
+            var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment);
             //Assert 
-            Assert.IsTrue(isCreated);
+            Assert.IsTrue(success);
         }
 
         [TestMethod]
@@ -73,11 +73,11 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             };
 
             //Act 
-            var isCreated = await _service.CreateAsync(enrollment2);
+            var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment2);
 
             //Assert 
 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
 
         }
 
@@ -120,11 +120,11 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             };
 
             //Act 
-            var isCreated = await _service.CreateAsync(enrollment2);
+            var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment2);
 
             //Assert 
 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
         }
 
         [TestMethod]
@@ -247,15 +247,15 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             for (int i = 1; i <= 6; i++)
             {
                 var enrollment = new Enrollment { StudentId = 3, CourseId = i };
-                var isCreated = await _service.CreateAsync(enrollment);
+                var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment);
 
                 if (i < 6)
                 {
-                    Assert.IsTrue(isCreated);
+                    Assert.IsTrue(success);
                 }
                 else
                 {
-                    Assert.IsFalse(isCreated);
+                    Assert.IsFalse(success);
                 }
             }
 
@@ -291,9 +291,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             };
 
             //Act 
-            var isCreated = await _service.CreateAsync(enrollment);
+            var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment);
 
-            Assert.IsFalse(isCreated);
+            Assert.IsFalse(success);
         }
     }
 }

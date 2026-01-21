@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.Students;
 using StudentCourseManagement.Business.Interfaces.Services;
@@ -27,6 +28,7 @@ namespace StudentCourseManagement.API.Controllers
         #region HttpPost
 
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
         {
             var student = _mapper.Map<Student>(createStudentDto);
@@ -44,6 +46,7 @@ namespace StudentCourseManagement.API.Controllers
         #region HttpGet
 
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
 
@@ -57,7 +60,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region GetById
         [HttpGet("{id}")]
-
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
             _logger.LogInformation($"API request : GET student with ID {id}");
@@ -76,7 +79,7 @@ namespace StudentCourseManagement.API.Controllers
         #region HttpPut
 
         [HttpPut]
-
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> UpdateAsync([FromBody] UpdateStudentDto updateStudentDto)
         {
             var student = _mapper.Map<Student>(updateStudentDto);
@@ -97,6 +100,7 @@ namespace StudentCourseManagement.API.Controllers
         #region HttpDelete 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
 

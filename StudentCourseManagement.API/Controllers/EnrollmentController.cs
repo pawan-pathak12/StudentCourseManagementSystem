@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.Enrollments;
 using StudentCourseManagement.Business.Interfaces.Services;
@@ -26,6 +27,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region POST - Create Enrollment
         [HttpPost]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateEnrollmentDto createDto)
         {
             if (!ModelState.IsValid)
@@ -55,6 +57,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region GET - Get All Enrollments
         [HttpGet]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -75,6 +78,7 @@ namespace StudentCourseManagement.API.Controllers
         #region GET - Get Enrollment By Id
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -99,6 +103,7 @@ namespace StudentCourseManagement.API.Controllers
 
         #region PUT - Update Enrollment
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateEnrollmentDto updateDto)
         {
             if (!ModelState.IsValid)
@@ -135,6 +140,7 @@ namespace StudentCourseManagement.API.Controllers
         #region DELETE - Soft Delete Enrollment
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try

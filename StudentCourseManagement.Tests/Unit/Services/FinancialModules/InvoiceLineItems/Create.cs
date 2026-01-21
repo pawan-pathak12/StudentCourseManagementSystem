@@ -25,10 +25,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
             };
 
             //act 
-            var result = await _invoiceLineItemService.CreateAsync(lineItem);
+            var (success, errorMessage, linetemId) = await _invoiceLineItemService.CreateAsync(lineItem);
 
             //assert
-            Assert.IsTrue(result);
+            Assert.IsTrue(success);
         }
         [TestMethod]
         public async Task CreateAsync_WhenCourseIdMissing_ReturnFalse()
@@ -47,10 +47,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
             };
 
             //act 
-            var result = await _invoiceLineItemService.CreateAsync(lineItem);
+            var (success, errorMessage, linetemId) = await _invoiceLineItemService.CreateAsync(lineItem);
 
             //assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(success);
         }
 
         [TestMethod]
@@ -67,10 +67,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
             };
 
             //act 
-            var result = await _invoiceLineItemService.CreateAsync(lineItem);
+            var (success, errorMessage, linetemId) = await _invoiceLineItemService.CreateAsync(lineItem);
 
             //assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(success);
         }
 
         [TestMethod]
@@ -87,10 +87,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
             };
 
             //act 
-            var result = await _invoiceLineItemService.CreateAsync(lineItem);
+            var (success, errorMessage, linetemId) = await _invoiceLineItemService.CreateAsync(lineItem);
 
             //assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(success);
         }
 
         #region private helper methods

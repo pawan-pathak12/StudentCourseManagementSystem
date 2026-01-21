@@ -15,14 +15,14 @@ namespace StudentCourseManagement.API.Controllers
         private readonly IAuthService _authService;
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly PasswordHasher<User> _passwordHasher;
 
-        public AuthController(IAuthService authService, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IPasswordHasher<User> passwordHasher)
+        public AuthController(IAuthService authService, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
         {
             this._authService = authService;
             this._userRepository = userRepository;
             this._refreshTokenRepository = refreshTokenRepository;
-            this._passwordHasher = passwordHasher;
+            this._passwordHasher = new PasswordHasher<User>();
         }
 
         #region HttpPost - Register User
@@ -56,6 +56,7 @@ namespace StudentCourseManagement.API.Controllers
         #endregion
 
         #region httpGet - EndPoint 
+
         [Authorize(Roles = "Admin")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllAsync()
@@ -109,7 +110,7 @@ namespace StudentCourseManagement.API.Controllers
             // save to db 
             await _refreshTokenRepository.AddAsync(refreshToken);
 
-            return Ok(new { accessToken = accesstoken, refreshToken = refreshToken });
+            return Ok(new { accessToken = accesstoken, refreshToken = refreshToken.Token });
 
         }
         #endregion

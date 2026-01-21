@@ -33,10 +33,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             };
 
             // Act
-            var result = await _paymentService.CreateAsync(payment);
+            var (sucess, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);
 
             // Assert
-            Assert.IsTrue(result);
+            Assert.IsTrue(sucess);
         }
 
         [TestMethod]
@@ -60,10 +60,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             };
 
             // Act
-            var result = await _paymentService.CreateAsync(payment);
+            var (sucess, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
         }
 
         [TestMethod]
@@ -88,10 +88,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             };
 
             // Act
-            var result = await _paymentService.CreateAsync(payment);
+            var (sucess, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
         }
 
         [TestMethod]
@@ -116,10 +116,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             };
 
             // Act
-            var result = await _paymentService.CreateAsync(payment);
+            var (sucess, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsFalse(sucess);
         }
 
         #endregion
