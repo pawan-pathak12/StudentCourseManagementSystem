@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.Application.DTOs.DTOs.Enrollments;
+using StudentCourseManagement.Application.DTOs.Enrollments;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Domain.Entities;
 

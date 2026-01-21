@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.Application.DTOs.DTOs.Auth;
-using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
+using StudentCourseManagement.Application.DTOs.Auth;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Business.Services;
 using StudentCourseManagement.Domain.Entities;
 
@@ -116,7 +115,7 @@ namespace StudentCourseManagement.API.Controllers
         #endregion
 
         #region Refresh Token 
-
+        [HttpPost("refresh")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto request)
         {
             // check if token exists in db or not 

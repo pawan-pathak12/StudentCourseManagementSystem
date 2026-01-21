@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

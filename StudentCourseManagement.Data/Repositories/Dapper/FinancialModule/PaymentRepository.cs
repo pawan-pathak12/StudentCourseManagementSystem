@@ -139,7 +139,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         #endregion
 
         #region Phase 4  : 
-        public async Task<Payment> GetByInvoiceIdAsync(int invoiceId)
+        public async Task<Payment?> GetByInvoiceIdAsync(int invoiceId)
         {
             const string sql = @"select p.*
                             from Payments p

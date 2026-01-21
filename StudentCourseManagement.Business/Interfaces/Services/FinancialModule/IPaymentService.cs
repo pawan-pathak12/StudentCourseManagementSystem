@@ -1,4 +1,4 @@
-﻿using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Payments;
+﻿using StudentCourseManagement.Application.DTOs.FInancialModule.Payments;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule

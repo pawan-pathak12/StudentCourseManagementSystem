@@ -2,11 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
-using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
-using StudentCourseManagement.Data.Repositories.Dapper.Identity;
+using StudentCourseManagement.Data.Repositories.Dapper.Identities;
 
 namespace StudentCourseManagement.Data
 {

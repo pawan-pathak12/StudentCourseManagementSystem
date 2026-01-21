@@ -1,10 +1,10 @@
 ﻿using Dapper;
-using StudentCourseManagement.Application.DTOs.DTOs.Auth;
-using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
+using StudentCourseManagement.Application.DTOs.Auth;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities;
 
-namespace StudentCourseManagement.Data.Repositories.Dapper.Identity
+namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
 {
     public class RefreshTokenRepository : IRefreshTokenRepository
     {

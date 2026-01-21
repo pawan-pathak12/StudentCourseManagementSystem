@@ -1,10 +1,10 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
-using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities;
 
-namespace StudentCourseManagement.Data.Repositories.Dapper.Identity
+namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
 {
     public class UserRepository : IUserRepository
     {
@@ -42,6 +42,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identity
             return result;
         }
 
+        public Task<IEnumerable<User>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<User?> GetByEmailAddressAsync(string? email)
         {
             const string sql = @"Select * from Users where Email=@Email";
@@ -52,6 +57,11 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identity
                 _logger.LogWarning("Email don't exists");
             }
             return user;
+        }
+
+        public Task<User?> GetByIdAsync(int userId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

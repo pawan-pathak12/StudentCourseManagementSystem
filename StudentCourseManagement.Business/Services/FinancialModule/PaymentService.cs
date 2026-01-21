@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Payments;
+using StudentCourseManagement.Application.DTOs.FInancialModule.Payments;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;

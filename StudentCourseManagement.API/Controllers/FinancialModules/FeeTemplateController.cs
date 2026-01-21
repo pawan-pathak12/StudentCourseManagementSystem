@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.feeTemplates;
+using StudentCourseManagement.Application.DTOs.FInancialModule.feeTemplates;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 

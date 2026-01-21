@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using StudentCourseManagement.Application.DTOs.DTOs.FInancialModule.Invoices;
+using StudentCourseManagement.Application.DTOs.FInancialModule.Invoices;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Business.Mapping.FinancialModule

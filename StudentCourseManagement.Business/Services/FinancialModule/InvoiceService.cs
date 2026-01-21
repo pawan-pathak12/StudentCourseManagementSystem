@@ -24,29 +24,29 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
         }
 
         #region CURD Operation
-        public async Task<bool> CreateAsync(Invoice invoice)
+        public async Task<(bool success, string? errorMessage, int id)> CreateAsync(Invoice invoice)
         {
             var student = await _courseRepository.GetByIdAsync(invoice.StudentId);
             if (student == null)
             {
                 _logger.LogWarning($"Student with Id {invoice.StudentId} not found");
-                return false;
+                return (false, $"", 0);
             }
             var course = await _courseRepository.GetByIdAsync(invoice.CourseId);
             if (course == null)
             {
                 _logger.LogWarning($"Course with Id {invoice.CourseId} not found");
-                return false;
+                return (false, $"", 0);
             }
             var feeAssessment = await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
             if (feeAssessment == null)
             {
                 _logger.LogWarning($"FeeAssessment with Id {invoice.FeeAssessmentId} not found");
-                return false;
+                return (false, $"", 0);
             }
 
-            await _invoiceRepository.AddAsync(invoice);
-            return true;
+            var invocieId = await _invoiceRepository.AddAsync(invoice);
+            return (true, null, invocieId);
         }
 
         public async Task<bool> DeleteAsync(int invoiceId)
