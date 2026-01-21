@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using StudentCourseManagement.Application.DTOs.DTOs.Auth;
 using StudentCourseManagement.Business.Interfaces.Repositories.Identity;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities;
@@ -27,19 +28,40 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identity
 
         }
 
-        public async Task<string> GetStoredTokenAsync(string token)
+        public async Task<RefreshTokenWithUserDto?> GetRefreshTokenWithUserAsync(string token)
         {
-            const string sql = @" SELECT Token
-                             FROM RefreshTokens
-                              WHERE Token = @Token
-                              AND IsRevoked = 0;";
+            const string sql = @"select * 
+                            from Users u
+                            inner join RefreshTokens rf on u.UserId = rf.UserId
+                            where rf.IsRevoked=0 and rf.Token=@Token";
 
             using var connection = _dbContext.CreateConnection();
 
-            var StoredToken = await connection.QueryFirstOrDefaultAsync<string>(sql, new { Token = token });
-            return token;
+            var result = await connection.QueryAsync<RefreshTokenWithUserDto>(sql, new { Token = token });
+            return result.FirstOrDefault();
 
+        }
+        public async Task<RefreshToken?> GetByTokenAsync(string token)
+        {
+            const string sql = @" SELECT * FROM RefreshTokens
+                            WHERE Token = @Token AND IsRevoked = 0;";
+            using var connection = _dbContext.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<RefreshToken>(sql, new { Token = token });
+            return result;
+        }
+        public async Task<int> UpdateAsync(RefreshToken refreshToken)
+        {
+            const string sql = @" UPDATE RefreshTokens
+                            SET ExpiresAt = @ExpiresAt,
+                                RevokedAt = @RevokedAt,
+                                IsRevoked = @IsRevoked,
+                                ReplacedByToken = @ReplacedByToken
+                            WHERE RefreshTokenId = @RefreshTokenId;";
 
+            using var connection = _dbContext.CreateConnection();
+            var rowsAffected = await connection.ExecuteAsync(sql, refreshToken);
+
+            return rowsAffected;
         }
     }
 }
