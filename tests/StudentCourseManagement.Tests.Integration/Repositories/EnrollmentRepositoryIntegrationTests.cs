@@ -7,11 +7,26 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories
 {
     [TestClass]
+    [DoNotParallelize]
     public class EnrollmentRepositoryIntegrationTests
     {
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
         private readonly EnrollmentRepository _enrollmentRepository;
+        private TransactionScope _scope;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose(); // rollback
+        }
+
         public EnrollmentRepositoryIntegrationTests()
         {
             var fixture = new DatabaseFixture();
@@ -31,7 +46,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task AddAsync_WithValidData_InsertData()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
 
@@ -46,7 +60,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetAll_IfNotNull_ReturnEnrollments()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             await CreateEnrollmentAsync(studentId, courseId);
@@ -61,7 +74,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetAll_WithExistingData_ReturnEnrollment()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -74,7 +86,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task Update_WithExistingId_ReturnTrue()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -102,7 +113,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task DeleteAsync_WithExistingData_ReturnsFalse()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -124,7 +134,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task ExistsAsync_WithExistingEnrollment_ReturnsTrue()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -140,14 +149,15 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetEnrollmentCountByCourse_ReturnInteger()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
+            //Arrange 
+            var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
-
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            //Act
             var count = await _enrollmentRepository.GetEnrollmentCountByCourse(courseId);
 
-            //Act 
-            Assert.IsTrue(count >= 0);
+            //Assert 
+            Assert.IsGreaterThan(0, count);
 
         }
 
@@ -155,14 +165,13 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetEnrollmentCountByStudent_ReturnInteger()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
-
-
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            //Act
             var count = await _enrollmentRepository.GetEnrollmentCountByStudent(studentId);
-
-            Assert.IsTrue(count >= 0);
-
+            //Assert
+            Assert.IsGreaterThan(0, count);
 
         }
         #endregion
@@ -172,7 +181,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task UpdateFeeAssessedDateAsync_WithExistingEnrollmentId_ReturnTrue()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);

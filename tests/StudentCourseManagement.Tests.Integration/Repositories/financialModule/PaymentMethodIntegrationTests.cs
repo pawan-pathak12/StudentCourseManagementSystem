@@ -8,9 +8,24 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
+    [DoNotParallelize]
     public class PaymentMethodIntegrationTests
     {
         private readonly PaymentMethodRepository _paymentMethodRepository;
+        private TransactionScope _scope;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose(); // rollback
+        }
+
         public PaymentMethodIntegrationTests()
         {
             var dbfixture = new DatabaseFixture();
@@ -22,10 +37,11 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task AddAsync_WithValid_InsertsRowAndReturnsId()
         {
-            using var tanscationScoped = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            //Arrange and Act
             var paymentMethodId = await CreatePaymentMethodAsync();
 
-            Assert.IsTrue(paymentMethodId > 0);
+            //Assert
+            Assert.IsGreaterThan(0, paymentMethodId);
 
         }
 
@@ -33,7 +49,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GettAllAsync_IfNotNullThen_ReturnListOf()
         {
             //Arrange 
-            using var tanscationScoped = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             await CreatePaymentMethodAsync();
 
             //Act 
@@ -47,7 +62,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
             //Arrange 
-            using var tanscationScoped = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var paymentMethodId = await CreatePaymentMethodAsync();
 
             var updated = new PaymentMethod
@@ -73,7 +87,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
             //Arrange 
-            using var tanscationScoped = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var paymentMethodId = await CreatePaymentMethodAsync();
 
             //Act 

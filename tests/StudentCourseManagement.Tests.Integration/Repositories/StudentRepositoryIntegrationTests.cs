@@ -7,33 +7,45 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories
 {
     [TestClass]
+    [DoNotParallelize]
     public class StudentRepositoryIntegrationTests
     {
         private readonly StudentRepository _repository;
+        private TransactionScope _scope;
         public StudentRepositoryIntegrationTests()
         {
             var fixture = new DatabaseFixture();
             var loggerMock = new Mock<ILogger<StudentRepository>>();
             _repository = new StudentRepository(fixture.DbContext, loggerMock.Object);
         }
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose(); // rollback
+        }
         [TestMethod]
         public async Task Create_WithValidStudent_InsertRecord()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Act
             var studentId = await CreateStudentAsync();
 
-            // Assert
-            Assert.IsTrue(studentId > 0);
+            // Asser
+            Assert.IsGreaterThan(0, studentId);
         }
 
         [TestMethod]
         public async Task GetAllAsync_ReturnsListOfStudentData()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             await CreateStudentAsync();
             //Act 
@@ -47,7 +59,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetByIdAsync_WithExisintgId_ReturnsStudentRecord()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
 
             //Act 
@@ -63,7 +74,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             var studentId = await CreateStudentAsync();
             var updateStudentData = new Student
@@ -91,7 +101,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task DeleteAsync_WithActiveAndExistingId_ReturnsTrue()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             var studentId = await CreateStudentAsync();
 
@@ -107,8 +116,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task IsStudentActiveAsync_WithExistingStudentID_ReturnTrue()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             var studentId = await CreateStudentAsync();
 
             var isActive = await _repository.IsStudentActiveAsync(studentId);
@@ -119,8 +126,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task EmailExistsAsync_IfEmailExists_Returntrue()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             var studentId = await CreateStudentAsync();
 
             var student = await _repository.GetByIdAsync(studentId);

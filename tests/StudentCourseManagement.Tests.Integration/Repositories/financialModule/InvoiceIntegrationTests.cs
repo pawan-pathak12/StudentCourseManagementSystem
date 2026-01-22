@@ -10,6 +10,7 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
+    [DoNotParallelize]
     public class InvoiceIntegrationTests
     {
         private readonly StudentRepository _studentRepository;
@@ -18,6 +19,21 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         private readonly FeeAssessmentRepository _feeAssessmentRepository;
         private readonly InvoiceRepository _invoiceRepository;
         private readonly FeeTemplateRepository _feeTemplate;
+        private TransactionScope _scope;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose(); // rollback
+        }
+
+
 
         public InvoiceIntegrationTests()
         {
@@ -43,8 +59,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task AddAsync_WithValid_InsertsRowAndReturnsId()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
 
             var studentId = await CreateStudentAsync();
@@ -52,18 +66,18 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            //Act
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
 
-            Assert.IsNotNull(invoiceId);
-            Assert.IsTrue(invoiceId > 0);
+            //Assert
+            Assert.IsGreaterThan(0, invoiceId);
 
         }
 
         [TestMethod]
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfInvoice()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
+            //Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -71,16 +85,16 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
 
+            //Act 
             var invocies = await _invoiceRepository.GetAllAsync();
 
+            //Assert
             Assert.IsTrue(invocies.Any());
         }
 
         [TestMethod]
         public async Task GetByIdAsync_WithExistingId_ReturnsInvoice()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
 
             var studentId = await CreateStudentAsync();
@@ -90,16 +104,16 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
 
+            //Act
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
+            //Assert
             Assert.IsNotNull(invoice);
         }
 
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
 
             var studentId = await CreateStudentAsync();
@@ -130,16 +144,11 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
             Assert.AreEqual(updateInvoiceData.UpdatedAt, invoice?.UpdatedAt);
             Assert.AreEqual(InvoiceStatus.Cancelled, invoice?.InvoiceStatus);
-
-
-
         }
 
         [TestMethod]
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             //Arrange
 
             var studentId = await CreateStudentAsync();
@@ -150,13 +159,12 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
 
             var setIsActiveFalse = await _invoiceRepository.DeleteAsync(invoiceId);
-
+            //Act 
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
 
+            //Assert
             Assert.IsTrue(setIsActiveFalse);
-
             Assert.IsNull(invoice);
-
         }
 
         #endregion
@@ -166,8 +174,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetByFeeAssessmentIdAsync_WithExistingFeeAssessmentId_ReturnsFeeAssessment()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);

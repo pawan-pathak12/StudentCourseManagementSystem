@@ -10,10 +10,24 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
+    [DoNotParallelize]
     public class FeeTemplateIntegrationTests
     {
         private readonly FeeTemplateRepository _feeTemplateRepository;
         private readonly CourseRepository _courseRepository;
+        private TransactionScope _scope;
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose(); // rollback
+        }
 
         public FeeTemplateIntegrationTests()
         {
@@ -29,7 +43,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task AddAsync_WithValidFeeTemplate_InsertsRowAndReturnsId()
         {
             // Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
 
             //Act
@@ -37,7 +50,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
 
             Assert.IsNotNull(feeTemplateId);
-            Assert.IsTrue(feeTemplateId > 0);
+            Assert.IsGreaterThan(0, feeTemplateId);
 
         }
 
@@ -45,7 +58,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfFeeTemplate()
         {
             // Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
@@ -63,7 +75,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetByIdAsync_WithExistingId_ReturnsFeeTemplate()
         {
             // Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
@@ -79,7 +90,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task UpdateAsync_WithExistingId_ReturnsTrue_AndUpdatesData()
         {
             // Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
 
             //Act
@@ -113,7 +123,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task DeleteAsync_WithActiveId_SetsIsActiveFalse()
         {
             // Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
@@ -133,7 +142,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetActiveByCourseld_ExistingCourse_ReturnsFeeTemplate()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var courseId = await CreateCourseAsync();
             var templateId = await CreateFeeTemplateAsync(courseId);
 

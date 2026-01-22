@@ -63,7 +63,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
         {
             const string sql = @"SELECT TOP 1 *
                          FROM Users
-                         WHERE Id = @Id";
+                         WHERE UserId = @Id";
 
             using var connection = _dbContext.CreateConnection();
             var result = await connection.QueryFirstOrDefaultAsync<User>(sql, new { Id = userId });

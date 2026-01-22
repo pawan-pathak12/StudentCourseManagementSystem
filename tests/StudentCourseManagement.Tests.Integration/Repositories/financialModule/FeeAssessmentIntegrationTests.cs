@@ -10,14 +10,31 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
     [TestClass]
+    [DoNotParallelize]
     public class FeeAssessmentIntegrationTests
     {
+        #region Private ReadOnly Field
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
         private readonly EnrollmentRepository _enrollmentRepository;
         private readonly FeeTemplateRepository _feeTemplate;
         private readonly FeeAssessmentRepository _feeAssessment;
         private readonly InvoiceRepository _invoiceRepository;
+        private TransactionScope _scope;
+        #endregion
+
+        [TestInitialize]
+        public void Init()
+        {
+            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _scope.Dispose();
+        }
+
         public FeeAssessmentIntegrationTests()
         {
             var dbFixture = new DatabaseFixture();
@@ -42,7 +59,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task AddAsync_WithValidData_InsertData()
         {
             //Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -60,7 +76,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GettAllAsync_IfNotNullThen_ReturnListOfFeeAssessment()
         {
             //Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -79,7 +94,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetByIdAsync_IfNotNull_ReturnFeeAssessment()
         {
             //Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -96,7 +110,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task UpdateAsync_WithValidInsert_ReturnTrue()
         {
             //Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -133,7 +146,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task DeleteAsync_WithExistingActiveId_ReturnsTrue()
         {
             //Arrange
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
@@ -158,7 +170,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestMethod]
         public async Task ExistsByEnrollmentIdAsync_WithExistingEnrollmentId_ReturnsTrue()
         {
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             //Arrange 
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
@@ -202,7 +213,6 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetByInvoiceIdAsync_IfExistingInvoiceIdExists_ReturnFeeAssessmentData()
         {
             //Arrange 
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
             var enrollmentId = await CreateEnrollmentAsync(courseId, studentId);

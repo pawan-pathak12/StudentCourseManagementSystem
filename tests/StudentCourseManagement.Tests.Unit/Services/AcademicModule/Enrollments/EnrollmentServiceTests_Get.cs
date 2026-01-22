@@ -4,6 +4,7 @@ using StudentCourseManagement.Tests.Unit.Common;
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {
     [TestClass]
+    [DoNotParallelize]
     public class EnrollmentServiceTests_Get : EnrollmentServiceTestBase
     {
         [TestMethod]
