@@ -83,8 +83,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             var updateEnrollment = new Enrollment
             {
                 EnrollmentId = enrollmentId,
-                StudentId = 1,
-                CourseId = 2,
+                StudentId = studentId,
+                CourseId = courseId,
                 IsActive = true,
                 FeeAssessmentDate = null,
                 CancellationReason = " ",

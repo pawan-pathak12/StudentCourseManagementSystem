@@ -26,7 +26,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             if (course == null)
             {
                 _logger.LogWarning($"Course with Id {feeTemplate.CourseId} is inactive or not found");
-                return (true, $"Course with Id {feeTemplate.CourseId} is inactive or not found", 0);
+                return (false, $"Course with Id {feeTemplate.CourseId} is inactive or not found", 0);
             }
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
             return (true, null, feeTemplateId);

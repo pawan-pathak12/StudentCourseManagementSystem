@@ -15,7 +15,7 @@ namespace StudentCourseManagement.Data
         public static IServiceCollection AddDataLayer(this IServiceCollection services, IConfiguration configuration)
         {
 
-            services.AddSingleton<StudentSysDbContext>();
+            services.AddTransient<StudentSysDbContext>();
 
             #region Repository Registration 
 

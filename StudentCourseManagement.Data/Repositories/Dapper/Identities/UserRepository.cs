@@ -59,9 +59,15 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
             return user;
         }
 
-        public Task<User?> GetByIdAsync(int userId)
+        public async Task<User?> GetByIdAsync(int userId)
         {
-            throw new NotImplementedException();
+            const string sql = @"SELECT TOP 1 *
+                         FROM Users
+                         WHERE Id = @Id";
+
+            using var connection = _dbContext.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<User>(sql, new { Id = userId });
+            return result;
         }
     }
 }

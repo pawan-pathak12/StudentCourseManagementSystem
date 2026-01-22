@@ -47,10 +47,9 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         public async Task GetByIdAsync_WithExistingId_ReturnsCourse()
         {
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            var courseId = await CreateCourseAsync();
 
-            //assume id 1 exists 
-            int id = 2;
-            var course = await _repository.GetByIdAsync(id);
+            var course = await _repository.GetByIdAsync(courseId);
 
             Assert.IsNotNull(course);
         }
