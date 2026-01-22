@@ -1,0 +1,21 @@
+﻿<Project Sdk="MSTest.Sdk/4.0.1">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.72" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\StudentCourseManagement.API\StudentCourseManagement.API.csproj" />
+    <ProjectReference Include="..\..\src\StudentCourseManagement.Business\StudentCourseManagement.Business.csproj" />
+    <ProjectReference Include="..\..\src\StudentCourseManagement.Data\StudentCourseManagement.Data.csproj" />
+    <ProjectReference Include="..\..\src\StudentCourseManagement.Domain\StudentCourseManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
