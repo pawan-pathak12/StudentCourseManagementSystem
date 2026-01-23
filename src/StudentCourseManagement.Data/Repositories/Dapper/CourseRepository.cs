@@ -163,5 +163,20 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
 
         #endregion
 
+        #region Phase 5: Refund Payment 
+
+        public async Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
+        {
+            const string sql = @"select c.StartDate
+                                 from Courses c
+                                inner join Enrollments e on c.CourseId =e.CourseId
+                                where e.EnrollmentId=@EnrollmentId";
+            using var connection = _dbContext.CreateConnection();
+            var result = await connection.QuerySingleAsync<DateTimeOffset>(sql, new { EnrollmentId = enrollmentId });
+            return result;
+
+        }
+        #endregion
+
     }
 }

@@ -8,13 +8,13 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
     public class PaymentRepository : IPaymentRepository
     {
-        private readonly StudentSysDbContext context;
+        private readonly StudentSysDbContext _context;
         private readonly ILogger<PaymentRepository> logger;
 
         public PaymentRepository(StudentSysDbContext context, ILogger<PaymentRepository> logger)
         {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._context = context;
+            this.logger = logger;
         }
 
         #region CURD Operations
@@ -35,7 +35,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var newId = await connection.QuerySingleAsync<int>(sql, payment);
 
@@ -49,7 +49,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
         {
             const string sql = " Update Payments set IsActive =0 WHERE PaymentId = @Id and IsActive=1";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
 
@@ -68,7 +68,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = "SELECT * FROM Payments where IsActive=1  ORDER BY PaymentDate DESC ";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var payments = await connection.QueryAsync<Payment>(sql);
 
@@ -82,7 +82,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = "SELECT * FROM Payments WHERE PaymentId = @Id and IsActive=1";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var payment = await connection.QuerySingleOrDefaultAsync<Payment>(sql, new { Id = id });
 
@@ -122,7 +122,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                     ProcessedBy = @ProcessedBy
                 WHERE PaymentId = @PaymentId and IsActive=1";
 
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
 
             var affectedRows = await connection.ExecuteAsync(sql, payment);
 
@@ -147,7 +147,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
                             where i.InvoiceId =@InvoiceId
                             and i.IsActive =1 
                             and p.IsActive=1";
-            using var connection = context.CreateConnection();
+            using var connection = _context.CreateConnection();
             var result = await connection.QueryFirstOrDefaultAsync<Payment>(sql, new { InvoiceId = invoiceId });
             if (result != null)
             {
@@ -155,6 +155,54 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             }
             return result;
 
+        }
+
+        #endregion
+
+        #region Phase 5 : refund payment 
+
+        public async Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId)
+        {
+            const string sql = @"select  i.*
+                            from Payments p
+                            inner join Invoices i on p.InvoiceId =i.InvoiceId
+                            where p.PaymentId = @PaymentId";
+            using var connection = _context.CreateConnection();
+            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { PaymentId = paymentId });
+            return invoice;
+        }
+
+        public async Task<bool> IsRefundedAsync(int paymentId)
+        {
+            const string sql = @"select 
+                            case when Exists (select 1 from Payments 
+                            where RefundedPaymentId=@PaymentId)
+                            then 1 else 0 end ";
+
+            using var connection = _context.CreateConnection();
+            var result = await connection.ExecuteScalarAsync<bool>(sql, new { PaymentId = paymentId });
+            return result;
+        }
+        public async Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId)
+        {
+            const string sql = @"select e.EnrollmentId
+                            from Payments p
+                            inner join Invoices i ON p.InvoiceId = i.InvoiceId
+                            inner join FeeAssessments f ON i.FeeAssessmentId = f.FeeAssessmentId
+                            inner join Enrollments e ON f.EnrollmentId = e.EnrollmentId
+                            where p.PaymentId = @PaymentId;";
+            using var connection = _context.CreateConnection();
+            var enrollmentId = await connection.ExecuteScalarAsync<int>(sql, new { PaymentId = paymentId });
+            return enrollmentId;
+        }
+
+        public async Task<Payment?> GetRefundPaymentDataByPaymentId(int paymentId)
+        {
+            const string sql = @"select * from Payments
+                                where RefundedPaymentId =@PaymentId;";
+            using var connection = _context.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<Payment>(sql, new { PaymentId = paymentId });
+            return result;
         }
 
         #endregion

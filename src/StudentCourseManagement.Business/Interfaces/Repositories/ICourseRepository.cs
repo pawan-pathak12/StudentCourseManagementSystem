@@ -24,5 +24,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories
 
         #endregion
 
+        Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId);
+
     }
 }

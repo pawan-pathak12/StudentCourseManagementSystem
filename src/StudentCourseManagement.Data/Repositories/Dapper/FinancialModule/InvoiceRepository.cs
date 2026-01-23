@@ -164,6 +164,21 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         #endregion
 
+        #region Phase 5
+
+        public async Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId)
+        {
+            const string sql = @"select  f.*
+                            from Invoices i
+                            inner join FeeAssessments f on i.FeeAssessmentId = f.FeeAssessmentId
+                            where i.InvoiceId = @InvoiceId";
+            using var connection = _context.CreateConnection();
+            var feeAssessment = await connection.QueryFirstOrDefaultAsync<FeeAssessment>(sql, new { InvoiceId = invoiceId });
+            return feeAssessment;
+        }
+
+        #endregion
+
 
 
 

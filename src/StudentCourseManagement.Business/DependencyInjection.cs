@@ -24,6 +24,8 @@ namespace StudentCourseManagement.Business
             services.AddScoped<IInvoiceLineItemService, InvoiceLineItemService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+
+            services.AddScoped<IRefundService, RefundService>();
             #endregion
 
             return services;
