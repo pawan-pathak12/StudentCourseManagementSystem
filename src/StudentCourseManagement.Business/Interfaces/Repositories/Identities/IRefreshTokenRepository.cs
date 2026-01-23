@@ -9,5 +9,6 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.Identities
         Task<RefreshTokenWithUserDto?> GetRefreshTokenWithUserAsync(string token);
         Task<RefreshToken?> GetByTokenAsync(string token);
         Task<int> UpdateAsync(RefreshToken refreshToken);
+        Task<RefreshToken?> GetByIdAsync(int refreshTokenId);
     }
 }

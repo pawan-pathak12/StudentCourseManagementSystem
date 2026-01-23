@@ -55,6 +55,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
                             SET ExpiresAt = @ExpiresAt,
                                 RevokedAt = @RevokedAt,
                                 IsRevoked = @IsRevoked,
+                                Token= @Token,
                                 ReplacedByToken = @ReplacedByToken
                             WHERE RefreshTokenId = @RefreshTokenId;";
 
@@ -62,6 +63,16 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
             var rowsAffected = await connection.ExecuteAsync(sql, refreshToken);
 
             return rowsAffected;
+        }
+
+        public async Task<RefreshToken?> GetByIdAsync(int refreshTokenId)
+        {
+            const string sql = @"SELECT RefreshTokenId, UserId, Token, ExpiresAt, CreatedAt 
+                         FROM RefreshTokens 
+                         WHERE RefreshTokenId = @Id";
+            using var connection = _dbContext.CreateConnection();
+            return await connection.QuerySingleOrDefaultAsync<RefreshToken>(sql, new { Id = refreshTokenId });
+
         }
     }
 }
