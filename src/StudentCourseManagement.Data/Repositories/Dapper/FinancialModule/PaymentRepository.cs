@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Database;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 {
@@ -14,8 +13,8 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         public PaymentRepository(StudentSysDbContext context, ILogger<PaymentRepository> logger)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._context = context;
+            this.logger = logger;
         }
 
         #region CURD Operations
@@ -162,27 +161,15 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         #region Phase 5 : refund payment 
 
-        public async Task<Payment?> GetByIdWithInvoiceAsync(int paymentId)
+        public async Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId)
         {
-
-            const string sql = @"select  p.*, i.*
-                            from Payments  p
-                            inner join Invoices i on p.InvoiceId = i.InvoiceId
-                            where p.PaymentId =@PaymentId";
+            const string sql = @"select  i.*
+                            from Payments p
+                            inner join Invoices i on p.InvoiceId =i.InvoiceId
+                            where p.PaymentId = @PaymentId";
             using var connection = _context.CreateConnection();
-            /*    / first and second : payment and Invoice is for mapping table
-                      and third :Payment is for teturn type
-                       and after sql , (payment , invoice)  is mapping function 
-             */
-            var result = await connection.QueryAsync<Payment, Invoice, Payment>(
-                sql, (payment, invoice) =>
-                {
-                    payment.Invoice = invoice;
-                    return payment;
-                },
-                new { PaymentId = paymentId }
-                );
-            return result.FirstOrDefault();
+            var invoice = await connection.QuerySingleOrDefaultAsync<Invoice>(sql, new { PaymentId = paymentId });
+            return invoice;
         }
 
         public async Task<bool> IsRefundedAsync(int paymentId)
@@ -196,13 +183,26 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             var result = await connection.ExecuteScalarAsync<bool>(sql, new { PaymentId = paymentId });
             return result;
         }
-
-        public async Task<bool> UpdateStatussync(int paymentId)
+        public async Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId)
         {
-            const string sql = "Update Payments set PaymentStatus=@Status where PaymentId=@PaymentId and IsActive=1";
+            const string sql = @"select e.EnrollmentId
+                            from Payments p
+                            inner join Invoices i ON p.InvoiceId = i.InvoiceId
+                            inner join FeeAssessments f ON i.FeeAssessmentId = f.FeeAssessmentId
+                            inner join Enrollments e ON f.EnrollmentId = e.EnrollmentId
+                            where p.PaymentId = @PaymentId;";
             using var connection = _context.CreateConnection();
-            var result = await connection.ExecuteAsync(sql, new { PaymentId = paymentId, Status = PaymentStatus.Refunded });
-            return result > 0;
+            var enrollmentId = await connection.ExecuteScalarAsync<int>(sql, new { PaymentId = paymentId });
+            return enrollmentId;
+        }
+
+        public async Task<Payment?> GetRefundPaymentDataByPaymentId(int paymentId)
+        {
+            const string sql = @"select * from Payments
+                                where RefundedPaymentId =@PaymentId;";
+            using var connection = _context.CreateConnection();
+            var result = await connection.QueryFirstOrDefaultAsync<Payment>(sql, new { PaymentId = paymentId });
+            return result;
         }
 
         #endregion

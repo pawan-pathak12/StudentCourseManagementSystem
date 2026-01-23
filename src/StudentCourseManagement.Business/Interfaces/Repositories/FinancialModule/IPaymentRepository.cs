@@ -18,9 +18,10 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
 
         #endregion
         #region Phase 5 : refud payment 
-        Task<Payment?> GetByIdWithInvoiceAsync(int paymentId);
+        Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId);
         Task<bool> IsRefundedAsync(int paymentId);
-        Task<bool> UpdateStatussync(int paymentId);
+        Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId);
+        Task<Payment?> GetRefundPaymentDataByPaymentId(int paymentId);
         #endregion
 
     }
