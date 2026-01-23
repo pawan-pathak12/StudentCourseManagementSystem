@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Business.DTOs.FInancialModule.Payments
+namespace StudentCourseManagement.Business.DTOs.FInancialModule.Refunds
 {
     public class RefundResultDto
     {
