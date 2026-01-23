@@ -31,6 +31,7 @@ namespace StudentCourseManagement.Business.Services
                 return (false, $"tilte {course.Title} already exists", 0);
             }
             _logger.LogInformation($"Repo : Course created suc+-cessfully with title : {course.Title}");
+            //course strt date must be in advance : 
             var courseId = await _courseRepository.AddAsync(course);
             return (true, null, courseId);
         }

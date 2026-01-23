@@ -1,5 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Unit.Common;
+﻿using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
 {
@@ -7,63 +7,48 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
     public class StudentServiceTests_Get : StudentServiceTestBase
     {
         [TestMethod]
-        public async Task GetAll_ReturnslistOfStudent()
+        public async Task GetAll_ShouldReturns_listOfStudent()
         {
             //Arrange 
-            var student = new Student
-            {
-                StudentId = 1,
-                Name = "Ram",
-                Address = "Ktm"
-            };
+            var student = new StudentBuilder()
+                .Build();
+
             await _studentService.CreateAsync(student);
+            //Act
 
             var students = _studentService.GetAllAsync();
 
+            //Assert
             Assert.IsNotNull(students);
         }
 
         [TestMethod]
-        public async Task GetById_WithExistingId_ReturnOneStudentData()
+        public async Task GetById_WithExistingId_ShouldReturnStudentData()
         {
             //Arrange 
-            var studentData = new Student
-            {
-                StudentId = 1,
-                Name = "Ram",
-                Address = "Ktm"
-            };
-            await _studentService.CreateAsync(studentData);
+            var studentData = new StudentBuilder()
+                .Build();
+            var (success, erroMessage, studentId) = await _studentService.CreateAsync(studentData);
 
-
-            //Assume Id 1 exists 
-            //     int id = 1;
-
-            var student = await _studentService.GetByIdAsync(studentData.StudentId);
-
+            //Act
+            var student = await _studentService.GetByIdAsync(studentId);
+            //Assert
             Assert.IsNotNull(student);
-
-            //    Assert.AreEqual(id, student.Id);
         }
 
         [TestMethod]
         public async Task GetById_WithNonExistingId_ReturnNull()
         {
             //Arrange 
-            var studentData = new Student
-            {
-                StudentId = 1,
-                Name = "Ram",
-                Address = "Ktm"
-            };
+            var studentData = new StudentBuilder()
+                .Build();
             await _studentService.CreateAsync(studentData);
-
-
             //Assume no  Id 111 exists 
             int id = 111;
-
+            //Act 
             var student = await _studentService.GetByIdAsync(id);
 
+            //Assert
             Assert.IsNull(student);
         }
     }

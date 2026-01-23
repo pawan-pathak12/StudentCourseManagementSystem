@@ -1,5 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Unit.Common;
+﻿using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
 {
@@ -8,50 +8,39 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
     {
 
         [TestMethod]
-        public async Task CreateStudent_ValidStudent_AddStudent()
+        public async Task CreateStudent_ValidStudent_ShouldSucceed()
         {
             //Arrange 
-            var student = new Student
-            {
-                StudentId = 1,
-                Name = "Pawan",
-                Address = "Haldibari",
-                Email = "email"
-            };
+
+            var student = new StudentBuilder()
+                .Build();
 
             //Act 
-            await _studentService.CreateAsync(student);
+            var (success, errorMessage, studentId) = await _studentService.CreateAsync(student);
 
             //Assert
-            Assert.AreEqual(1, _repository._students.Count());
+            Assert.IsTrue(success);
+            Assert.IsNull(errorMessage);
         }
 
         [TestMethod]
-        public async Task CreateStudent_WithDuplicateEmail_ReturnFalse()
+        public async Task CreateStudent_WithDuplicateEmail_ShouldReturnError()
         {
             //Arrange 
-            var student = new Student
-            {
-                StudentId = 1,
-                Name = "Pawan",
-                Address = "Haldibari",
-                Email = "email"
-            };
+            var email = "testemail@gmail.com";
+
+            var student = new StudentBuilder()
+                .WithEmail(email).Build();
             await _studentService.CreateAsync(student);
 
-            var student2 = new Student
-            {
-                StudentId = 1,
-                Name = "Ram",
-                Address = "Haldibari",
-                Email = "email"
-            };
-
+            var student2 = new StudentBuilder()
+                  .WithEmail(email).Build();
             //Act 
             var (success, errorMessage, studentId) = await _studentService.CreateAsync(student2);
 
             //Assert 
             Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
         }
     }
 }

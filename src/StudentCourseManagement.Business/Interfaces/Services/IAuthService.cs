@@ -1,4 +1,4 @@
-﻿using StudentCourseManagement.Domain.Entities;
+﻿using StudentCourseManagement.Domain.Entities.Identites;
 
 namespace StudentCourseManagement.Business.Services
 {

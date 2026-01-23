@@ -1,5 +1,5 @@
 ﻿using StudentCourseManagement.Application.DTOs.Auth;
-using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Entities.Identites;
 
 namespace StudentCourseManagement.Business.Interfaces.Repositories.Identities
 {

@@ -1,5 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Tests.Unit.Common;
+﻿using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
 {
@@ -10,33 +10,26 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students
         public async Task Delete_WithExistingId_ReturnTrueAfterDeleting()
         {
             //Arrange 
-            var student = new Student
-            {
-                Name = "Ram",
-                Address = "Ktm",
-                IsActive = true
-            };
-            await _studentService.CreateAsync(student);
 
-            //Assume id 1 exists
-            int id = 1;
+            var student = new StudentBuilder()
+                  .Build();
 
-            var isDeleted = await _studentService.DeleteAsync(id);
-            Console.WriteLine(isDeleted);
-
+            var (success, errorMessage, studentId) = await _studentService.CreateAsync(student);
+            //Act
+            var isDeleted = await _studentService.DeleteAsync(studentId);
+            //Assert 
             Assert.IsTrue(isDeleted);
+            var studentData = await _repository.GetByIdAsync(studentId);
+            Assert.IsNull(studentData);
         }
 
         [TestMethod]
         public async Task Delete_WitNonExistingId_ReturnFalseAfterDeleting()
         {
             //Arrange 
-            var student = new Student
-            {
-                Name = "Ram",
-                Address = "Ktm",
-                IsActive = true
-            };
+            var student = new StudentBuilder()
+                .Build();
+
             await _studentService.CreateAsync(student);
 
             //Assume id 1111 don't exists

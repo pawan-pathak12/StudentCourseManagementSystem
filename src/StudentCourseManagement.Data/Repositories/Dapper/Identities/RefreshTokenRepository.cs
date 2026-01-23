@@ -2,7 +2,7 @@
 using StudentCourseManagement.Application.DTOs.Auth;
 using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Data.Database;
-using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Entities.Identites;
 
 namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
 {

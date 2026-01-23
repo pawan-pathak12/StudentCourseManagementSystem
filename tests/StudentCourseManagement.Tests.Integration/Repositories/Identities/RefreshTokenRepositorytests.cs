@@ -6,6 +6,7 @@ using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Business.Services;
 using StudentCourseManagement.Data.Repositories.Dapper.Identities;
 using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Entities.Identites;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.Identities

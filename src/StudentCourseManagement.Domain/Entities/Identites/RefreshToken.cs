@@ -1,4 +1,4 @@
-﻿namespace StudentCourseManagement.Domain.Entities
+﻿namespace StudentCourseManagement.Domain.Entities.Identites
 {
     public class RefreshToken
     {

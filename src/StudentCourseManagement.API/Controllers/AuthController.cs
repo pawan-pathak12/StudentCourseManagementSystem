@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.Auth;
 using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Business.Services;
-using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Domain.Entities.Identites;
 
 namespace StudentCourseManagement.API.Controllers
 {
