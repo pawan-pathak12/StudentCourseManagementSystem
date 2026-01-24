@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssessments

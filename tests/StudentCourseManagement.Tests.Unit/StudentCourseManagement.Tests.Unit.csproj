@@ -5,10 +5,14 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.20.72" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+	  <PackageReference Include="MSTest.TestAdapter" Version="3.5.2" />
+	  <PackageReference Include="MSTest.TestFramework" Version="3.5.2" />
+	  <PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
 
   <ItemGroup>

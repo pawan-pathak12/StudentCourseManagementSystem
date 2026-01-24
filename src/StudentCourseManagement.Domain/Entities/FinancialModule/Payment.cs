@@ -19,7 +19,7 @@ namespace StudentCourseManagement.Domain.Entities.FinancialModule
         public DateTimeOffset CreatedDate { get; set; }
 
         //refund 
-        public int RefundedPaymentId { get; set; }
+        public int? RefundedPaymentId { get; set; }
         public string? RefundReason { get; set; }
         public DateTimeOffset RefundDate { get; set; }
     }

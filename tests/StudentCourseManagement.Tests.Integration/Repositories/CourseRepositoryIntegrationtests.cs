@@ -11,6 +11,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
     public class CourseRepositoryIntegrationtests
     {
         private readonly CourseRepository _repository;
+        private readonly StudentRepository _studentRepository;
+        private readonly EnrollmentRepository _enrollmentRepository;
         private TransactionScope _scope;
 
         [TestInitialize]
@@ -29,7 +31,11 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         {
             var fixture = new DatabaseFixture();
             var loggerMock = new Mock<ILogger<CourseRepository>>();
+            var loggerMockStudent = new Mock<ILogger<StudentRepository>>();
+            var loggerMockEnrollment = new Mock<ILogger<EnrollmentRepository>>();
             _repository = new CourseRepository(fixture.DbContext, loggerMock.Object);
+            _studentRepository = new StudentRepository(fixture.DbContext, loggerMockStudent.Object);
+            _enrollmentRepository = new EnrollmentRepository(fixture.DbContext, loggerMockEnrollment.Object);
         }
         #region CURD Operations 
 
@@ -165,6 +171,25 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         }
         #endregion
 
+        #region Phase 5 : required Method 
+        [TestMethod]
+        public async Task GetStartDateByEnrollmentIdAsync_WithExistingEnrollment_ReturnCourseStartDate()
+        {
+            //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment
+            { StudentId = studentId, CourseId = courseId, IsActive = true });
+
+            //Act 
+            var startDate = await _repository.GetStartDateByEnrollmentIdAsync(enrollmentId);
+            //Assert 
+            Assert.IsNotNull(startDate);
+        }
+
+        #endregion
+
         #region Private Helper Methods 
 
         private async Task<int> CreateCourseAsync()
@@ -185,6 +210,16 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             };
 
             return await _repository.AddAsync(course);
+        }
+
+        private async Task<int> CreateStudentAsync()
+        {
+            var student = new Student
+            {
+                Name = "Pawan",
+                IsActive = true
+            };
+            return await _studentRepository.AddAsync(student);
         }
         #endregion
     }

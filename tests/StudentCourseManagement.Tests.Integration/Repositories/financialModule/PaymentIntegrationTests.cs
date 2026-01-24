@@ -216,6 +216,109 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         }
         #endregion
 
+        #region Phase 5 :Refund Procesing : Required Methods 
+        [TestMethod]
+        public async Task GetInvoiceByPaymentIdAsync_ShouldReturnInvoice_WhenPaymentExists()
+        {
+            // Arrange  
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+            // Act  
+            var invoice = await _paymentRepository.GetInvoiceByPaymentIdAsync(paymentId);
+            // Assert
+            Assert.IsNotNull(invoice);
+            Assert.IsInstanceOfType<Invoice>(invoice);
+        }
+
+        [TestMethod]
+        public async Task IsRefundedAsync_ShouldReturnTrue_WhenPaymentHasRefund()
+        {
+            // Arrange  
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+            var refund = new Payment
+            {
+                InvoiceId = invoiceId,
+                RefundedPaymentId = paymentId,
+                IsActive = true,
+                Amount = -1000,
+                StudentId = studentId,
+                PaymentMethodId = paymentMethodId,
+                RefundDate = DateTimeOffset.UtcNow
+            };
+            var refundId = await _paymentRepository.AddAsync(refund);
+            // Act  
+            var result = await _paymentRepository.IsRefundedAsync(paymentId);
+            // Assert
+        }
+
+        [TestMethod]
+        public async Task GetEnrollmentIdFromPaymentIdAsync_ShouldReturnEnrollmentId_WhenPaymentExists()
+        {
+            // Arrange  
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+
+            // Act  
+            var retriveEnrollmentId = await _paymentRepository.GetEnrollmentIdFromPaymentIdAsync(paymentId);
+            // Assert
+            Assert.IsGreaterThan(0, retriveEnrollmentId);
+            Assert.AreEqual(enrollmentId, retriveEnrollmentId);
+
+        }
+        [TestMethod]
+        public async Task GetRefundPaymentDataByPaymentIdAsync_ShouldReturnRefundPayment_WhenValidPaymentIdProvided()
+        {
+            //     Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feeTemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feeTemplateId);
+            var invoiceId = await CreateInvoiceAsync(studentId, courseId, feeAssessmentId);
+            var paymentMethodId = await CreatePaymentMethodAsync();
+            var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
+            var refund = new Payment
+            {
+                InvoiceId = invoiceId,
+                RefundedPaymentId = paymentId,
+                IsActive = true,
+                Amount = -1000,
+                StudentId = studentId,
+                PaymentMethodId = paymentMethodId,
+                RefundDate = DateTimeOffset.UtcNow,
+                PaymentDate = DateTimeOffset.UtcNow
+            };
+            var refundId = await _paymentRepository.AddAsync(refund);
+            Assert.IsGreaterThan(0, refundId);
+            // Act  
+            var refundPaymentData = await _paymentRepository.GetRefundPaymentDataByPaymentId(paymentId);
+            // Assert
+            Assert.IsNotNull(refundPaymentData);
+            Assert.IsGreaterThan(0, refundPaymentData.RefundedPaymentId.Value);
+
+        }
+
+        #endregion
+
 
         #region Helper Method
 
@@ -275,7 +378,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 RatePerCredit = 2500.00m,
                 IsActive = true,
                 CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null
+                UpdatedAt = null,
+                Amount = 1000
             };
             return await _feeTemplate.AddAsync(feeTemplate);
         }
@@ -286,7 +390,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 EnrollmentId = enrollmentid,
                 CourseId = courseId,
                 FeeTemplateId = FeeTemplateId,
-                Amount = 15000.00m,
+                Amount = 1000.00m,
                 DueDate = DateTime.UtcNow.AddDays(30),
                 FeeAssessmentStatus = AssessmentStatus.Pending,
                 IsActive = true,
@@ -309,7 +413,7 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 LateFeeApplied = false,
                 IssuedAt = new DateTimeOffset(2026, 01, 20, 10, 0, 0, TimeSpan.FromHours(5.75)),
                 DueDate = DateTimeOffset.UtcNow.AddDays(30),
-                TotalAmount = 0,
+                TotalAmount = 1000,
                 InvoiceStatus = InvoiceStatus.Issued,
                 CreatedAt = DateTimeOffset.UtcNow,
                 AmountPaid = 0,
@@ -328,12 +432,14 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
                 InvoiceId = invoiceId,
                 PaymentMethodId = paymentMethodId,
                 IsActive = true,
-                Amount = 7500.00m,
+                Amount = 1000.00m,
                 PaymentDate = new DateTimeOffset(2026, 01, 25, 14, 30, 0, TimeSpan.FromHours(5.75)),
                 ReferenceNumber = "TXN-2026-ABC123",
                 Notes = "First installment of tuition fee",
                 ProcessedBy = "AdminUser01",
-                CreatedDate = DateTimeOffset.UtcNow
+                CreatedDate = DateTimeOffset.UtcNow,
+                RefundedPaymentId = null
+
             };
             return await _paymentRepository.AddAsync(payment);
         }

@@ -2,7 +2,7 @@
 
 namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders
 {
-    internal class StudentBuilder
+    public class StudentBuilder
     {
         // Private fields with default values
         private int _studentId = 1;

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
 using StudentCourseManagement.Business.Services.FinancialModule;
@@ -12,33 +11,32 @@ using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
-    public abstract class InvocieServiceTestBaseClass
+    //
+    public class RefundServiceBaseClass
     {
-        protected IInvoiceService _invoiceService;
-
-        protected InMemoryStudentRepository _studentRepository;
+        protected InMemoryPaymentRepository _paymentRepository;
         protected InMemoryCourseRepository _courseRepository;
-        protected InMemoryFeeAssessmentRepository _feeAssessmentRepository;
         protected InMemorryInvoiceRepository _invoiceRepository;
+        protected InMemoryFeeAssessmentRepository _feeAssessmentRepository;
+
+        protected RefundService _refundService;
         [TestInitialize]
         public void Setup()
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<StudentProfile>();
                 cfg.AddProfile<CourseProfile>();
-                cfg.AddProfile<FeeAssessmentProfile>();
+                cfg.AddProfile<PaymentProfile>();
                 cfg.AddProfile<InvoiceProfile>();
+                cfg.AddProfile<FeeAssessmentProfile>();
             });
-            IMapper mapper = config.CreateMapper();
-
-            _studentRepository = new InMemoryStudentRepository();
+            var mapper = config.CreateMapper();
             _courseRepository = new InMemoryCourseRepository(mapper);
-            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
             _invoiceRepository = new InMemorryInvoiceRepository(mapper);
-
-            var mockLogger = new Mock<ILogger<InvoiceService>>();
-            _invoiceService = new InvoiceService(_invoiceRepository, mockLogger.Object, _studentRepository, _courseRepository, _feeAssessmentRepository);
+            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
+            _paymentRepository = new InMemoryPaymentRepository(mapper);
+            var mocklogger = new Mock<ILogger<RefundService>>();
+            _refundService = new RefundService(_paymentRepository, _courseRepository, _invoiceRepository, _feeAssessmentRepository, mocklogger.Object);
         }
 
     }

@@ -66,5 +66,28 @@ public class InMemoryPaymentRepository : IPaymentRepository
         var payment = _payments.Find(x => x.InvoiceId == invoiceId && x.IsActive);
         return Task.FromResult(payment);
     }
+
+    #endregion
+
+    #region Phase 5 
+    public Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> IsRefundedAsync(int paymentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Payment?> GetRefundPaymentDataByPaymentId(int paymentId)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 }

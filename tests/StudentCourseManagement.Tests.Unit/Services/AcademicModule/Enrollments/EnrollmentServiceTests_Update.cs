@@ -1,5 +1,7 @@
-﻿using StudentCourseManagement.Domain.Entities;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {
@@ -9,40 +11,33 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
         [TestMethod]
         public async Task Update_WihExisitngEnrollmentId_ReturnsTrue()
         {
-            var student = new Student
-            {
-                Address = "HAlibari ",
-                Name = "Ram Nath"
-            };
-            var course = new Course
-            {
-                Capacity = 20,
-                Code = "C2001"
-            };
+            var student = new StudentBuilder()
+               .Build();
+            var course = new CourseBuilder()
+                   .Build();
+
+            var studentId = await _studentRepository.AddAsync(student);
+            var courseId = await _courseRepository.AddAsync(course);
+
+
 
             await _studentRepository.AddAsync(student);
             await _courseRepository.AddAsync(course);
 
-            var enrollment = new Enrollment
-            {
-                CourseId = 1,
-                StudentId = 1
-            };
+            var enrollment = new EnrollmentBuilder()
+               .WithStudentId(studentId).WithCourseId(courseId).Build();
 
             var enrollmentId = await _repository.AddAsync(enrollment);
 
-            var enrollment2 = new Enrollment
-            {
-                EnrollmentId = 1,
-                IsActive = true,
-                CancellationReason = "testing ",
-                CourseId = enrollment.CourseId,
-                StudentId = enrollment.StudentId
-            };
+            var enrollment2 = new EnrollmentBuilder()
+               .WithStudentId(studentId).WithCourseId(courseId).WithEnrollmentId(enrollmentId).WithCancellationReason("Nothing").Build();
 
             var isUpdated = await _service.UpdateAsync(enrollmentId, enrollment2);
 
             Assert.IsTrue(isUpdated);
+            var enrollmentData = await _repository.GetByIdAsync(enrollmentId);
+            Assert.IsNotNull(enrollmentData);
+            Assert.AreEqual(enrollment2.CancellationReason, enrollmentData.CancellationReason);
         }
 
 

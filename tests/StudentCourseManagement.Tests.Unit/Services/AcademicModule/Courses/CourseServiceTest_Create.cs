@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Tests.Unit.Common;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentCourseManagement.Tests.Unit.Common;
 using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Courses
@@ -17,7 +18,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Courses
             var (success, erroMessage, courseId) = await _courseService.CreateAsync(course);
             //Assert
             Assert.IsTrue(success);
-            Assert.IsGreaterThan(0, courseId);
+            Assert.IsTrue(courseId > 0);
         }
 
         [TestMethod]

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Services;

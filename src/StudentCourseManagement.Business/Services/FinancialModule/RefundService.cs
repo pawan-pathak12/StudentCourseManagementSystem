@@ -158,7 +158,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
                 PaymentMethodId = refundData.PaymentMethodId,
                 PaymentStatus = refundData.PaymentStatus,
                 RefundDate = refundData.RefundDate,
-                RefundedPaymentId = refundData.RefundedPaymentId,
+                RefundedPaymentId = refundData.RefundedPaymentId.Value,
                 RefundReason = refundData.RefundReason
             };
         }
