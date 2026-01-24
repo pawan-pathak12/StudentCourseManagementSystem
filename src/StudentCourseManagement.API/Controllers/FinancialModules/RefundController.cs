@@ -40,8 +40,8 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
         #endregion
 
-        #region HttGet - get refund info by Payment Id 
-        [HttpGet("get-refund-info")]
+
+        [HttpGet("refund-info")]
         public async Task<IActionResult> GetRefundInfoAsync(int paymentId)
         {
             var paymentInfo = await _refundService.GetRefundInfoAsync(paymentId);
@@ -52,10 +52,7 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             return Ok(paymentInfo);
         }
 
-        #endregion
-
-        #region httpget -check refund eligibility 
-        [HttpGet("check-refund-Eligibility ")]
+        [HttpGet("check-refund-eligibility ")]
         public async Task<IActionResult> ValidateEligibility(int paymentId)
         {
             var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
@@ -63,8 +60,8 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
             {
                 return BadRequest(errorMessage);
             }
-            return Ok(new { CanBeRefunded = success });
+            return Ok(new { CanBeRefunded = true });
         }
-        #endregion
+
     }
 }

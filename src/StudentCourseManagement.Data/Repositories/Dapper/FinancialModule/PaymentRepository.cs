@@ -26,18 +26,18 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
             const string sql = @"
                 INSERT INTO Payments (
-                    StudentId, InvoiceId, Amount, PaymentDate, PaymentMethodId,
-                    PaymentStatus, ReferenceNumber, Notes, ProcessedBy, CreatedDate,IsActive
+                    StudentId, InvoiceId, Amount, PaymentDate, PaymentMethodId,RefundedPaymentId,RefundReason,
+                    PaymentStatus, ReferenceNumber, Notes, ProcessedBy, CreatedDate,IsActive,RefundDate
                 )
                 VALUES (
-                    @StudentId, @InvoiceId, @Amount, @PaymentDate, @PaymentMethodId,
-                    @PaymentStatus, @ReferenceNumber, @Notes, @ProcessedBy, @CreatedDate,@IsActive
+                    @StudentId, @InvoiceId, @Amount, @PaymentDate, @PaymentMethodId,@RefundedPaymentId,@RefundReason, 
+                    @PaymentStatus, @ReferenceNumber, @Notes, @ProcessedBy, @CreatedDate,@IsActive,@RefundDate
                 );
                 SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var connection = _context.CreateConnection();
 
-            var newId = await connection.QuerySingleAsync<int>(sql, payment);
+            var newId = await connection.ExecuteScalarAsync<int>(sql, payment);
 
             logger.LogInformation("Successfully added Payment with ID: {Id}, ReferenceNumber: {ReferenceNumber}",
                 newId, payment.ReferenceNumber);

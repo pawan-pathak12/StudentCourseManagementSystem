@@ -98,5 +98,9 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(isValid);
         }
 
+        public Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
