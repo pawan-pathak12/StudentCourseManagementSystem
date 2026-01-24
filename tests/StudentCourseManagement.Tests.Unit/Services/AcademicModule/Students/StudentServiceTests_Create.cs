@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Tests.Unit.Common;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentCourseManagement.Tests.Unit.Common;
 using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Students

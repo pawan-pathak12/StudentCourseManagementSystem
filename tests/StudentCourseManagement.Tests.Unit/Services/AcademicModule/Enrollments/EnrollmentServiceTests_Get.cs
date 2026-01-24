@@ -1,5 +1,6 @@
-﻿using StudentCourseManagement.Domain.Entities;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {
@@ -11,21 +12,18 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
         public async Task Get_ReturnsListof_ExistingEnrollments()
         {
             //Arrange 
-            var enrollment = new Enrollment
-            {
-                CourseId = 1,
-                StudentId = 1
-            };
+            var student = new StudentBuilder()
+              .Build();
+            var course = new CourseBuilder()
+                   .Build();
+
+            var studentId = await _studentRepository.AddAsync(student);
+            var courseId = await _courseRepository.AddAsync(course);
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId).Build();
 
             await _service.CreateAsync(enrollment);
-
-            var enrollment2 = new Enrollment
-            {
-                CourseId = 1,
-                StudentId = 1
-            };
-
-            await _service.CreateAsync(enrollment2);
 
             //Act 
             var enrollments = await _service.GetAllAsync();
@@ -35,12 +33,6 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             Assert.AreEqual(enrollments.Count(), _repository._enrollments.Count());
         }
 
-        /*   [TestMethod]
-           public async Task GetAll_IfNoExisingData_ReturnsNull()
-           {
-               var enrollments = await _service.GetAllEnrollmentsAsync();
 
-               Assert.IsNull(enrollments);
-           }*/
     }
 }

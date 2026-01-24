@@ -1,4 +1,5 @@
-﻿using StudentCourseManagement.Domain.Entities;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
 

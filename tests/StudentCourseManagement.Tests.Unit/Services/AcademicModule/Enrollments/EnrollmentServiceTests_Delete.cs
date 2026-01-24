@@ -1,5 +1,6 @@
-﻿using StudentCourseManagement.Domain.Entities;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StudentCourseManagement.Tests.Unit.Common;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {
@@ -10,27 +11,16 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
         public async Task Delete_WithExistingEnrollmentId_ReturnTrue()
         {
             //Arrange 
-            var student = new Student
-            {
-                Name = "Ram",
-                Address = "haldibari",
-                IsActive = true
-            };
+            var student = new StudentBuilder()
+                 .Build();
+            var course = new CourseBuilder()
+                   .Build();
 
-            var course = new Course
-            {
-                Capacity = 10,
-                Code = "CA002",
-                IsActive = true
-            };
-            await _studentRepository.AddAsync(student);
-            await _courseRepository.AddAsync(course);
-            var enrollment = new Enrollment
-            {
-                StudentId = 1,
-                CourseId = 1,
-                IsActive = true
-            };
+            var studentId = await _studentRepository.AddAsync(student);
+            var courseId = await _courseRepository.AddAsync(course);
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId).Build();
 
             var enrollmentId = await _repository.AddAsync(enrollment);
 

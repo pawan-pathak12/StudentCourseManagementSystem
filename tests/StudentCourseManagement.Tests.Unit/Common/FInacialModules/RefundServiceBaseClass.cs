@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
