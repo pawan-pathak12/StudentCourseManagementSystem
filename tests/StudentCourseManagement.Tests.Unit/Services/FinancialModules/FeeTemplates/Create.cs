@@ -1,8 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
+﻿using StudentCourseManagement.Domain.Enums;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTemplates
 {
@@ -16,13 +15,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
             var courseId = await CreateCourse();
 
             //feetemplate Id = feetemplate+1 ; 
-            var feeTemplate = new FeeTemplate
-            {
-                FeeTemplateId = 0,
-                CourseId = courseId,
-                Amount = 50000,
-                IsActive = true
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(4000).Build();
+
             //Act 
             var (sucess, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
 
@@ -37,13 +32,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
         public async Task CreateAsync_WhenCourseNotFound_Returnfalse()
         {
             //Arrange 
-            var feeTemplate = new FeeTemplate
-            {
-                CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 1000,
-                CalculationType = CalculationType.FlatAmount,
-                IsActive = true
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCalculationType(CalculationType.FlatAmount)
+               .WithAmount(4000).Build();
 
             //Act
             var (sucess, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
@@ -57,13 +48,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
 
         private async Task<int> CreateCourse()
         {
-            var course = new Course
-            {
-                Title = "C#",
-                IsActive = true
-            };
+            var course = new CourseBuilder()
+                .WithTitle("C# master class").Build();
             return await _courseRepository.AddAsync(course);
-
         }
 
 

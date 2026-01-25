@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
+﻿using StudentCourseManagement.Domain.Constants;
 using StudentCourseManagement.Domain.Enums;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssessments
 {
@@ -12,28 +12,18 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         public async Task UpdateAsync_WithValidInput_ReturnTrue()
         {
             //Arrange 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = 1,
-                FeeTemplateId = 1,
-                EnrollmentId = 1,
-                Amount = 1000,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Pending
-            };
-            var feeAssessentId = await _assessmentRepository.AddAsync(feeAssessment);
+            var feeAssessmentData = new FeeAssessmentBuilder()
+                .WithCourseId(1).WithFeeTemplateId(1).WithEnrollmentId(1)
+                .WithIsActive(true).WithAmount(100).WithFeeAssessmentStatus(AssessmentStatus.Pending).Build();
 
-            var updateFeeAssessment = new FeeAssessment
-            {
-                FeeAssessmentId = feeAssessentId,
-                CourseId = 1,
-                FeeTemplateId = 1,
-                EnrollmentId = 1,
-                Amount = 1000,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Paid,
-                DueDate = DateTimeOffset.UtcNow.AddDays(30)
-            };
+
+            var feeAssessentId = await _assessmentRepository.AddAsync(feeAssessmentData);
+
+            var updateFeeAssessment = new FeeAssessmentBuilder()
+              .WithCourseId(1).WithFeeTemplateId(1).WithEnrollmentId(1).WithFeeAssessmentId(feeAssessentId)
+              .WithIsActive(true).WithAmount(100).WithFeeAssessmentStatus(AssessmentStatus.Paid)
+              .WithDueDate(DateTimeOffset.UtcNow.AddDays(FinancialConstants.DUE_DATE_DAYS)).Build();
+
 
             //Act 
             var result = await _feeAssessmentService.UpdateAsync(feeAssessentId, updateFeeAssessment);
@@ -50,16 +40,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
 
         public async Task UpdateAsync_WithNonExistingId_Returnfalse()
         {
-            var updateFeeAssessment = new FeeAssessment
-            {
-                CourseId = 1,
-                FeeTemplateId = 1,
-                EnrollmentId = 1,
-                Amount = 1000,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Paid,
-                DueDate = DateTimeOffset.UtcNow.AddDays(30)
-            };
+            var updateFeeAssessment = new FeeAssessmentBuilder()
+              .WithCourseId(1).WithFeeTemplateId(1).WithEnrollmentId(1)
+              .WithIsActive(true).WithAmount(100).WithFeeAssessmentStatus(AssessmentStatus.Pending).Build();
 
             //Act 
             var result = await _feeAssessmentService.UpdateAsync(1, updateFeeAssessment);

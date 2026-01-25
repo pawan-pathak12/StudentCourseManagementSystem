@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Business.Mapping;
@@ -14,13 +13,13 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
     public class FeeAssessmentServiceTestBase
     {
-        protected InMemoryStudentRepository? _studentRepository;
-        protected InMemoryCourseRepository? _courseRepository;
-        protected InMemoryEnrollmentRepository? _enrollmentRepository;
-        protected InMemoryFeeTemplateRepository? _feeTemplateRepository;
-        protected InMemoryFeeAssessmentRepository? _assessmentRepository;
-        protected InMemorryInvoiceRepository? _invoiceRepository;
-        protected IFeeAssessmentService? _feeAssessmentService;
+        protected InMemoryStudentRepository _studentRepository;
+        protected InMemoryCourseRepository _courseRepository;
+        protected InMemoryEnrollmentRepository _enrollmentRepository;
+        protected InMemoryFeeTemplateRepository _feeTemplateRepository;
+        protected InMemoryFeeAssessmentRepository _assessmentRepository;
+        protected InMemorryInvoiceRepository _invoiceRepository;
+        protected IFeeAssessmentService _feeAssessmentService;
 
 
 

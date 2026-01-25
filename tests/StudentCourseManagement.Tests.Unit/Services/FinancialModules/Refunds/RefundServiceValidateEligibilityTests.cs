@@ -1,10 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+﻿using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
 {
     [TestClass]
-    internal class RefundServiceValidateEligibilityTests : RefundServiceBaseClass
+    public class RefundServiceValidateEligibilityTests : RefundServiceBaseClass
     {
         [TestMethod]
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenPaymentNotFound()

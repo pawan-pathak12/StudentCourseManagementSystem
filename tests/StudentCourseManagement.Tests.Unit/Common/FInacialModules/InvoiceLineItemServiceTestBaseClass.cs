@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Business.Mapping;
@@ -13,11 +12,13 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
     // course , feetemplate , invoice , involitemitemservce + rep 
     public abstract class InvoiceLineItemServiceTestBaseClass
     {
+        protected InMemoryStudentRepository _studentRepository;
         protected InMemoryCourseRepository _courseRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
         protected InMemorryInvoiceRepository _invoiceRepository;
         protected InMemoryInvoiceLineItemRepository _invoiceLineItemRepository;
         protected IInvoiceLineItemService _invoiceLineItemService;
+
         [TestInitialize]
         public void Setup()
         {
@@ -29,7 +30,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
                 cfg.AddProfile<InvoiceProfile>();
             });
             var mapper = config.CreateMapper();
-
+            _studentRepository = new InMemoryStudentRepository();
             _courseRepository = new InMemoryCourseRepository(mapper);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
             _invoiceRepository = new InMemorryInvoiceRepository(mapper);

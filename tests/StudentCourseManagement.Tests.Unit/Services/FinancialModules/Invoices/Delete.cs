@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
+﻿using StudentCourseManagement.Domain.Enums;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
 {
@@ -12,25 +11,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Invoices
         public async Task DeleteAsync_WithExistingId_ReturnTrue()
         {
             //Arrange 
-            var invoice = new Invoice
-            {
-                InvoiceId = 9001,
-                InvoiceNumber = "INV-2026-001",
-                StudentId = 1,
-                CourseId = 1,
-                IsActive = true,
-                FeeAssessmentId = 1,
-                LateFeeApplied = false,
-                IssuedAt = new DateTimeOffset(2026, 01, 20, 10, 0, 0, TimeSpan.FromHours(5.75)),
-                DueDate = DateTimeOffset.UtcNow.AddDays(30),
-                TotalAmount = 0,
-                InvoiceStatus = InvoiceStatus.Issued,
-                CreatedAt = DateTimeOffset.UtcNow,
-                AmountPaid = 0,
-                BalanceDue = 0,
-                UpdatedAt = DateTimeOffset.UtcNow,
-                Discount = 0
-            };
+            var invoice = new InvoiceBuilder()
+     .WithCourseId(1).WithFeeAssessmentId(1).WithStudentId(1)
+     .WithInvoiceStatus(InvoiceStatus.Issued).Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             //Act 

@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities;
+﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTemplates
 {
@@ -19,23 +19,16 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
             };
             var courseId = await _courseRepository.AddAsync(course);
 
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CreatedAt = DateTimeOffset.UtcNow,
-                IsActive = true,
-                Name = "Lab fee"
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                  .WithCourseId(courseId).WithAmount(4000).Build();
 
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
-            var updateFeeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                FeeTemplateId = feeTemplateId,
-                Amount = 1000,
-                Name = "Tution fee"
-            };
+
+            var updateFeeTemplate = new FeeTemplateBuilder()
+                   .WithFeeTemplateId(feeTemplateId).WithCourseId(courseId).WithName("Tution Fee")
+                    .WithAmount(5000).Build();
+
 
             //Act 
             var result = await _feeTemplateService.UpdateAsync(feeTemplateId, updateFeeTemplate);
@@ -44,6 +37,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
             Assert.IsTrue(result);
 
             var feeTemplateData = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
+            Assert.IsNotNull(feeTemplateData);
             Assert.AreEqual(updateFeeTemplate.Amount, feeTemplateData.Amount);
             Assert.AreEqual(updateFeeTemplate.Name, feeTemplateData.Name);
         }
@@ -88,13 +82,8 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTempla
 
             var feeTemplateId = 11;
 
-            var updateFeeTemplate = new FeeTemplate
-            {
-                FeeTemplateId = feeTemplateId,
-                CourseId = courseId,
-                Amount = 1000,
-                Name = "Tution fee"
-            };
+            var updateFeeTemplate = new FeeTemplateBuilder()
+     .WithCourseId(courseId).WithAmount(4000).Build();
 
             //Act 
             var result = await _feeTemplateService.UpdateAsync(feeTemplateId, updateFeeTemplate);

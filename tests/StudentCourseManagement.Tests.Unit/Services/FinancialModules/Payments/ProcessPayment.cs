@@ -1,8 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities;
+﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
 {
@@ -36,33 +37,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Cancelled,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithStudentId(studentId)
+                .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                .WithInvoiceStatus(InvoiceStatus.Cancelled).WithTotalAmount(feeAssessment.Amount)
+                .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -85,31 +70,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
+            var feeAssessment = new FeeAssessmentBuilder()
+                        .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                        .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                        .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+
+            var invoice = new InvoiceBuilder()
+                       .WithCourseId(courseId).WithStudentId(studentId)
+                       .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                       .WithInvoiceStatus(InvoiceStatus.Cancelled).WithTotalAmount(feeAssessment.Amount)
+                       .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = 111111;
@@ -133,33 +104,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                           .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                           .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                           .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                         .WithCourseId(courseId).WithStudentId(studentId)
+                         .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                         .WithInvoiceStatus(InvoiceStatus.Issued).WithTotalAmount(feeAssessment.Amount)
+                         .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -184,33 +139,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                         .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                         .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                         .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                         .WithCourseId(courseId).WithStudentId(studentId)
+                         .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                         .WithInvoiceStatus(InvoiceStatus.Issued).WithTotalAmount(feeAssessment.Amount)
+                         .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -234,33 +173,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                        .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                        .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                        .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                         .WithCourseId(courseId).WithStudentId(studentId)
+                         .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                         .WithInvoiceStatus(InvoiceStatus.Issued).WithTotalAmount(feeAssessment.Amount)
+                         .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -293,33 +216,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                          .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                          .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                          .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                         .WithCourseId(courseId).WithStudentId(studentId)
+                         .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                         .WithInvoiceStatus(InvoiceStatus.Issued).WithTotalAmount(feeAssessment.Amount)
+                         .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -350,33 +257,17 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
             var enrollmentId = await _enrollmentRepository.AddAsync(new Enrollment { StudentId = studentId, CourseId = courseId, IsActive = true });
             var (feeTemplateId, feeTemplateAmount) = await CreateFeeTemplateAsync(courseId); //clculation type : Flat amount 
 
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                EnrollmentId = enrollmentId,
-                FeeTemplateId = feeTemplateId,
-                IsActive = true,
-                FeeAssessmentStatus = AssessmentStatus.Assessed,
-                Amount = feeTemplateAmount,
-                DueDate = DateTimeOffset.UtcNow.AddDays(10),
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                        .WithCourseId(courseId).WithEnrollmentId(enrollmentId)
+                        .WithFeeTemplateId(feeTemplateId).WithFeeAssessmentStatus(AssessmentStatus.Assessed)
+                        .WithAmount(feeTemplateAmount).Build();
             var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
 
-            var invoice = new Invoice
-            {
-                CourseId = courseId,
-                StudentId = studentId,
-                FeeAssessmentId = feeAssessmentId,
-                BalanceDue = feeAssessment.Amount,
-                AmountPaid = 0,
-                InvoiceNumber = $"INV-.....",
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                InvoiceStatus = InvoiceStatus.Issued,
-                TotalAmount = feeAssessment.Amount,
-                DueDate = feeAssessment.DueDate,
-            };
+            var invoice = new InvoiceBuilder()
+                         .WithCourseId(courseId).WithStudentId(studentId)
+                         .WithFeeAssessmentId(feeAssessmentId).WithBalanceDue(feeAssessment.Amount)
+                         .WithInvoiceStatus(InvoiceStatus.Issued).WithTotalAmount(feeAssessment.Amount)
+                         .Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
             var paymentMethodId = await CreatePaymentMethodAsync();
@@ -401,49 +292,24 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
         #region Private Helper Methods
         private async Task<int> CreateCourseAsync()
         {
-            var course = new Course
-            {
-                Code = "A112A",
-                Title = "Introduction to Computer Science",
-                Credits = 3,
-                Description = "Basic concepts of programming, algorithms, and problem-solving.",
-                Instructor = "Dr. Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(25),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 20,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(5),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(15)
-            };
+            var course = new CourseBuilder()
+                 .WithInstructor("Dr. Anil Sharma").WithDescription("Fundamentals of programming using C# and .NET Core.")
+                 .WithTitle("Introduction to Programming").Build();
 
             return await _courseRepository.AddAsync(course);
         }
         private async Task<int> CreateStudentAsync()
         {
-            var student = new Student
-            {
-                Name = "Sita Sharma",
-                Email = "sita.sharma@example.com",
-                DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
-                Number = 9812345678,
-                IsActive = true,
-                Gender = "Female",
-                Address = "Biratnagar, Nepal"
-            };
+            var student = new StudentBuilder()
+               .Build();
             return await _studentRepository.AddAsync(student);
         }
 
         private async Task<(int, decimal)> CreateFeeTemplateAsync(int courseId)
         {
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CalculationType = CalculationType.FlatAmount,
-                Amount = 2000,
-                IsActive = true,
-                Name = "Lab fee",
-                RatePerCredit = 0
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(4000).
+                WithCalculationType(CalculationType.FlatAmount).Build();
 
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
             return (feeTemplateId, feeTemplate.Amount);
