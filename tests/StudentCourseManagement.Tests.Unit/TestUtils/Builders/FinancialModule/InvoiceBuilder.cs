@@ -6,7 +6,7 @@ namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule
     public class InvoiceBuilder
     {
         private int _invoiceId;
-        private string _invoiceNumber = string.Empty;
+        private string _invoiceNumber = $"INV-{DateTime.UtcNow:yyyymmdd}";
         private int _studentId;
         private int _courseId;
         private int _feeAssessmentId;
@@ -18,7 +18,7 @@ namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule
         private InvoiceStatus _invoiceStatus;
         private DateTimeOffset _createdAt = DateTimeOffset.UtcNow;
         private bool _lateFeeApplied = false;
-        private DateTimeOffset _issuedAt;
+        private DateTimeOffset _issuedAt = DateTimeOffset.UtcNow.AddMinutes(1);
         private DateTimeOffset _updatedAt;
         private decimal _discount = 0;
 
