@@ -1,10 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+﻿using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
 {
     [TestClass]
-    internal class ProcessRefundTests : RefundServiceBaseClass
+    public class ProcessRefundTests : RefundServiceBaseClass
     {
         //process refund return tru  
         [TestMethod]

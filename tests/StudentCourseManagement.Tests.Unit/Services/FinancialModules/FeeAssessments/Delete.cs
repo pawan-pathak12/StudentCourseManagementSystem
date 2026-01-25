@@ -1,6 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+﻿using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssessments
 {
@@ -11,14 +10,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         public async Task DeleteAsync_WithExistingFeeAssessemnt_ReturnsTrue()
         {
             //Arrange 
-            var feeAssessmentData = new FeeAssessment
-            {
-                CourseId = 1,
-                FeeTemplateId = 1,
-                EnrollmentId = 1,
-                IsActive = true,
-                Amount = 100
-            };
+            var feeAssessmentData = new FeeAssessmentBuilder()
+                .WithCourseId(1).WithFeeTemplateId(1).WithEnrollmentId(1)
+                .WithIsActive(true).WithAmount(100).Build();
+
             var feeAssessmentId = await _assessmentRepository.AddAsync(feeAssessmentData);
 
             //Act 

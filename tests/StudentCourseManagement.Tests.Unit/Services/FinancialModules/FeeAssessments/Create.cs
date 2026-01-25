@@ -1,8 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities;
+﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssessments
 {
@@ -16,22 +17,16 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         {
 
             //Arrange 
+
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             var enrollmentId = await CreateEnrollment(courseId, studentId);
             var feeTemplateId = await CreateFeeTemplate(courseId);
 
 
-            var feeAssessment = new FeeAssessment
-            {
-                FeeAssessmentId = 0,
-                CourseId = courseId,
-                FeeTemplateId = feeTemplateId,
-                EnrollmentId = enrollmentId,
-                IsActive = true,
-                Amount = 1000
-            };
-
+            var feeAssessment = new FeeAssessmentBuilder()
+                   .WithCourseId(courseId).WithFeeTemplateId(feeTemplateId)
+                   .WithEnrollmentId(enrollmentId).WithAmount(1000m).Build();
             //Act 
 
             var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
@@ -66,14 +61,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
 
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
-            var feeAssessment = new FeeAssessment
-            {
-                FeeAssessmentId = 0,
-                FeeTemplateId = feeTemplateId,
-                EnrollmentId = enrollmentId,
-                IsActive = true,
-                Amount = 1000
-            };
+            var feeAssessment = new FeeAssessmentBuilder()
+                    .WithFeeTemplateId(feeTemplateId)
+                    .WithEnrollmentId(enrollmentId).WithAmount(1000m).Build();
 
             //Act 
 
@@ -92,13 +82,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             //Arrange 
             var courseId = await CreateCourse();
             var feetemplateId = await CreateFeeTemplate(courseId);
-            var feeAssessment = new FeeAssessment
-            {
-                CourseId = courseId,
-                FeeTemplateId = feetemplateId,
-                Amount = 1000,
-                IsActive = true
-            };
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                     .WithCourseId(courseId).WithFeeTemplateId(feetemplateId)
+                     .WithAmount(1000m).Build();
 
             //Act 
             var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
@@ -140,14 +127,12 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             await CreateFeeTemplate(courseId);
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                EnrollmentStatus = EnrollmentStatus.Comfirmed,
-                EnrollmentDate = DateTimeOffset.UtcNow
-            };
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .WithEnrollmentStatus(EnrollmentStatus.Comfirmed).WithEnrollmentDate(DateTimeOffset.UtcNow)
+                .Build();
+
             var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
 
             //Act 
@@ -157,7 +142,6 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             Assert.IsNull(result.ErrorMessage);
 
         }
-
 
         [TestMethod]
         public async Task AssessFee_EnrollmentNotFound_ReturnsFalse()
@@ -179,13 +163,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             await CreateFeeTemplate(courseId);
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                EnrollmentStatus = EnrollmentStatus.Cancelled
-            };
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .WithEnrollmentStatus(EnrollmentStatus.Cancelled).WithEnrollmentDate(DateTimeOffset.UtcNow)
+                .Build();
             var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
 
             //Act
@@ -233,15 +214,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             //Arrange 
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CalculationType = CalculationType.FlatAmount,
-                Amount = 500,
-                CreatedAt = DateTimeOffset.UtcNow,
-                Name = "Lab fee",
-                IsActive = false
-            };
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithCalculationType(CalculationType.FlatAmount).WithIsActive(false).Build();
+
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
             var enrollmentId = await CreateEnrollment(studentId, courseId);
@@ -251,7 +227,6 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             Assert.IsFalse(result.success);
             Assert.IsNotNull(result.ErrorMessage);
 
-
         }
 
         [TestMethod]
@@ -259,30 +234,15 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         {
             //Arrange 
             var studentId = await CreateStudent();
-            var course = new Course
-            {
-                CourseId = 501,
-                Code = "CS101",
-                Title = "Introduction to Computer Science",
-                IsActive = true,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(4),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(14),
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                Capacity = 20
-            };
+            var course = new CourseBuilder()
+                .WithCredits(0).WithTitle("Introduction to Computer Science").Build();
+
             var courseId = await _courseRepository.AddAsync(course);
 
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CalculationType = CalculationType.FlatAmount,
-                CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 5000,
-                IsActive = true,
-                Name = "Lab fee",
-                RatePerCredit = 0
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithCalculationType(CalculationType.FlatAmount)
+                .WithRatePerCredit(0).Build();
+
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
             var enrollmentId = await CreateEnrollment(studentId, courseId);
@@ -299,42 +259,18 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         {
             //Arrange 
             var studentId = await CreateStudent();
-            var course = new Course
-            {
-                CourseId = 501,
-                Code = "CS101",
-                Title = "Introduction to Computer Science",
-                Credits = 5,
-                IsActive = true,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(4),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(14),
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                Capacity = 20
-            };
+            var course = new CourseBuilder()
+                .WithCredits(0).WithTitle("Introduction to Computer Science").Build();
+
             var courseId = await _courseRepository.AddAsync(course);
 
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 0,
-                IsActive = true,
-                Name = "Lab fee",
-                RatePerCredit = 1000
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithCalculationType(CalculationType.RatePerCredit)
+                .WithRatePerCredit(100).Build();
             var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
 
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                EnrollmentStatus = EnrollmentStatus.Comfirmed,
-                EnrollmentDate = DateTimeOffset.UtcNow
-            };
-            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var enrollmentId = await CreateEnrollment(courseId, studentId);
 
             //Act
             var result = await _feeAssessmentService.AssessFee(enrollmentId);
@@ -352,15 +288,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             await CreateFeeTemplate(courseId);
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                EnrollmentStatus = EnrollmentStatus.Comfirmed,
-                EnrollmentDate = DateTimeOffset.UtcNow
-            };
-            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+            var enrollmentId = await CreateEnrollment(courseId, studentId);
 
             //Act 
             var result = await _feeAssessmentService.AssessFee(enrollmentId);
@@ -377,14 +305,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
             var studentId = await CreateStudent();
             var courseId = await CreateCourse();
             await CreateFeeTemplate(courseId);
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                EnrollmentStatus = EnrollmentStatus.Comfirmed,
-                IsActive = true
-            };
-            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+            var enrollmentId = await CreateEnrollment(studentId, courseId);
 
             //Act
             var result = await _feeAssessmentService.AssessFee(enrollmentId);
@@ -403,30 +324,15 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         #region Private Helper Methods
         private async Task<int> CreateStudent()
         {
-            var student = new Student
-            {
-                Name = "Pawan",
-                Address = "Haldibari",
-                IsActive = true
-            };
+            var student = new StudentBuilder()
+                      .Build();
             return await _studentRepository.AddAsync(student);
 
         }
         private async Task<int> CreateCourse()
         {
-            var course = new Course
-            {
-                CourseId = 501,
-                Code = "CS101",
-                Title = "Introduction to Computer Science",
-                Credits = 5,
-                IsActive = true,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(4),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(14),
-                StartDate = DateTimeOffset.UtcNow.AddDays(30),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                Capacity = 20
-            };
+            var course = new CourseBuilder()
+                .Build();
             return await _courseRepository.AddAsync(course);
 
         }
@@ -447,14 +353,11 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         }
         private async Task<int> CreateEnrollment(int courseId, int studentId)
         {
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                EnrollmentStatus = EnrollmentStatus.Comfirmed
-            };
-            return await _enrollmentRepository.AddAsync(enrollment);
+            var enrollement = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .WithEnrollmentStatus(EnrollmentStatus.Comfirmed).WithEnrollmentDate(DateTimeOffset.UtcNow).Build();
+
+            return await _enrollmentRepository.AddAsync(enrollement);
         }
 
         #endregion
