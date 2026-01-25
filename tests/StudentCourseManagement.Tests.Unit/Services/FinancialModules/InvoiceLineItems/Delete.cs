@@ -1,6 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+﻿using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLineItems
 {
@@ -12,15 +11,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.InvoiceLi
         {
             //Arrange 
 
-            var lineItem = new InvoiceLineItem
-            {
-                CourseId = 1,
-                InvoiceId = 1,
-                FeeTemplateId = 1,
-                CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 1333,
-                IsActive = true
-            };
+            var lineItem = new InvoiceLineItemBuilder()
+                .WithCourseId(1).WithInvoiceId(1).WithAmount(1000)
+              .WithFeeTemplateId(1).Build();
 
             var lineItemId = await _invoiceLineItemRepository.AddAsync(lineItem);
             //Act

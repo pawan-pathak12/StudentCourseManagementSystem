@@ -338,16 +338,9 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeAssess
         }
         private async Task<int> CreateFeeTemplate(int courseId)
         {
-            var feeTemplate = new FeeTemplate
-            {
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                CreatedAt = DateTimeOffset.UtcNow,
-                Amount = 0,
-                IsActive = true,
-                Name = "Lab fee",
-                RatePerCredit = 1000
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(4000).
+                WithRatePerCredit(100).Build();
 
             return await _feeTemplateRepository.AddAsync(feeTemplate);
         }
