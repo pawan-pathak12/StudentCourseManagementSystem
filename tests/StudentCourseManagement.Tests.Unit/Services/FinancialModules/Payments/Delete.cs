@@ -1,7 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities.FinancialModule;
-using StudentCourseManagement.Domain.Enums;
-using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+﻿using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
+using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
 {
@@ -12,20 +10,11 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Payments
         public async Task DeleteAsync_WithExistingPaymentId_ReturnsTrue()
         {
             //arrange 
-            var payment = new Payment
-            {
-                StudentId = 1,
-                InvoiceId = 1,
-                PaymentMethodId = 1,
-                IsActive = true,
-                Amount = 15000.00m,
-                PaymentDate = DateTimeOffset.UtcNow,
-                PaymentStatus = PaymentStatus.Completed,
-                ReferenceNumber = "TXN-2026-ABC123",
-                Notes = "Initial payment",
-                ProcessedBy = "TestUser",
-                CreatedDate = DateTimeOffset.UtcNow
-            };
+            var payment = new PaymentBuilder()
+                .WithStudentId(1).WithInvoiceId(1)
+                .WithPaymentMethodId(1).WithAmount(15000.0m)
+                .WithProcessedBy("Test User").Build();
+
 
 
             var paymentId = await _paymentRepository.AddAsync(payment);
