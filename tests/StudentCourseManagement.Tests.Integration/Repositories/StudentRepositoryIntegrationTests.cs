@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
-using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Tests.Common.Builders;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories
@@ -74,20 +74,14 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task UpdateAsync_WithExistingId_ReturnsTrue()
         {
-
+            //Arrange 
             var studentId = await CreateStudentAsync();
-            var updateStudentData = new Student
-            {
-                StudentId = studentId,
-                Name = "pawan",
-                IsActive = true,
-                Address = " ",
-                Email = "emnail",
-                Gender = "M",
-                DOB = new DateTimeOffset(2012, 10, 10, 0, 0, 0, TimeSpan.FromHours(3.2)),
-                Number = 9812431234
-            };
 
+            var updateStudentData = new StudentBuilder()
+                .WithName("Pawan").WithEmail("pawan@gmail.com")
+                .WithId(studentId).Build();
+
+            //Act
             var isUpdated = await _repository.UpdateAsync(updateStudentData);
 
             //Assert 
@@ -101,14 +95,14 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task DeleteAsync_WithActiveAndExistingId_ReturnsTrue()
         {
-
+            //Arange 
             var studentId = await CreateStudentAsync();
 
-
+            //act 
             var isDeleted = await _repository.DeleteAsync(studentId);
 
+            //Assert
             Assert.IsTrue(isDeleted);
-
             var student = await _repository.GetByIdAsync(studentId);
             Assert.IsNull(student);
         }
@@ -116,16 +110,18 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         [TestMethod]
         public async Task IsStudentActiveAsync_WithExistingStudentID_ReturnTrue()
         {
+            //Arrange 
             var studentId = await CreateStudentAsync();
 
             var isActive = await _repository.IsStudentActiveAsync(studentId);
-
+            //Assert
             Assert.IsTrue(isActive);
         }
 
         [TestMethod]
         public async Task EmailExistsAsync_IfEmailExists_Returntrue()
         {
+            //Arrange 
             var studentId = await CreateStudentAsync();
 
             var student = await _repository.GetByIdAsync(studentId);
@@ -140,17 +136,9 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
         private async Task<int> CreateStudentAsync()
         {
-            var student = new Student
-            {
-                StudentId = 1,
-                Name = "Kiran Sharma",
-                Email = "kiran.sharma@example.com",
-                DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)), // May 12, 2004
-                Number = 9812345678,
-                IsActive = true,
-                Gender = "Female",
-                Address = "Biratnagar, Nepal"
-            };
+            var student = new StudentBuilder()
+                .Build();
+
             return await _repository.AddAsync(student);
         }
         #endregion

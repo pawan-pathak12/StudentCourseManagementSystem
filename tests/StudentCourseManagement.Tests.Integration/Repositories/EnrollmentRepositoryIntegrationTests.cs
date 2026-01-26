@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
-using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Tests.Common.Builders;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories
@@ -91,16 +91,10 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
 
             //act 
-            var updateEnrollment = new Enrollment
-            {
-                EnrollmentId = enrollmentId,
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                FeeAssessmentDate = null,
-                CancellationReason = " ",
-                CancelledDate = DateTimeOffset.UtcNow,
-            };
+            var updateEnrollment = new EnrollmentBuilder()
+                            .WithCourseId(courseId).WithStudentId(studentId)
+                            .WithEnrollmentId(enrollmentId).WithCancellationReason("nothing")
+                            .Build();
 
             var isUpdated = await _enrollmentRepository.UpdateAsync(enrollmentId, updateEnrollment);
 
@@ -197,47 +191,24 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
         private async Task<int> CreateStudentAsync()
         {
-            var student = new Student
-            {
-                Name = "Sita Sharma",
-                Email = "sita.sharma@example.com",
-                DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
-                Number = 9812345678,
-                IsActive = true,
-                Gender = "Female",
-                Address = "Biratnagar, Nepal"
-            };
+            var student = new StudentBuilder()
+                .Build();
+
             return await _studentRepository.AddAsync(student);
         }
 
         private async Task<int> CreateCourseAsync()
         {
-            var course = new Course
-            {
-                Code = "CS1001",
-                Title = "Introduction to Programming",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(40),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(10),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25),
-            };
+            var course = new CourseBuilder()
+                  .Build();
 
             return await _courseRepository.AddAsync(course);
         }
         private async Task<int> CreateEnrollmentAsync(int studentId, int courseId)
         {
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                FeeAssessmentDate = null
-            };
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
 
             return await _enrollmentRepository.AddAsync(enrollment);
 
