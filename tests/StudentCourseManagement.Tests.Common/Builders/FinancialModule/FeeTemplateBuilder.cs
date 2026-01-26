@@ -7,7 +7,7 @@ namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
     {
         private int _feeTemplateId;
         private int _courseId;
-        private string? _name;
+        private string? _name = "Lab Fee";
         private CalculationType _calculationType;
         private decimal _amount;
         private decimal _ratePerCredit;

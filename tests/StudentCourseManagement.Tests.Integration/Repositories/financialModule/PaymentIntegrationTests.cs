@@ -2,9 +2,10 @@
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
-using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
+using StudentCourseManagement.Tests.Common.Builders;
+using StudentCourseManagement.Tests.Common.Builders.FinancialModule;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
@@ -142,21 +143,11 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             var paymentMethodId = await CreatePaymentMethodAsync();
             var paymentId = await CreatePaymentAsync(studentId, invoiceId, paymentMethodId);
 
-            var updatedPayment = new Payment
-            {
-                PaymentId = paymentId,
-                StudentId = studentId,
-                InvoiceId = invoiceId,
-                PaymentMethodId = paymentMethodId,
-                IsActive = true,
-                Amount = 15000.00m,
-                PaymentDate = DateTimeOffset.UtcNow.AddDays(1),
-                PaymentStatus = PaymentStatus.Completed,
-                ReferenceNumber = "TXN-2026-XYZ789",
-                Notes = "Final installment, invoice fully settled",
-                ProcessedBy = "AdminUser02",
-                CreatedDate = DateTimeOffset.UtcNow
-            };
+            var updatedPayment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(1000).WithPaymentId(paymentId)
+               .WithNotes("Testing ").WithProcessedBy("Ram ").Build();
+
             //Act 
             var result = await _paymentRepository.UpdateAsync(paymentId, updatedPayment);
 
@@ -324,123 +315,55 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
         private async Task<int> CreateStudentAsync()
         {
-            var student = new Student
-            {
-                Name = "Sita Sharma 1",
-                Email = "sita.sharma@example.com",
-                DOB = new DateTimeOffset(2004, 05, 12, 0, 0, 0, TimeSpan.FromHours(5.75)),
-                Number = 9812345678,
-                IsActive = true,
-                Gender = "Female",
-                Address = "Biratnagar, Nepal"
-            };
+            var student = new StudentBuilder().Build();
             return await _studentRepository.AddAsync(student);
         }
 
         private async Task<int> CreateCourseAsync()
         {
-            var course = new Course
-            {
-                Code = "CS1001",
-                Title = "Introduction to Programming 1",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(40),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(10),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25),
-            };
-
+            var course = new CourseBuilder().Build();
             return await _courseRepository.AddAsync(course);
         }
         private async Task<int> CreateEnrollmentAsync(int studentId, int courseId)
         {
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true
-            };
-
+            var enrollment = new EnrollmentBuilder()
+                .WithCourseId(courseId).WithStudentId(studentId).Build();
             return await _enrollmentRepository.AddAsync(enrollment);
 
         }
         private async Task<int> CreateFeeTemplateAsync(int courseId)
         {
-            var feeTemplate = new FeeTemplate
-            {
-                Name = "Undergraduate Tuition Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                RatePerCredit = 2500.00m,
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null,
-                Amount = 1000
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithCalculationType(CalculationType.RatePerCredit)
+                .Build();
             return await _feeTemplate.AddAsync(feeTemplate);
         }
-        private async Task<int> CreateFeeAssessmentAsync(int enrollmentid, int courseId, int FeeTemplateId)
+
+        private async Task<int> CreateFeeAssessmentAsync(int enrollmentid, int courseId, int feeTemplateId)
         {
-            var feeAssessment = new FeeAssessment
-            {
-                EnrollmentId = enrollmentid,
-                CourseId = courseId,
-                FeeTemplateId = FeeTemplateId,
-                Amount = 1000.00m,
-                DueDate = DateTime.UtcNow.AddDays(30),
-                FeeAssessmentStatus = AssessmentStatus.Pending,
-                IsActive = true,
-                PaidDate = null,
-                LateFeeAmount = null,
-                LateFeeAppliedDate = null
-            };
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentid).WithCourseId(courseId).WithFeeTemplateId(feeTemplateId)
+                .Build();
+
             return await _feeAssessmentRepository.AddAsync(feeAssessment);
         }
         private async Task<int> CreateInvoiceAsync(int studentId, int courseId, int feeAssessmentId)
         {
-            var invoice = new Invoice
-            {
-                InvoiceId = 9001,
-                InvoiceNumber = "INV-2026-001",
-                StudentId = studentId,
-                CourseId = courseId,
-                IsActive = true,
-                FeeAssessmentId = feeAssessmentId,
-                LateFeeApplied = false,
-                IssuedAt = new DateTimeOffset(2026, 01, 20, 10, 0, 0, TimeSpan.FromHours(5.75)),
-                DueDate = DateTimeOffset.UtcNow.AddDays(30),
-                TotalAmount = 1000,
-                InvoiceStatus = InvoiceStatus.Issued,
-                CreatedAt = DateTimeOffset.UtcNow,
-                AmountPaid = 0,
-                BalanceDue = 0,
-                UpdatedAt = DateTimeOffset.UtcNow,
-                Discount = 0
-            };
+            var invoice = new InvoiceBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .Build();
             return await _invoiceRepository.AddAsync(invoice);
         }
 
+
         private async Task<int> CreatePaymentAsync(int studentId, int invoiceId, int paymentMethodId)
         {
-            var payment = new Payment
-            {
-                StudentId = studentId,
-                InvoiceId = invoiceId,
-                PaymentMethodId = paymentMethodId,
-                IsActive = true,
-                Amount = 1000.00m,
-                PaymentDate = new DateTimeOffset(2026, 01, 25, 14, 30, 0, TimeSpan.FromHours(5.75)),
-                ReferenceNumber = "TXN-2026-ABC123",
-                Notes = "First installment of tuition fee",
-                ProcessedBy = "AdminUser01",
-                CreatedDate = DateTimeOffset.UtcNow,
-                RefundedPaymentId = null
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(1000)
+                .Build();
 
-            };
             return await _paymentRepository.AddAsync(payment);
         }
 
