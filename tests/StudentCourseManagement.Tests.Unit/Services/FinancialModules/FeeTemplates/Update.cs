@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Tests.Common.Builders.FinancialModule;
 using StudentCourseManagement.Tests.Unit.Common.FInacialModules;
-using StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.FeeTemplates
 {

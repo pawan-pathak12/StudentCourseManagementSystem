@@ -1,7 +1,7 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders
+namespace StudentCourseManagement.Tests.Common.Builders
 {
     public class EnrollmentBuilder
     {

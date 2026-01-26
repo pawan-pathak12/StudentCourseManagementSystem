@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
 
-namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule
+namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
 {
     public class InvoiceLineItemBuilder
     {
