@@ -2,6 +2,7 @@
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Tests.Common.Builders;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories
@@ -78,23 +79,9 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
         {
             //Aarrange 
             var courseId = await CreateCourseAsync();
-
-            var updateCourseData = new Course
-            {
-                CourseId = courseId,
-                Code = "CS1012",
-                Title = "Introduction to Programming 2",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Pawan Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(40),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(5),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(30),
-
-            };
+            var updateCourseData = new CourseBuilder()
+                .WithCode("CS0001").WithInstructor("Hello WOrld")
+                .Build();
             //Act
 
             var isUpdated = await _repository.UpdateAsync(courseId, updateCourseData);
@@ -194,31 +181,15 @@ namespace StudentCourseManagement.Tests.Integration.Repositories
 
         private async Task<int> CreateCourseAsync()
         {
-            var course = new Course
-            {
-                Code = "CS101",
-                Title = "Introduction to Programming",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = new DateTimeOffset(2026, 02, 01, 9, 0, 0, TimeSpan.FromHours(5.75)),
-                EndDate = new DateTimeOffset(2026, 05, 30, 17, 0, 0, TimeSpan.FromHours(5.75)),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = new DateTimeOffset(2026, 01, 15, 8, 0, 0, TimeSpan.FromHours(5.75)),
-                EnrollmentEndDate = new DateTimeOffset(2026, 01, 31, 17, 0, 0, TimeSpan.FromHours(5.75))
-            };
-
+            var course = new CourseBuilder()
+                .Build();
             return await _repository.AddAsync(course);
         }
 
         private async Task<int> CreateStudentAsync()
         {
-            var student = new Student
-            {
-                Name = "Pawan",
-                IsActive = true
-            };
+            var student = new StudentBuilder()
+                .Build();
             return await _studentRepository.AddAsync(student);
         }
         #endregion

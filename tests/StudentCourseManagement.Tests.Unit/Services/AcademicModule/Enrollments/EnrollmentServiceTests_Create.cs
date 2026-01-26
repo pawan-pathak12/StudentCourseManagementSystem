@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StudentCourseManagement.Domain.Entities;
+﻿using StudentCourseManagement.Domain.Entities;
+using StudentCourseManagement.Tests.Common.Builders;
 using StudentCourseManagement.Tests.Unit.Common;
-using StudentCourseManagement.Tests.Unit.TestUtils.Builders;
 
 namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 {

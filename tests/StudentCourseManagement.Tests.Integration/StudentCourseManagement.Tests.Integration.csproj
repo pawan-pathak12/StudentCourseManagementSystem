@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\StudentCourseManagement.Data\StudentCourseManagement.Data.csproj" />
     <ProjectReference Include="..\..\src\StudentCourseManagement.Domain\StudentCourseManagement.Domain.csproj" />
+    <ProjectReference Include="..\StudentCourseManagement.Tests.Common\StudentCourseManagement.Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

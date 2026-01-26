@@ -1,14 +1,13 @@
-﻿
-using StudentCourseManagement.Domain.Entities.FinancialModule;
+﻿using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule
+namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
 {
     public class FeeTemplateBuilder
     {
         private int _feeTemplateId;
         private int _courseId;
-        private string? _name;
+        private string? _name = "Lab Fee";
         private CalculationType _calculationType;
         private decimal _amount;
         private decimal _ratePerCredit;

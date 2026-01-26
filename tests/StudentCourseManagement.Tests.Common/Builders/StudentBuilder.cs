@@ -1,6 +1,6 @@
 ﻿using StudentCourseManagement.Domain.Entities;
 
-namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders
+namespace StudentCourseManagement.Tests.Common.Builders
 {
     public class StudentBuilder
     {

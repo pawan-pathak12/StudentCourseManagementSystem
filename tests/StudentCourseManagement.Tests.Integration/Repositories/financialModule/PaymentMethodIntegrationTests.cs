@@ -3,6 +3,7 @@ using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
+using StudentCourseManagement.Tests.Common.Builders.FinancialModule;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
@@ -101,12 +102,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         #region Private hepler methods 
         private async Task<int> CreatePaymentMethodAsync()
         {
-            var paymentMethod = new PaymentMethod
-            {
-                PaymentMethodType = PaymentMethodType.Cash,
-                Name = "nothing",
-                IsActive = true
-            };
+            var paymentMethod = new PaymentMethodBuilder()
+                .WithPaymentMethodType(PaymentMethodType.Cash).Build();
 
             return await _paymentMethodRepository.AddAsync(paymentMethod);
         }

@@ -2,7 +2,7 @@
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Tests.Unit.TestUtils.Builders.FinancialModule
+namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
 {
     public class FeeAssessmentBuilder
     {

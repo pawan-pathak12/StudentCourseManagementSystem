@@ -2,9 +2,10 @@
 using Moq;
 using StudentCourseManagement.Data.Repositories.Dapper;
 using StudentCourseManagement.Data.Repositories.Dapper.FinancialModule;
-using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 using StudentCourseManagement.Domain.Enums;
+using StudentCourseManagement.Tests.Common.Builders;
+using StudentCourseManagement.Tests.Common.Builders.FinancialModule;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
@@ -95,16 +96,10 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             //Act
             var feeTemplateId = await CreateFeeTemplateAsync(courseId);
 
+            var updateData = new FeeTemplateBuilder()
+                .WithFeeTemplateId(feeTemplateId).WithCourseId(courseId).WithAmount(45000)
+                .Build();
 
-            var updateData = new FeeTemplate
-            {
-                FeeTemplateId = feeTemplateId,
-                Name = "Updated Fee Template",
-                Amount = 45000m,
-                UpdatedAt = DateTimeOffset.UtcNow,
-                IsActive = true,
-                CourseId = courseId
-            };
 
             // Act
             var isUpdated = await _feeTemplateRepository.UpdateAsync(feeTemplateId, updateData);
@@ -114,8 +109,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
             var updatedTemplate = await _feeTemplateRepository.GetByIdAsync(feeTemplateId);
             Assert.IsNotNull(updatedTemplate);
-            Assert.AreEqual("Updated Fee Template", updatedTemplate.Name);
-            Assert.AreEqual(45000m, updatedTemplate.Amount);
+            Assert.AreEqual(updateData.Name, updatedTemplate.Name);
+            Assert.AreEqual(updateData.Amount, updatedTemplate.Amount);
         }
 
 
@@ -156,36 +151,15 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         #region Private Helper Methods 
         private async Task<int> CreateCourseAsync()
         {
-            var course = new Course
-            {
-                Code = "CS1001",
-                Title = "Introduction to Programming",
-                Credits = 3,
-                Description = "Fundamentals of programming using C# and .NET Core.",
-                Instructor = "Dr. Anil Sharma",
-                StartDate = DateTimeOffset.UtcNow.AddDays(40),
-                EndDate = DateTimeOffset.UtcNow.AddMonths(2),
-                IsActive = true,
-                Capacity = 50,
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(10),
-                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(25),
-            };
+            var course = new CourseBuilder().Build();
 
             return await _courseRepository.AddAsync(course);
         }
         private async Task<int> CreateFeeTemplateAsync(int courseId)
         {
-            var feeTemplate = new FeeTemplate
-            {
-                Name = "Undergraduate Tuition Template",
-                CourseId = courseId,
-                CalculationType = CalculationType.RatePerCredit,
-                RatePerCredit = 2500.00m,
-                IsActive = true,
-                CreatedAt = DateTimeOffset.UtcNow,
-                UpdatedAt = null,
-                Amount = 0
-            };
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithCalculationType(CalculationType.RatePerCredit)
+                .Build();
             return await _feeTemplateRepository.AddAsync(feeTemplate);
         }
         #endregion
