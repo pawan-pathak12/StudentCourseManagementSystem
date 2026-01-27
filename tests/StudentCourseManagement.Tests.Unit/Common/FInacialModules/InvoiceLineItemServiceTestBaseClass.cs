@@ -6,6 +6,7 @@ using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
 using StudentCourseManagement.Data.Repositories.InMemory;
 using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
+using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
@@ -31,9 +32,11 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             });
             var mapper = config.CreateMapper();
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
+            var mockFeeAssesment = new Mock<InMemoryFeeAssessmentRepository>();
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, mockFeeAssesment.Object);
             _invoiceLineItemRepository = new InMemoryInvoiceLineItemRepository(mapper);
 
             var mockLogger = new Mock<ILogger<InvoiceLineItemService>>();

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Data.Repositories.InMemory;
 using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
+using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 public class InMemoryPaymentRepository : IPaymentRepository
@@ -9,16 +10,16 @@ public class InMemoryPaymentRepository : IPaymentRepository
     private readonly List<Payment> _payments;
     private readonly IMapper _mapper;
     private readonly InMemorryInvoiceRepository _invoiceRepository;
-    private readonly IFeeAssessmentRepository _feeAssessmentRepository;
-    private readonly IEnrollmentRepository _enrollmentRepository;
+    private readonly InMemoryFeeAssessmentRepository _feeAssessmentRepository;
+    private readonly InMemoryEnrollmentRepository _enrollmentRepository;
 
-    public InMemoryPaymentRepository(IMapper mapper, InMemorryInvoiceRepository invoiceRepository, IFeeAssessmentRepository feeAssessmentRepository, IEnrollmentRepository enrollmentRepositorys)
+    public InMemoryPaymentRepository(IMapper mapper, InMemorryInvoiceRepository invoiceRepository, InMemoryFeeAssessmentRepository feeAssessmentRepository, InMemoryEnrollmentRepository enrollmentRepository)
     {
         _payments = new List<Payment>();
         this._mapper = mapper;
         this._invoiceRepository = invoiceRepository;
         this._feeAssessmentRepository = feeAssessmentRepository;
-        this._enrollmentRepository = _enrollmentRepository;
+        this._enrollmentRepository = enrollmentRepository;
     }
 
     #region CRUD Operations

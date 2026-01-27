@@ -83,7 +83,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             }
             await _invoiceRepository.UpdateAsync(invoice.InvoiceId, invoice);
 
-            //5. Update FeeAssessment (if was invoice status paid) 
+            //5. Update FeeAssessment 
 
             if (previousStatus == InvoiceStatus.Paid)
             {
@@ -109,18 +109,19 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
                 return (false, $"Payment with Id {paymentId} not found.");
             }
 
-            //2.Payment Status must be completed
-            if (payment.PaymentStatus != PaymentStatus.Completed)
-            {
-                _logger.LogWarning($"Refund failed : Payment status must be completed to refund");
-                return (false, $"Refund failed : Payment status must be completed to refund");
-            }
-
-            //3.payment must not be refunded already 
+            //2.payment must not be refunded already 
             if (payment.PaymentStatus == PaymentStatus.Refunded)
             {
                 _logger.LogWarning("Refund Failed: Payment Id {PaymentId} is already refunded.", paymentId);
                 return (false, $"Payment Id {paymentId} is already refunded.");
+            }
+
+            //3.Payment Status must be completed
+            if (payment.PaymentStatus != PaymentStatus.Completed)
+            {
+
+                _logger.LogWarning($"Refund failed : Payment status must be completed to refund");
+                return (false, $"Refund failed : Payment status must be completed to refund");
             }
 
             //4.Rule to be refunded : will be only refunded if it is within 30 days of payment is done 

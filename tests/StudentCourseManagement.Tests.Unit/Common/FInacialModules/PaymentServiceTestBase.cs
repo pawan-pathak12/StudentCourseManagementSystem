@@ -41,11 +41,13 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             var mockLoggerPayment = new Mock<ILogger<PaymentService>>();
 
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
             _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
+            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
+
             _paymentMethodRepository = new InMemoryPaymentMethodRepository(mapper);
             _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
+
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
             _paymentRepository = new InMemoryPaymentRepository(mapper, _invoiceRepository, _feeAssessmentRepository, _enrollmentRepository);
 

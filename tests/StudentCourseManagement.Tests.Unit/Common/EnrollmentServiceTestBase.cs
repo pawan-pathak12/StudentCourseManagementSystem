@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Services;
@@ -28,8 +27,9 @@ namespace StudentCourseManagement.Tests.Unit.Common
             IMapper mapper = config.CreateMapper();
             logger = NullLogger<EnrollmentService>.Instance;
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
             _repository = new InMemoryEnrollmentRepository(mapper);
+            _courseRepository = new InMemoryCourseRepository(mapper, _repository);
+
 
             _service = new EnrollmentService(_repository, _studentRepository, _courseRepository, logger);
         }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
@@ -15,6 +14,7 @@ namespace StudentCourseManagement.Tests.Unit.Common
         protected ICourseService _courseService;
 
 
+
         [TestInitialize]
         public void Setup()
         {
@@ -24,8 +24,8 @@ namespace StudentCourseManagement.Tests.Unit.Common
             });
             IMapper mapper = config.CreateMapper();
             var loggerMock = new Mock<ILogger<CourseService>>();
-
-            _courseRepository = new InMemoryCourseRepository(mapper);
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _courseService = new CourseService(_courseRepository, loggerMock.Object);
         }
     }

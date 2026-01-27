@@ -8,10 +8,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
     {
         public readonly List<Course> _courses;
         private readonly IMapper _mapper;
-        public InMemoryCourseRepository(IMapper mapper)
+        private readonly InMemoryEnrollmentRepository _enrollmentRepository;
+
+        public InMemoryCourseRepository(IMapper mapper, InMemoryEnrollmentRepository enrollmentRepository)
         {
             _courses = new List<Course>();
             this._mapper = mapper;
+            this._enrollmentRepository = enrollmentRepository;
         }
 
         #region CURD Operations 
@@ -98,9 +101,15 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(isValid);
         }
 
-        public Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
+        public async Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
         {
-            throw new NotImplementedException();
+            var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
+            if (enrollment == null)
+            {
+
+            }
+            var course = _courses.Find(x => x.CourseId == enrollment.CourseId);
+            return course.StartDate;
         }
     }
 }
