@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
@@ -8,11 +9,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
     {
         private readonly List<Invoice> _invoice;
         private readonly IMapper _mapper;
+        private readonly InMemoryFeeAssessmentRepository _feeAssessmentRepository;
 
-        public InMemorryInvoiceRepository(IMapper mapper)
+        public InMemorryInvoiceRepository(IMapper mapper, InMemoryFeeAssessmentRepository feeAssessmentRepository)
         {
             _invoice = new List<Invoice>();
             this._mapper = mapper;
+            this._feeAssessmentRepository = feeAssessmentRepository;
         }
 
         #region CURD Operations 
@@ -76,9 +79,15 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         #endregion
 
         #region Phase 5 
-        public Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId)
+        public async Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId)
         {
-            throw new NotImplementedException();
+            var invoice = _invoice.Find(x => x.InvoiceId == invoiceId);
+            if (invoice == null)
+            {
+                return null;
+            }
+            return await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
+
         }
         #endregion
 

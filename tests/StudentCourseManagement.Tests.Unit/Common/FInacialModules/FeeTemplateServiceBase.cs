@@ -26,8 +26,9 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             });
             var mapper = config.CreateMapper();
             var mockLogger = new Mock<ILogger<FeeTemplateService>>();
-
-            _courseRepository = new InMemoryCourseRepository(mapper);
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            //use protected pro and pass in mock
+            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
             _feeTemplateService = new FeeTemplateService(_feeTemplateRepository, mockLogger.Object, _courseRepository);
         }

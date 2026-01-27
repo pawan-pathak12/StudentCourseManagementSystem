@@ -40,7 +40,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
 
             var payment = new PaymentBuilder()
                 .WithStudentId(studentId).WithInvoiceId(invoiceId)
-                .WithPaymentMethodId(paymentMethodId).WithAmount(1000)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(100).WithPaymentStatus(PaymentStatus.Completed)
                 .Build();
             var paymentId = await _paymentRepository.AddAsync(payment);
 
@@ -55,38 +55,138 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenPaymentNotFound()
         {
             //Arrange 
-
+            int paymentId = 99999;
             //Act 
+            var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
+            Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
         }
 
         [TestMethod]
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenPaymentStatusIsNotCompleted()
         {
             //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(1000)
+                .WithCalculationType(CalculationType.FlatAmount).Build();
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentId).WithCourseId(courseId)
+                .WithFeeTemplateId(feeTemplateId).Build();
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .WithStudentId(studentId).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(100).WithPaymentStatus(PaymentStatus.Pending)
+                .Build();
+            var paymentId = await _paymentRepository.AddAsync(payment);
 
             //Act 
+            var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
+            Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
         }
 
         [TestMethod]
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenPaymentIsAlreadyRefunded()
         {
             //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(1000)
+                .WithCalculationType(CalculationType.FlatAmount).Build();
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentId).WithCourseId(courseId)
+                .WithFeeTemplateId(feeTemplateId).Build();
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .WithStudentId(studentId).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(1000).WithPaymentStatus(PaymentStatus.Refunded)
+                .Build();
+            var paymentId = await _paymentRepository.AddAsync(payment);
 
             //Act 
+            var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
+            Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
         }
 
         [TestMethod]
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenRefundWindowHasExpired()
         {
             //Arrange 
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(1000)
+                .WithCalculationType(CalculationType.FlatAmount).Build();
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentId).WithCourseId(courseId)
+                .WithFeeTemplateId(feeTemplateId).Build();
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .WithStudentId(studentId).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(100).WithPaymentStatus(PaymentStatus.Completed)
+                .WithPaymentDate(DateTimeOffset.UtcNow.AddDays(-40)).Build();
+            var paymentId = await _paymentRepository.AddAsync(payment);
 
             //Act 
+            var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
         }
@@ -95,11 +195,47 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
         public async Task ValidateEligibilityAsync_ShouldReturnFalse_WhenCourseStartedTooLongAgo()
         {
             //Arrange 
+            var studentId = await CreateStudentAsync();
+            var course = new CourseBuilder()
+                .WithStartDate(DateTimeOffset.UtcNow.AddDays(-10)).Build();
+            var courseId = await _courseRepository.AddAsync(course);
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(1000)
+                .WithCalculationType(CalculationType.FlatAmount).Build();
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentId).WithCourseId(courseId)
+                .WithFeeTemplateId(feeTemplateId).Build();
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .WithStudentId(studentId).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(1000).WithPaymentStatus(PaymentStatus.Completed)
+              .WithPaymentDate(DateTimeOffset.UtcNow.AddDays(-6)).Build();
+            var paymentId = await _paymentRepository.AddAsync(payment);
 
             //Act 
+            var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
+            Assert.IsFalse(success);
+            Assert.IsNotNull(errorMessage);
         }
+
         #region Helper Moethods 
         private async Task<int> CreateCourseAsync()
         {

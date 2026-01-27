@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Business.Mapping;
@@ -33,9 +32,10 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             IMapper mapper = config.CreateMapper();
 
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
 
             var mockLogger = new Mock<ILogger<InvoiceService>>();
             _invoiceService = new InvoiceService(_invoiceRepository, mockLogger.Object, _studentRepository, _courseRepository, _feeAssessmentRepository);

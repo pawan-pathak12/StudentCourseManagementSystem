@@ -45,11 +45,13 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 
             // Initialize repositories 
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
             _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
+            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
+
+
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
             _assessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _assessmentRepository);
 
             // Initialize service
             _feeAssessmentService = new FeeAssessmentService(_assessmentRepository, loggerMockFeeAss.Object, _courseRepository, _enrollmentRepository, _feeTemplateRepository, _invoiceRepository);

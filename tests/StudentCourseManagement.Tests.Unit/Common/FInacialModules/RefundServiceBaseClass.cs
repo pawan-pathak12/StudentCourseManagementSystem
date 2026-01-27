@@ -39,12 +39,14 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             });
             var mapper = config.CreateMapper();
             _studentRepository = new InMemoryStudentRepository();
-            _courseRepository = new InMemoryCourseRepository(mapper);
             _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
+            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
+
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper);
             _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
             _paymentRepository = new InMemoryPaymentRepository(mapper, _invoiceRepository, _feeAssessmentRepository, _enrollmentRepository);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
+
             _paymentMethodRepository = new InMemoryPaymentMethodRepository(mapper);
             var mocklogger = new Mock<ILogger<RefundService>>();
             _refundService = new RefundService(_paymentRepository, _courseRepository, _invoiceRepository, _feeAssessmentRepository, mocklogger.Object);
