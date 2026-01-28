@@ -42,9 +42,12 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
             return result;
         }
 
-        public Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            const string sql = "Select * from Users ";
+            using var connection = _dbContext.CreateConnection();
+            var result = await connection.QueryAsync<User>(sql);
+            return result;
         }
 
         public async Task<User?> GetByEmailAddressAsync(string? email)

@@ -15,10 +15,12 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
     {
         protected InMemoryStudentRepository _studentRepository;
         protected InMemoryCourseRepository _courseRepository;
+        protected InMemoryEnrollmentRepository _enrollmentRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
         protected InMemorryInvoiceRepository _invoiceRepository;
         protected InMemoryInvoiceLineItemRepository _invoiceLineItemRepository;
         protected IInvoiceLineItemService _invoiceLineItemService;
+        protected InMemoryFeeAssessmentRepository _feeAssessmentRepository;
 
         [TestInitialize]
         public void Setup()
@@ -26,17 +28,22 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<CourseProfile>();
+                cfg.AddProfile<EnrollmentProfile>();
+                cfg.AddProfile<InvoiceProfile>();
                 cfg.AddProfile<FeeTemplateProfile>();
                 cfg.AddProfile<InvoiceLineItemProfile>();
                 cfg.AddProfile<InvoiceProfile>();
             });
             var mapper = config.CreateMapper();
             _studentRepository = new InMemoryStudentRepository();
-            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
-            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
+            _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
+
+            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
-            var mockFeeAssesment = new Mock<InMemoryFeeAssessmentRepository>();
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper, mockFeeAssesment.Object);
+
+            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
+
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
             _invoiceLineItemRepository = new InMemoryInvoiceLineItemRepository(mapper);
 
             var mockLogger = new Mock<ILogger<InvoiceLineItemService>>();

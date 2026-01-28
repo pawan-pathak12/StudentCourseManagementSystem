@@ -27,7 +27,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
 
         public Task<Student> GetByIdAsync(int id)
         {
-            var result = _students.Find(x => x.StudentId == id);
+            var result = _students.Find(x => x.StudentId == id && x.IsActive == true);
             return Task.FromResult(result);
 
         }

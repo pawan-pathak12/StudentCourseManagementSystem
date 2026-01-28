@@ -88,7 +88,10 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         public async Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
         {
             var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
-
+            if (invoice == null)
+            {
+                return null;
+            }
             return _feeAssessment.FirstOrDefault(f => f.FeeAssessmentId == invoice?.FeeAssessmentId && f.IsActive == true);
         }
 

@@ -231,7 +231,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 
         private async Task<int> CreateStudentAsync()
         {
-            var student = new StudentBuilder().Build();
+            var student = new StudentBuilder().
+                WithName("Ram NAth ").Build();
             return await _studentRepository.AddAsync(student);
         }
 

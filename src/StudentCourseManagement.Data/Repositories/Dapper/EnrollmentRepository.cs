@@ -28,7 +28,7 @@ namespace StudentCourseManagement.Data.Repositories.Dapper
                     SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var connection = _dbContext.CreateConnection();
-            var newId = await connection.QuerySingleOrDefaultAsync<int>(sql, enrollment);
+            var newId = await connection.ExecuteScalarAsync<int>(sql, enrollment);
 
             if (newId > 0)
             {
