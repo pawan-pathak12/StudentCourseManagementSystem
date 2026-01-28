@@ -179,7 +179,30 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
 
         #endregion
 
+        #region Phase 6 : Late Fee
 
+        public async Task<Invoice> GetOverDueInvoiceAsync(int invoiceId)
+        {
+            const string sql = @"select * from Invoices
+                                where InvoiceId= @InvoiceId and DueDate< @Date;";
+
+            using var connection = _context.CreateConnection();
+            var invoice = await connection.QueryFirstOrDefaultAsync<Invoice>(sql, new { InvoiceId = invoiceId, Date = DateTimeOffset.UtcNow });
+            logger.LogInformation("Sucessfully fetch over due invoice with Id {invoiceId} ", invoiceId);
+            return invoice;
+        }
+
+        public async Task<IEnumerable<Invoice>> GetAllOverDueInvoicesAsync()
+        {
+            const string sql = @"select * from Invoices
+                                DueDate< @Date;";
+
+            using var connection = _context.CreateConnection();
+            var invoices = await connection.QueryAsync<Invoice>(sql, new { Date = DateTimeOffset.UtcNow });
+            logger.LogInformation($"Sucessfully fetch all {invoices.Count()} over due invoices  ");
+            return invoices;
+        }
+        #endregion
 
 
     }

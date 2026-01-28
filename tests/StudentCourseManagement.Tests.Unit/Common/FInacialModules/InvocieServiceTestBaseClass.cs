@@ -17,6 +17,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 
         protected InMemoryStudentRepository _studentRepository;
         protected InMemoryCourseRepository _courseRepository;
+        protected InMemoryEnrollmentRepository _enrollmentRepository;
         protected InMemoryFeeAssessmentRepository _feeAssessmentRepository;
         protected InMemorryInvoiceRepository _invoiceRepository;
         [TestInitialize]
@@ -26,14 +27,15 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             {
                 cfg.AddProfile<StudentProfile>();
                 cfg.AddProfile<CourseProfile>();
+                cfg.AddProfile<EnrollmentProfile>();
                 cfg.AddProfile<FeeAssessmentProfile>();
                 cfg.AddProfile<InvoiceProfile>();
             });
             IMapper mapper = config.CreateMapper();
 
             _studentRepository = new InMemoryStudentRepository();
-            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
-            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
+            _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
+            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
             _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
             _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
 

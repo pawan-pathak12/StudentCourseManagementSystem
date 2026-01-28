@@ -12,7 +12,7 @@ namespace StudentCourseManagement.Tests.Unit.Common
     {
         protected InMemoryCourseRepository _courseRepository;
         protected ICourseService _courseService;
-
+        protected InMemoryEnrollmentRepository _enrollmentRepository;
 
 
         [TestInitialize]
@@ -23,8 +23,10 @@ namespace StudentCourseManagement.Tests.Unit.Common
                 cfg.AddProfile<CourseProfile>(); // add your mapping profile
             });
             IMapper mapper = config.CreateMapper();
+
             var loggerMock = new Mock<ILogger<CourseService>>();
-            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>(_enrollmentRepository);
+
             _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _courseService = new CourseService(_courseRepository, loggerMock.Object);
         }

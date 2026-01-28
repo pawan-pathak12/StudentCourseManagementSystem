@@ -46,7 +46,6 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             }
             return id;
 
-
         }
 
         public async Task<bool> DeleteAsync(int id)

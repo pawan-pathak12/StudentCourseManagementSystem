@@ -18,10 +18,15 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         Task<Invoice?> GetByFeeAssessmentIdAsync(int feeAssessmentId);
 
         #endregion
+
         #region Phase 5 : required method 
         Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId);
         #endregion
 
+        #region Phase 5 
 
+        Task<Invoice> GetOverDueInvoiceAsync(int invoiceId);
+        Task<IEnumerable<Invoice>> GetAllOverDueInvoicesAsync();
+        #endregion
     }
 }

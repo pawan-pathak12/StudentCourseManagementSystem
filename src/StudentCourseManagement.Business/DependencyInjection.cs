@@ -26,6 +26,8 @@ namespace StudentCourseManagement.Business
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
 
             services.AddScoped<IRefundService, RefundService>();
+
+            services.AddScoped<ILateFeeService, LateFeeService>();
             #endregion
 
             return services;

@@ -89,7 +89,24 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
             return await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
 
         }
+
         #endregion
+
+        #region Phase 6
+        public Task<Invoice> GetOverDueInvoiceAsync(int invoiceId)
+        {
+            var invoice = _invoice.Find(x => x.InvoiceId == invoiceId && x.DueDate < DateTimeOffset.UtcNow && x.IsActive == true);
+            return Task.FromResult(invoice);
+        }
+
+        public Task<IEnumerable<Invoice>> GetAllOverDueInvoicesAsync()
+        {
+            var invoices = _invoice.Where(x => x.DueDate < DateTimeOffset.UtcNow);
+            return Task.FromResult(invoices);
+        }
+        #endregion
+
+
 
     }
 }

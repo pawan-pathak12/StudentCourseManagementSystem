@@ -15,6 +15,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
         protected IFeeTemplateService _feeTemplateService;
         protected InMemoryCourseRepository _courseRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
+        protected InMemoryEnrollmentRepository _enrollmentRepository;
         [TestInitialize]
         public void Setup()
         {
@@ -26,7 +27,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             });
             var mapper = config.CreateMapper();
             var mockLogger = new Mock<ILogger<FeeTemplateService>>();
-            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>();
+            var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>(_enrollmentRepository);
             //use protected pro and pass in mock
             _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
             _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);

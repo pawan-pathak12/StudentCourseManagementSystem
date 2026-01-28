@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using StudentCourseManagement.Business.Interfaces.Services;
 using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Services;
@@ -15,8 +15,6 @@ namespace StudentCourseManagement.Tests.Unit.Common
         public InMemoryEnrollmentRepository _repository;
         public InMemoryStudentRepository _studentRepository;
         public InMemoryCourseRepository _courseRepository;
-        public ILogger<EnrollmentService> logger;
-
         [TestInitialize]
         public void Setup()
         {
@@ -25,13 +23,15 @@ namespace StudentCourseManagement.Tests.Unit.Common
                 cfg.AddProfile<EnrollmentProfile>(); // add your mapping profile
             });
             IMapper mapper = config.CreateMapper();
-            logger = NullLogger<EnrollmentService>.Instance;
+
+            var logger = new Mock<ILogger<EnrollmentService>>();
+
             _studentRepository = new InMemoryStudentRepository();
             _repository = new InMemoryEnrollmentRepository(mapper);
             _courseRepository = new InMemoryCourseRepository(mapper, _repository);
 
 
-            _service = new EnrollmentService(_repository, _studentRepository, _courseRepository, logger);
+            _service = new EnrollmentService(_repository, _studentRepository, _courseRepository, logger.Object);
         }
     }
 }

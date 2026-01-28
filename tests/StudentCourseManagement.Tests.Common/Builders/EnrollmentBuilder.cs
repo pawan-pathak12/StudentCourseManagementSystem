@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Tests.Common.Builders
 {
     public class EnrollmentBuilder
     {
-        private int _enrollmentId = 1;
+        private int _enrollmentId;
         private DateTimeOffset _enrollmentDate = DateTimeOffset.UtcNow;
         private int _studentId = 1;
         private int _courseId = 1;
@@ -84,6 +84,7 @@ namespace StudentCourseManagement.Tests.Common.Builders
         {
             return new Enrollment
             {
+                EnrollmentId = _enrollmentId,
                 EnrollmentDate = _enrollmentDate,
                 StudentId = _studentId,
                 CourseId = _courseId,
