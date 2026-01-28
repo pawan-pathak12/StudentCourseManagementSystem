@@ -97,7 +97,6 @@ namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
         {
             return new FeeAssessment
             {
-                FeeAssessmentId = _feeAssessmentId,
                 EnrollmentId = _enrollmentId,
                 CourseId = _courseId,
                 FeeTemplateId = _feeTemplateId,

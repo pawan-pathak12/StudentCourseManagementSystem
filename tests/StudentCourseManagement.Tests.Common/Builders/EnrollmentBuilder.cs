@@ -84,6 +84,7 @@ namespace StudentCourseManagement.Tests.Common.Builders
         {
             return new Enrollment
             {
+                EnrollmentId = _enrollmentId,
                 EnrollmentDate = _enrollmentDate,
                 StudentId = _studentId,
                 CourseId = _courseId,

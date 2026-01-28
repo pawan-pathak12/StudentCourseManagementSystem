@@ -10,8 +10,9 @@ using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
 {
-    [TestClass]
     [DoNotParallelize]
+    [TestClass]
+
     public class InvoiceIntegrationTests
     {
         private readonly StudentRepository _studentRepository;
@@ -31,10 +32,8 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         [TestCleanup]
         public void Cleanup()
         {
-            _scope.Dispose(); // rollback
+            _scope.Dispose();
         }
-
-
 
         public InvoiceIntegrationTests()
         {
@@ -185,6 +184,63 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType<Invoice>(result);
 
+        }
+        #endregion
+
+        #region Phase 5 :Late Fee
+        [TestMethod]
+        public async Task GetOverdueInvoiceAsync_ShouldReturnInvoice_WhenInvoiceIsOverdue()
+        {
+            // Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+
+            Assert.IsGreaterThan(0, enrollmentId);
+
+            // test failed cause ;feetemplateId and FeeassessmentId is 0
+
+            var feetemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessment = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
+
+            var invoice = new InvoiceBuilder()
+                    .WithCourseId(courseId).WithStudentId(studentId)
+                    .WithTotalAmount(1000).WithBalanceDue(1000).WithAmountPaid(0)
+                    .WithDueDate(DateTimeOffset.UtcNow.AddDays(-35)).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            // Act
+            var invoiceData = await _invoiceRepository.GetOverDueInvoiceAsync(invoiceId);
+
+            Assert.IsNotNull(invoiceData);
+            Assert.AreEqual(invoiceId, invoiceData.InvoiceId);
+            Assert.IsInstanceOfType(invoiceData, typeof(Invoice));
+        }
+
+        [TestMethod]
+        public async Task GetAllOverdueInvoicesAsync_ShouldReturnListOfOverdueInvoices()
+        {
+            // Arrange
+            // Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
+            var feetemplateId = await CreateFeeTemplateAsync(courseId);
+            var feeAssessment = await CreateFeeAssessmentAsync(courseId, enrollmentId, feetemplateId);
+
+            var invoice = new InvoiceBuilder()
+                    .WithCourseId(courseId).WithStudentId(studentId)
+                    .WithTotalAmount(1000).WithBalanceDue(1000).WithAmountPaid(0)
+                    .WithDueDate(DateTimeOffset.UtcNow.AddDays(-35)).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+            // Act
+            var invoices = await _invoiceRepository.GetAllOverDueInvoicesAsync();
+            // Assert
+            Assert.IsNotNull(invoices);
+            Assert.IsTrue(invoices.Any());
+            Assert.IsTrue(invoices.Any(i => i.InvoiceId == invoiceId));
         }
         #endregion
 
