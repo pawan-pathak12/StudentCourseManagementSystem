@@ -5,7 +5,7 @@ namespace StudentCourseManagement.Business.Interfaces.Services.FinancialModule
     public interface ILateFeeService
     {
         Task<bool> ApplyLateFeeAsync(int invoiceId);
-        Task ProcessAllOverDue();
+        Task<(int success, int failed)> ProcessAllOverDueAsync();
         Task<Invoice> GetOverDueInvoiceAsync(int invoiceId);
     }
 }

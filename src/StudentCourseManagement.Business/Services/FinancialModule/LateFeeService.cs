@@ -104,7 +104,6 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             foreach (var invoice in invoices)
             {
                 var result = await ApplyLateFeeAsync(invoice.InvoiceId);
-                // FIX: Correct counter logic
                 if (result)
                 {
                     success++;
@@ -114,7 +113,6 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
                     failed++;
                 }
             }
-
             _logger.LogInformation("Late fee processing completed. Success: {Success}, Failed: {Failed}",
                 success, failed);
 
