@@ -1,16 +1,19 @@
 ﻿
 using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Data.Repositories.InMemory;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 public class InMemoryPaymentMethodRepository : IPaymentMethodRepository
 {
     private readonly List<PaymentMethod> _paymentMethods;
     private readonly IMapper _mapper;
+    private readonly InMemoryDbContext db;
 
-    public InMemoryPaymentMethodRepository(IMapper mapper)
+    public InMemoryPaymentMethodRepository(IMapper mapper, InMemoryDbContext _db)
     {
-        _paymentMethods = new List<PaymentMethod>();
+        this.db = _db;
+        _paymentMethods = _db.PaymentMethods;
         this._mapper = mapper;
     }
 

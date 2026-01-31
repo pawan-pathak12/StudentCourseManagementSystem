@@ -189,6 +189,7 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
             var (success, errorMessage) = await _refundService.ValidateEligibilityAsync(paymentId);
 
             //Assert
+            Assert.IsFalse(success);
         }
 
         [TestMethod]
@@ -280,6 +281,49 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
             return await _paymentMethodRepository.AddAsync(method);
         }
         #endregion
+
+        [TestMethod]
+        public async Task GetEnrollmentIdFromPaymentIdAsync_IfWorksThen_ReturnId()
+        {
+            // Arrange
+            var studentId = await CreateStudentAsync();
+            var courseId = await CreateCourseAsync();
+
+            var enrollment = new EnrollmentBuilder()
+                .WithStudentId(studentId).WithCourseId(courseId)
+                .Build();
+            var enrollmentId = await _enrollmentRepository.AddAsync(enrollment);
+
+            var feeTemplate = new FeeTemplateBuilder()
+                .WithCourseId(courseId).WithAmount(1000)
+                .WithCalculationType(CalculationType.FlatAmount).Build();
+            var feeTemplateId = await _feeTemplateRepository.AddAsync(feeTemplate);
+
+            var feeAssessment = new FeeAssessmentBuilder()
+                .WithEnrollmentId(enrollmentId).WithCourseId(courseId)
+                .WithFeeTemplateId(feeTemplateId).Build();
+            var feeAssessmentId = await _feeAssessmentRepository.AddAsync(feeAssessment);
+
+            var invoice = new InvoiceBuilder()
+                .WithCourseId(courseId).WithFeeAssessmentId(feeAssessmentId)
+                .WithStudentId(studentId).Build();
+            var invoiceId = await _invoiceRepository.AddAsync(invoice);
+
+            var paymentMethodId = await CreatePaymentMethodAsync();
+
+            var payment = new PaymentBuilder()
+                .WithStudentId(studentId).WithInvoiceId(invoiceId)
+                .WithPaymentMethodId(paymentMethodId).WithAmount(100).WithPaymentStatus(PaymentStatus.Completed)
+                .WithPaymentDate(DateTimeOffset.UtcNow.AddDays(-40)).Build();
+            var paymentId = await _paymentRepository.AddAsync(payment);
+
+            //act 
+            var createdEnrollmentId = await _paymentRepository.GetEnrollmentIdFromPaymentIdAsync(paymentId);
+
+            Console.WriteLine(createdEnrollmentId);
+            Assert.IsGreaterThan(0, createdEnrollmentId);
+
+        }
 
     }
 }

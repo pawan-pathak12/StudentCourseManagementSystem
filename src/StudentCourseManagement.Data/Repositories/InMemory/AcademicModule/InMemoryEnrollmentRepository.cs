@@ -3,16 +3,18 @@ using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Enums;
 
-namespace StudentCourseManagement.Data.Repositories.InMemory
+namespace StudentCourseManagement.Data.Repositories.InMemory.AcademicModule
 {
     public class InMemoryEnrollmentRepository : IEnrollmentRepository
     {
         public readonly List<Enrollment> _enrollments;
         private readonly IMapper _mapper;
+        private readonly InMemoryDbContext _db;
 
-        public InMemoryEnrollmentRepository(IMapper mapper)
+        public InMemoryEnrollmentRepository(IMapper mapper, InMemoryDbContext db)
         {
-            _enrollments = new List<Enrollment>();
+            this._db = db;
+            _enrollments = _db.Enrollments;
             this._mapper = mapper;
         }
 

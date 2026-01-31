@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
-using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
@@ -8,21 +7,28 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
     public class InMemorryInvoiceRepository : IInvoiceRepository
     {
         private readonly List<Invoice> _invoice;
+        private readonly List<FeeAssessment> _feeAssessments;
         private readonly IMapper _mapper;
-        private readonly InMemoryFeeAssessmentRepository _feeAssessmentRepository;
+        private readonly InMemoryDbContext _db;
 
-        public InMemorryInvoiceRepository(IMapper mapper, InMemoryFeeAssessmentRepository feeAssessmentRepository)
+        public InMemorryInvoiceRepository(IMapper mapper, InMemoryDbContext db)
         {
-            _invoice = new List<Invoice>();
+            this._db = db;
+            this._feeAssessments = _db.FeeAssessments;
+            _invoice = _db.Invoices;
             this._mapper = mapper;
-            this._feeAssessmentRepository = feeAssessmentRepository;
         }
 
         #region CURD Operations 
         public Task<int> AddAsync(Invoice invoice)
         {
+            if (invoice.InvoiceId == 0)
+            {
+                invoice.InvoiceId = _invoice.Count + 1;
+            }
+
+            invoice.IsActive = true;
             _invoice.Add(invoice);
-            invoice.InvoiceId++;
             return Task.FromResult(invoice.InvoiceId);
         }
 
@@ -52,11 +58,11 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         public Task<bool> UpdateAsync(int id, Invoice invoice)
         {
             var existingInvoice = _invoice.FirstOrDefault(x => x.InvoiceId == id && x.IsActive == true);
-            if (invoice == null)
+            if (existingInvoice == null)
             {
                 return Task.FromResult(false);
             }
-            _mapper.Map(existingInvoice, invoice);
+            _mapper.Map(invoice, existingInvoice);
             return Task.FromResult(true);
         }
         #endregion
@@ -79,21 +85,21 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
         #endregion
 
         #region Phase 5 
-        public async Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId)
+        public Task<FeeAssessment?> GetFeeAssessmentByInvoiceIdAsync(int invoiceId)
         {
             var invoice = _invoice.Find(x => x.InvoiceId == invoiceId);
             if (invoice == null)
             {
                 return null;
             }
-            return await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
-
+            var feeAssessment = _feeAssessments.Find(x => x.FeeAssessmentId == invoice.FeeAssessmentId);
+            return Task.FromResult(feeAssessment);
         }
 
         #endregion
 
         #region Phase 6
-        public Task<Invoice> GetOverDueInvoiceAsync(int invoiceId)
+        public Task<Invoice?> GetOverDueInvoiceAsync(int invoiceId)
         {
             var invoice = _invoice.Find(x => x.InvoiceId == invoiceId && x.DueDate < DateTimeOffset.UtcNow && x.IsActive == true);
             return Task.FromResult(invoice);

@@ -132,40 +132,45 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
             #region Course 
             var course1 = new CourseBuilder()
                           .WithTitle("Introduction to Programming")
-                          .WithStartDate(new DateTimeOffset(2026, 2, 1, 0, 0, 0, TimeSpan.Zero))
-                          .WithEndDate(new DateTimeOffset(2026, 5, 1, 0, 0, 0, TimeSpan.Zero))
-                          .WithEnrollmentStartDate(new DateTimeOffset(2026, 1, 15, 0, 0, 0, TimeSpan.Zero))
+                          .WithStartDate(DateTimeOffset.UtcNow.AddDays(40))
+                        .WithEndDate(DateTimeOffset.UtcNow.AddMonths(2))
+                        .WithEnrollmentStartDate(DateTimeOffset.UtcNow.AddDays(-5))
+                        .WithEnrollmentEndDate(DateTimeOffset.UtcNow.AddDays(35))
                           .Build();
 
             var course2 = new CourseBuilder()
                         .WithTitle("Database Systems")
-                        .WithStartDate(new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero))
-                        .WithEndDate(new DateTimeOffset(2026, 6, 1, 0, 0, 0, TimeSpan.Zero))
-                        .WithEnrollmentStartDate(new DateTimeOffset(2026, 2, 10, 0, 0, 0, TimeSpan.Zero))
+                       .WithStartDate(DateTimeOffset.UtcNow.AddDays(45))
+                        .WithEndDate(DateTimeOffset.UtcNow.AddMonths(12))
+                        .WithEnrollmentStartDate(DateTimeOffset.UtcNow.AddDays(-15))
+                        .WithEnrollmentEndDate(DateTimeOffset.UtcNow.AddDays(40))
                         .Build();
 
             var course3 = new CourseBuilder()
                         .WithTitle("Web Development Fundamentals")
-                        .WithStartDate(new DateTimeOffset(2026, 4, 1, 0, 0, 0, TimeSpan.Zero))
-                        .WithEndDate(new DateTimeOffset(2026, 7, 1, 0, 0, 0, TimeSpan.Zero))
-                        .WithEnrollmentStartDate(new DateTimeOffset(2026, 3, 15, 0, 0, 0, TimeSpan.Zero))
+                         .WithStartDate(DateTimeOffset.UtcNow.AddDays(10))
+                        .WithEndDate(DateTimeOffset.UtcNow.AddMonths(2))
+                        .WithEnrollmentStartDate(DateTimeOffset.UtcNow.AddDays(-1))
+                        .WithEnrollmentEndDate(DateTimeOffset.UtcNow.AddDays(5))
                         .Build();
 
             var course4 = new CourseBuilder()
-                    .WithTitle("Software Engineering Practices")
-                    .WithStartDate(new DateTimeOffset(2026, 5, 1, 0, 0, 0, TimeSpan.Zero))
-                    .WithEndDate(new DateTimeOffset(2026, 8, 1, 0, 0, 0, TimeSpan.Zero))
-                    .WithEnrollmentStartDate(new DateTimeOffset(2026, 4, 10, 0, 0, 0, TimeSpan.Zero))
-                    .Build();
+                        .WithTitle("Software Engineering Practices")
+                        .WithStartDate(DateTimeOffset.UtcNow.AddDays(30))
+                        .WithEndDate(DateTimeOffset.UtcNow.AddMonths(3))
+                        .WithEnrollmentStartDate(DateTimeOffset.UtcNow.AddDays(-10))
+                        .WithEnrollmentEndDate(DateTimeOffset.UtcNow.AddDays(25))
+                        .Build();
 
             var course5 = new CourseBuilder()
                     .WithTitle("Cloud Computing Basics")
-                    .WithStartDate(new DateTimeOffset(2026, 6, 1, 0, 0, 0, TimeSpan.Zero))
-                    .WithEndDate(new DateTimeOffset(2026, 9, 1, 0, 0, 0, TimeSpan.Zero))
-                    .WithEnrollmentStartDate(new DateTimeOffset(2026, 5, 15, 0, 0, 0, TimeSpan.Zero))
+                    .WithStartDate(DateTimeOffset.UtcNow.AddDays(40))
+                    .WithEndDate(DateTimeOffset.UtcNow.AddMonths(2))
+                    .WithEnrollmentStartDate(DateTimeOffset.UtcNow.AddDays(-15))
+                    .WithEnrollmentEndDate(DateTimeOffset.UtcNow.AddDays(35))
                     .Build();
 
-            var courseId = new int[7];
+            var courseId = new int[6];
             courseId[0] = await _courseRepository.AddAsync(course1);
             courseId[1] = await _courseRepository.AddAsync(course2);
             courseId[2] = await _courseRepository.AddAsync(course3);
@@ -179,10 +184,10 @@ namespace StudentCourseManagement.Tests.Unit.Services.AcademicModule.Enrollments
 
             for (int i = 0; i < courseId.Length; i++)
             {
-                var enrollment = new Enrollment { StudentId = firstStudentId, CourseId = courseId[i] };
+                var enrollment = new Enrollment { StudentId = firstStudentId, CourseId = courseId[i], IsActive = true };
                 var (success, errorMessage, enrollmentId) = await _service.CreateAsync(enrollment);
 
-                if (i < courseId[5])
+                if (i < 5)
                 {
                     Assert.IsTrue(success);
                 }

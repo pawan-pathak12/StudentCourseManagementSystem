@@ -6,12 +6,14 @@ using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
 using StudentCourseManagement.Business.Services.FinancialModule;
 using StudentCourseManagement.Data.Repositories.InMemory;
+using StudentCourseManagement.Data.Repositories.InMemory.AcademicModule;
 using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
 
 namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
 {
     public class FeeTemplateServiceBase
     {
+        protected InMemoryDbContext _db;
         protected IFeeTemplateService _feeTemplateService;
         protected InMemoryCourseRepository _courseRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
@@ -19,7 +21,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
         [TestInitialize]
         public void Setup()
         {
-
+            _db = new InMemoryDbContext();
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<FeeTemplateProfile>();
@@ -28,9 +30,9 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
             var mapper = config.CreateMapper();
             var mockLogger = new Mock<ILogger<FeeTemplateService>>();
             var enrollmentRepo = new Mock<InMemoryEnrollmentRepository>(_enrollmentRepository);
-            //use protected pro and pass in mock
-            _courseRepository = new InMemoryCourseRepository(mapper, enrollmentRepo.Object);
-            _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
+
+            _courseRepository = new InMemoryCourseRepository(mapper, _db);
+            _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper, _db);
             _feeTemplateService = new FeeTemplateService(_feeTemplateRepository, mockLogger.Object, _courseRepository);
         }
     }

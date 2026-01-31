@@ -1,14 +1,17 @@
 ﻿using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Domain.Entities;
 
-namespace StudentCourseManagement.Data.Repositories.InMemory
+namespace StudentCourseManagement.Data.Repositories.InMemory.AcademicModule
 {
     public class InMemoryStudentRepository : IStudentRepository
     {
-        public readonly List<Student> _students;
-        public InMemoryStudentRepository()
+        private readonly InMemoryDbContext _db;
+        private readonly List<Student> _students;
+
+        public InMemoryStudentRepository(InMemoryDbContext db)
         {
-            _students = new List<Student>();
+            this._db = db;
+            _students = _db.Students;
         }
 
         #region CURD Operations 

@@ -82,6 +82,11 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
 
         public async Task<bool> UpdateAsync(int feeAssessmentId, FeeAssessment feeAssessment)
         {
+            if (feeAssessmentId != feeAssessment.FeeAssessmentId)
+            {
+                _logger.LogWarning($"Id mismatched");
+                return false;
+            }
             var assessment = await _feeAssessmentRepository.GetByIdAsync(feeAssessmentId);
             if (assessment == null)
             {
@@ -89,11 +94,7 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
                 return false;
             }
 
-            if (feeAssessmentId != feeAssessment.FeeAssessmentId)
-            {
-                _logger.LogWarning($"Id mismatched");
-                return false;
-            }
+
             return await _feeAssessmentRepository.UpdateAsync(feeAssessmentId, feeAssessment);
         }
 
