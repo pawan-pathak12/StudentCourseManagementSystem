@@ -2,19 +2,22 @@
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Domain.Entities;
 
-namespace StudentCourseManagement.Data.Repositories.InMemory
+namespace StudentCourseManagement.Data.Repositories.InMemory.AcademicModule
 {
     public class InMemoryCourseRepository : ICourseRepository
     {
         public readonly List<Course> _courses;
-        private readonly IMapper _mapper;
-        private readonly InMemoryEnrollmentRepository _enrollmentRepository;
+        public readonly List<Enrollment> _enrollments;
+        private readonly InMemoryDbContext _db;
 
-        public InMemoryCourseRepository(IMapper mapper, InMemoryEnrollmentRepository enrollmentRepository)
+        private readonly IMapper _mapper;
+        public InMemoryCourseRepository(IMapper mapper, InMemoryDbContext db)
         {
-            _courses = new List<Course>();
+            this._db = db;
+            _courses = _db.Courses;
+            _enrollments = _db.Enrollments;
             this._mapper = mapper;
-            this._enrollmentRepository = enrollmentRepository;
+
         }
 
         #region CURD Operations 
@@ -101,15 +104,15 @@ namespace StudentCourseManagement.Data.Repositories.InMemory
             return Task.FromResult(isValid);
         }
 
-        public async Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
+        public Task<DateTimeOffset> GetStartDateByEnrollmentIdAsync(int enrollmentId)
         {
-            var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
+            var enrollment = _enrollments.Find(x => x.EnrollmentId == enrollmentId);
             if (enrollment == null)
             {
 
             }
             var course = _courses.Find(x => x.CourseId == enrollment.CourseId);
-            return course.StartDate;
+            return Task.FromResult(course.StartDate);
         }
     }
 }

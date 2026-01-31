@@ -181,7 +181,7 @@ public class PaymentService : IPaymentService
         {
             invoice.InvoiceStatus = InvoiceStatus.PartiallyPaid;
         }
-
+        invoice.IsActive = true;
         await _invoiceRepository.UpdateAsync(invoice.InvoiceId, invoice);
 
         //Update FeeAssessment only if fully paid 

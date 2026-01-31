@@ -8,10 +8,12 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.financialModule
     {
         private readonly List<FeeTemplate> _feeTemplate;
         private readonly IMapper _mapper;
+        private readonly InMemoryDbContext _db;
 
-        public InMemoryFeeTemplateRepository(IMapper mapper)
+        public InMemoryFeeTemplateRepository(IMapper mapper, InMemoryDbContext db)
         {
-            _feeTemplate = new List<FeeTemplate>();
+            this._db = db;
+            _feeTemplate = _db.feeTemplates;
             this._mapper = mapper;
         }
 

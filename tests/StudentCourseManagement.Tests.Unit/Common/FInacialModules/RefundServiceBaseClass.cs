@@ -5,6 +5,7 @@ using StudentCourseManagement.Business.Mapping;
 using StudentCourseManagement.Business.Mapping.FinancialModule;
 using StudentCourseManagement.Business.Services.FinancialModule;
 using StudentCourseManagement.Data.Repositories.InMemory;
+using StudentCourseManagement.Data.Repositories.InMemory.AcademicModule;
 using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
 using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
 
@@ -13,6 +14,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
     //
     public class RefundServiceBaseClass
     {
+        protected InMemoryDbContext _db;
         protected InMemoryStudentRepository _studentRepository;
         protected InMemoryEnrollmentRepository _enrollmentRepository;
         protected InMemoryFeeTemplateRepository _feeTemplateRepository;
@@ -26,6 +28,7 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
         [TestInitialize]
         public void Setup()
         {
+            _db = new InMemoryDbContext();
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<StudentProfile>();
@@ -38,16 +41,17 @@ namespace StudentCourseManagement.Tests.Unit.Common.FInacialModules
                 cfg.AddProfile<PaymentMethodProfile>();
             });
             var mapper = config.CreateMapper();
-            _studentRepository = new InMemoryStudentRepository();
-            _enrollmentRepository = new InMemoryEnrollmentRepository(mapper);
-            _courseRepository = new InMemoryCourseRepository(mapper, _enrollmentRepository);
+            _studentRepository = new InMemoryStudentRepository(_db);
+            _enrollmentRepository = new InMemoryEnrollmentRepository(mapper, _db);
+            _courseRepository = new InMemoryCourseRepository(mapper, _db);
 
-            _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper);
-            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _invoiceRepository);
-            _paymentRepository = new InMemoryPaymentRepository(mapper, _invoiceRepository, _feeAssessmentRepository, _enrollmentRepository);
-            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _feeAssessmentRepository);
+            _feeTemplateRepository = new InMemoryFeeTemplateRepository(mapper, _db);
+            _feeAssessmentRepository = new InMemoryFeeAssessmentRepository(mapper, _db);
+            _paymentRepository = new InMemoryPaymentRepository(mapper, _db);
 
-            _paymentMethodRepository = new InMemoryPaymentMethodRepository(mapper);
+            _invoiceRepository = new InMemorryInvoiceRepository(mapper, _db);
+
+            _paymentMethodRepository = new InMemoryPaymentMethodRepository(mapper, _db);
             var mocklogger = new Mock<ILogger<RefundService>>();
 
             _refundService = new RefundService(_paymentRepository, _courseRepository, _invoiceRepository, _feeAssessmentRepository, mocklogger.Object);

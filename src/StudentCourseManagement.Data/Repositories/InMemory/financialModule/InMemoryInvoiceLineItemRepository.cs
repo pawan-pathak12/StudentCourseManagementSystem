@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Data.Repositories.InMemory;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 public class InMemoryInvoiceLineItemRepository : IInvoiceLineItemRepository
 {
     private readonly List<InvoiceLineItem> _lineItems;
     private readonly IMapper _mapper;
+    private readonly InMemoryDbContext _db;
 
-    public InMemoryInvoiceLineItemRepository(IMapper mapper)
+    public InMemoryInvoiceLineItemRepository(IMapper mapper, InMemoryDbContext db)
     {
-        _lineItems = new List<InvoiceLineItem>();
+        this._db = db;
+        _lineItems = _db.LineItems;
         this._mapper = mapper;
     }
 

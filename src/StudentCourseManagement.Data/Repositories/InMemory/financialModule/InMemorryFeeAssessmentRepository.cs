@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
-using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
@@ -10,14 +9,14 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         private readonly List<FeeAssessment> _feeAssessment;
         private readonly List<Invoice> _invoices;
         private readonly IMapper _mapper;
-        private readonly InMemorryInvoiceRepository _invoiceRepository;
+        private readonly InMemoryDbContext _db;
 
-        public InMemoryFeeAssessmentRepository(IMapper mapper, InMemorryInvoiceRepository invoiceRepository)
+        public InMemoryFeeAssessmentRepository(IMapper mapper, InMemoryDbContext db)
         {
-            _feeAssessment = new List<FeeAssessment>();
-            _invoices = new List<Invoice>();
+            this._db = db;
+            _feeAssessment = _db.FeeAssessments;
+            _invoices = _db.Invoices;
             _mapper = mapper;
-            this._invoiceRepository = invoiceRepository;
         }
 
         #region CRUD Operation
@@ -29,7 +28,7 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
             {
                 feeAssessment.FeeAssessmentId = _feeAssessment.Count + 1;
             }
-
+            feeAssessment.IsActive = true;
             _feeAssessment.Add(feeAssessment);
             return Task.FromResult(feeAssessment.FeeAssessmentId);
         }
@@ -85,17 +84,13 @@ namespace StudentCourseManagement.Data.Repositories.InMemory.FinancialModule
         #endregion
 
         #region Phase -4 : payment Processing required method
-        public async Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
+        public Task<FeeAssessment?> GetByInvoiceIdAsync(int invoiceId)
         {
-            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
-            if (invoice == null)
-            {
-                return null;
-            }
-            return _feeAssessment.FirstOrDefault(f => f.FeeAssessmentId == invoice?.FeeAssessmentId && f.IsActive == true);
+            var invoice = _invoices.Find(x => x.InvoiceId == invoiceId);
+
+            var feeAssessment = _feeAssessment.FirstOrDefault(f => f.FeeAssessmentId == invoice?.FeeAssessmentId && f.IsActive == true);
+            return Task.FromResult(feeAssessment);
         }
-
-
 
         #endregion
     }

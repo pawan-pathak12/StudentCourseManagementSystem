@@ -1,25 +1,28 @@
 ﻿using AutoMapper;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Data.Repositories.InMemory;
-using StudentCourseManagement.Data.Repositories.InMemory.financialModule;
-using StudentCourseManagement.Data.Repositories.InMemory.FinancialModule;
+using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 public class InMemoryPaymentRepository : IPaymentRepository
 {
     private readonly List<Payment> _payments;
+    private readonly List<Invoice> _invoices;
+    private readonly List<FeeAssessment> _feeAssessments;
+    private readonly List<Enrollment> _enrollments;
     private readonly IMapper _mapper;
-    private readonly InMemorryInvoiceRepository _invoiceRepository;
-    private readonly InMemoryFeeAssessmentRepository _feeAssessmentRepository;
-    private readonly InMemoryEnrollmentRepository _enrollmentRepository;
+    private readonly InMemoryDbContext _db;
 
-    public InMemoryPaymentRepository(IMapper mapper, InMemorryInvoiceRepository invoiceRepository, InMemoryFeeAssessmentRepository feeAssessmentRepository, InMemoryEnrollmentRepository enrollmentRepository)
+    public InMemoryPaymentRepository(IMapper mapper, InMemoryDbContext db)
     {
-        _payments = new List<Payment>();
+        this._db = db;
+        this._enrollments = _db.Enrollments;
+        this._feeAssessments = _db.FeeAssessments;
+        this._invoices = _db.Invoices;
+        _payments = _db.Payments;
         this._mapper = mapper;
-        this._invoiceRepository = invoiceRepository;
-        this._feeAssessmentRepository = feeAssessmentRepository;
-        this._enrollmentRepository = enrollmentRepository;
+
+
     }
 
     #region CRUD Operations
@@ -79,13 +82,18 @@ public class InMemoryPaymentRepository : IPaymentRepository
     #endregion
 
     #region Phase 5
-    public async Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId)
+    public Task<Invoice?> GetInvoiceByPaymentIdAsync(int paymentId)
     {
         var payment = _payments.Find(x => x.PaymentId == paymentId);
         if (payment == null) return null;
 
-        return await _invoiceRepository.GetByIdAsync(payment.InvoiceId);
+        var invoice = _invoices.Find(x => x.InvoiceId == payment.InvoiceId);
+        return Task.FromResult(invoice);
     }
+
+    #endregion
+
+    #region Phase 6 
 
     public Task<bool> IsRefundedAsync(int paymentId)
     {
@@ -93,23 +101,24 @@ public class InMemoryPaymentRepository : IPaymentRepository
         return Task.FromResult(isRefundable);
     }
 
-    public async Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId)
+    public Task<int> GetEnrollmentIdFromPaymentIdAsync(int paymentId)
     {
         var payment = _payments.Find(x => x.PaymentId == paymentId);
-        if (payment == null) return 0;
+        if (payment == null) return Task.FromResult(0);
 
-        var invoice = await _invoiceRepository.GetByIdAsync(payment.InvoiceId);
-        if (invoice == null) return 0;
+        var invoice = _invoices.Find(x => x.InvoiceId == payment.InvoiceId);
+        if (invoice == null) return Task.FromResult(0);
 
-        var feeAssessment = await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
-        if (feeAssessment == null) return 0;
 
-        var enrollment = await _enrollmentRepository.GetByIdAsync(feeAssessment.EnrollmentId);
+        var feeAssessment = _feeAssessments.Find(x => x.FeeAssessmentId == invoice.FeeAssessmentId);
+        if (feeAssessment == null) return Task.FromResult(0);
+
+        var enrollment = _enrollments.Find(x => x.EnrollmentId == feeAssessment.EnrollmentId);
         if (enrollment == null)
         {
-            return 0;
+            return Task.FromResult(0);
         }
-        return enrollment.EnrollmentId;
+        return Task.FromResult(enrollment.EnrollmentId);
     }
 
     public Task<Payment?> GetRefundPaymentDataByPaymentId(int paymentId)
@@ -117,6 +126,8 @@ public class InMemoryPaymentRepository : IPaymentRepository
         var payment = _payments.Find(x => x.RefundedPaymentId == paymentId);
         return Task.FromResult(payment);
     }
+
     #endregion
+
 
 }

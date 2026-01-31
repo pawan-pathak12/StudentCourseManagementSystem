@@ -75,6 +75,7 @@ namespace StudentCourseManagement.Tests.Common.Builders.FinancialModule
         {
             return new FeeTemplate
             {
+                FeeTemplateId = _feeTemplateId,
                 CourseId = _courseId,
                 Name = _name,
                 CalculationType = _calculationType,

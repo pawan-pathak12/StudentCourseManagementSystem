@@ -26,7 +26,7 @@ namespace StudentCourseManagement.Business.Interfaces.Repositories.FinancialModu
         #region Phase 5 
 
         Task<Invoice> GetOverDueInvoiceAsync(int invoiceId);
-        Task<IEnumerable<Invoice>> GetAllOverDueInvoicesAsync();
+        Task<IEnumerable<Invoice?>> GetAllOverDueInvoicesAsync();
         #endregion
     }
 }
