@@ -7,6 +7,7 @@ using StudentCourseManagement.Domain.Entities;
 
 namespace StudentCourseManagement.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentController : ControllerBase

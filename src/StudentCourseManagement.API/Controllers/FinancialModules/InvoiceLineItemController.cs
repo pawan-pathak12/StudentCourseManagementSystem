@@ -7,6 +7,7 @@ using StudentCourseManagement.Domain.Entities.FinancialModule;
 
 namespace StudentCourseManagement.API.Controllers.FinancialModules
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class InvoiceLineItemController : ControllerBase

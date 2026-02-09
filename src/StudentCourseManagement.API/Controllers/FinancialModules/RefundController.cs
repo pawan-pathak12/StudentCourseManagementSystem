@@ -5,6 +5,7 @@ using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 
 namespace StudentCourseManagement.API.Controllers.FinancialModules
 {
+    [Authorize]
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]

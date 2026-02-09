@@ -4,6 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.Students
 {
     public class UpdateStudentDto
     {
+        public int Id { get; set; }
         [Required]
         public string? Name { get; set; }
         [Required]

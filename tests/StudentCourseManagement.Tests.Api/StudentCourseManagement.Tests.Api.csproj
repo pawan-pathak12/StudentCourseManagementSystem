@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\StudentCourseManagement.API\StudentCourseManagement.API.csproj" />
     <ProjectReference Include="..\..\src\StudentCourseManagement.Domain\StudentCourseManagement.Domain.csproj" />
+    <ProjectReference Include="..\StudentCourseManagement.Tests.Common\StudentCourseManagement.Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

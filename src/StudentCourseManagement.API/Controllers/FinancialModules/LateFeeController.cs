@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 
 namespace StudentCourseManagement.API.Controllers.FinancialModules
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LateFeeController : ControllerBase
