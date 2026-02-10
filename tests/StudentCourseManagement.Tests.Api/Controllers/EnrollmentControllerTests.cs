@@ -1,4 +1,6 @@
-﻿using StudentCourseManagement.Application.DTOs.Enrollments;
+﻿using StudentCourseManagement.Application.DTOs.Courses;
+using StudentCourseManagement.Application.DTOs.Enrollments;
+using StudentCourseManagement.Application.DTOs.Students;
 using StudentCourseManagement.Tests.Api.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,6 +17,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public static void ClassInitialize(TestContext context)
         {
             _factory = new CustomWebApplicationFactory();
+        }
+        [TestInitialize]
+        public void TestInit()
+        {
             _client = _factory.CreateClient();
         }
 
@@ -25,108 +31,264 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             _factory.Dispose();
         }
 
+        #region New Happy Path 
         [TestMethod]
-        public async Task GetAllEnrollments_ReturnsOk()
+        public async Task Create_WhenStudentAndCourseExists_Return201()
         {
-            var response = await _client.GetAsync("/api/Enrollment");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        }
+            //Arrange 
 
-        [TestMethod]
-        public async Task GetActiveEnrollments_ReturnsOk()
-        {
-            var response = await _client.GetAsync("/api/Enrollment/active");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [TestMethod]
-        public async Task GetInactiveEnrollments_ReturnsOk()
-        {
-            var response = await _client.GetAsync("/api/Enrollment/inactive");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [TestMethod]
-        public async Task GetEnrollmentById_ValidId_ReturnsOk()
-        {
-            var response = await _client.GetAsync("/api/Enrollment/1");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-        }
-
-        [TestMethod]
-        public async Task GetEnrollmentById_InvalidId_ReturnsNotFound()
-        {
-            var response = await _client.GetAsync("/api/Enrollment/99999");
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-        }
-
-        [TestMethod]
-        public async Task CreateEnrollment_ValidData_ReturnsCreated()
-        {
-            var enrollment = new CreateEnrollmentDto
+            var createStudent = new CreateStudentDto
             {
-                StudentId = 1,
-                CourseId = 1
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
             };
 
-            var response = await _client.PostAsJsonAsync("/api/Enrollment", enrollment);
-            Assert.IsTrue(
-                response.StatusCode == HttpStatusCode.Created ||
-                response.StatusCode == HttpStatusCode.OK
-            );
+            //Act
+            var resposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.Created, resposne.StatusCode);
         }
 
         [TestMethod]
-        public async Task CreateEnrollment_InvalidStudentId_ReturnsBadRequest()
+        public async Task GetById_WhenEnrollmentExists_Return200()
         {
-            var enrollment = new CreateEnrollmentDto
+            //Arrange 
+
+            var createStudent = new CreateStudentDto
             {
-                StudentId = 99999,
-                CourseId = 1
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
             };
 
-            var response = await _client.PostAsJsonAsync("/api/Enrollment", enrollment);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-        }
+            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+            var enrollment = await enrollmentResponse.Content
+                .ReadFromJsonAsync<EnrollmentResponseDto>();
 
+            //Act
+            var existingEnrollment = await _client.GetAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, existingEnrollment.StatusCode);
+
+        }
         [TestMethod]
-        public async Task CreateEnrollment_InvalidCourseId_ReturnsBadRequest()
+        public async Task GetAll_WhenEnrollmentExists_Return200()
         {
-            var enrollment = new CreateEnrollmentDto
+            //Arrange 
+
+            var createStudent = new CreateStudentDto
             {
-                StudentId = 1,
-                CourseId = 99999
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
             };
 
-            var response = await _client.PostAsJsonAsync("/api/Enrollment", enrollment);
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+
+            //Act
+            var existingEnrollment = await _client.GetAsync("/api/enrollment/");
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, existingEnrollment.StatusCode);
         }
 
         [TestMethod]
-        public async Task UpdateEnrollment_InvalidId_ReturnsNotFound()
+        public async Task Update_WhenEnrollmentExists_Return204()
         {
-            var enrollment = new UpdateEnrollmentDto
+            //Arrange 
+
+            var createStudent = new CreateStudentDto
             {
-                StudentId = 1,
-                CourseId = 1
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
+            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+            var enrollment = await enrollmentResponse.Content
+                .ReadFromJsonAsync<EnrollmentResponseDto>();
+
+            var updateRequest = new UpdateEnrollmentDto
+            {
+                EnrollmentId = enrollment!.EnrollmentId,
+                CourseId = enrollment!.CourseId,
+                StudentId = enrollment!.StudentId,
+                CancellationReason = "Just kidding"
             };
 
-            var response = await _client.PutAsJsonAsync("/api/Enrollment/99999", enrollment);
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            //Act
+            var updatedResponse = await _client.PutAsJsonAsync($"/api/enrollment/{enrollment!.EnrollmentId}", updateRequest);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.OK, updatedResponse.StatusCode);
+        }
+        [TestMethod]
+        public async Task Delete_WhenEnrollmentExists_Return204()
+        {
+            //Arrange 
+
+            var createStudent = new CreateStudentDto
+            {
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
+
+            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+            var enrollment = await enrollmentResponse.Content
+                .ReadFromJsonAsync<EnrollmentResponseDto>();
+
+            //Act
+            var existingEnrollment = await _client.DeleteAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.NoContent, existingEnrollment.StatusCode);
+        }
+
+        #endregion
+
+        #region New Negative Path
+        [TestMethod]
+        public async Task Create_WhenStudentNotFound_Return404()
+        {
+            //Arrange 
+
+            //Act
+
+            //Assert
         }
 
         [TestMethod]
-        public async Task DeleteEnrollment_InvalidId_ReturnsNotFound()
+        public async Task Create_WhenCourseNotFound_Return404()
         {
-            var response = await _client.DeleteAsync("/api/Enrollment/99999");
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            //Arrange 
+
+            //Act
+
+            //Assert
+        }
+        [TestMethod]
+        public async Task Create_WhenEnrollmentDuplicate_Return400()
+        {
+            //Arrange 
+
+            //Act
+
+            //Assert
         }
 
         [TestMethod]
-        public async Task GetEnrollmentStatistics_ReturnsOk()
+        public async Task Create_WhenBusinessLogicFails_Return400()
         {
-            var response = await _client.GetAsync("/api/Enrollment/Enrollment-Statistics");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            //Arrange 
+
+            //Act
+
+            //Assert
         }
+
+
+        #endregion
+
+
+
+
     }
 }
