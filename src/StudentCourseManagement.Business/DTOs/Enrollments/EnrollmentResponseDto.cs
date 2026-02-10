@@ -4,6 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.Enrollments
 {
     public class EnrollmentResponseDto
     {
+        public int EnrollmentId { get; set; }
         public int StudentId { get; set; }          // FK to Student
         public int CourseId { get; set; }           // FK to Course
         public EnrollmentStatus EnrollmentStatus { get; set; } = EnrollmentStatus.Comfirmed;
