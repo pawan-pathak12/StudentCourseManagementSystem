@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 
 namespace StudentCourseManagement.Tests.Api.Fixtures
 {
@@ -9,21 +10,22 @@ namespace StudentCourseManagement.Tests.Api.Fixtures
         {
             builder.UseEnvironment("Testing");
 
-            builder.ConfigureServices(services =>
+            builder.ConfigureAppConfiguration(services =>
             {
-                // Optional: Replace services with test doubles
-                // Example: Replace real database with in-memory or test database
 
-                // var descriptor = services.SingleOrDefault(
-                //     d => d.ServiceType == typeof(DbContextOptions<YourDbContext>));
-                // if (descriptor != null)
-                //     services.Remove(descriptor);
-
-                // services.AddDbContext<YourDbContext>(options =>
-                // {
-                //     options.UseInMemoryDatabase("TestDb");
-                // });
             });
+
+            builder.ConfigureAppConfiguration(config =>
+            {
+                var settings = new Dictionary<string, string>
+                {
+                    {"Jwt:Issuer" , "JwtAuthLearning" },
+                    {"Jwt:Audience" ,"JwtAuthLearningUsers" },
+                    {"Jwt:Key" , "THIS_IS_A_SUPER_SECRET_KEY_CHANGE_LATER_BYOWNER" }
+                };
+                config.AddInMemoryCollection(settings);
+            });
+            builder.UseEnvironment("Test");
         }
     }
 }
