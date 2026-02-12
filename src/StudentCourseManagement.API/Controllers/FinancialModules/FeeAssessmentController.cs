@@ -42,30 +42,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         }
         #endregion
 
-        #region Manual 
-        [HttpPost]
-        [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Create([FromBody] CreateFeeAssessmentDto createFeeAssessment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var feeAssessment = _mapper.Map<FeeAssessment>(createFeeAssessment);
-            var (success, errorMessage, feeAssessmentId) = await _feeAssessmentService.CreateAsync(feeAssessment);
-
-            if (!success)
-            {
-                _logger.LogWarning("Failed to create FeeAssessment for EnrollmentId {EnrollmentId}, CourseId {CourseId}",
-                    feeAssessment.EnrollmentId, feeAssessment.CourseId);
-                return BadRequest($"Error Meaage : {errorMessage}");
-            }
-
-            return CreatedAtAction(nameof(GetById), new { id = feeAssessmentId }, createFeeAssessment);
-        }
-        #endregion
-
         #endregion
 
         #region HttpGet Endpoint

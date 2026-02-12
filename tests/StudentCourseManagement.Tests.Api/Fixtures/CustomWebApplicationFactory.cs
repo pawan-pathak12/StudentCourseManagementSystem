@@ -8,12 +8,13 @@ namespace StudentCourseManagement.Tests.Api.Fixtures
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("Testing");
 
             builder.ConfigureAppConfiguration(services =>
             {
 
             });
+
+
 
             builder.ConfigureAppConfiguration(config =>
             {
