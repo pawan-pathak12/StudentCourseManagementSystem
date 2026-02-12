@@ -2,12 +2,14 @@
 using StudentCourseManagement.Tests.Api.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
+using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
     public class CourseControllerTests
     {
+        private TransactionScope _scope = null!;
         private static CustomWebApplicationFactory _factory = null!;
         private static HttpClient _client = null!;
 
@@ -23,10 +25,15 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             _client = _factory.CreateClient();
         }
 
+        [TestCleanup]
+        public void TestClean()
+        {
+            _scope.Dispose();
+            _client.Dispose();
+        }
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            _client.Dispose();
             _factory.Dispose();
         }
 

@@ -4,6 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.FInancialModule.FeeAssessment
 {
     public class UpdateFeeAssessmentDto
     {
+        public int FeeAssessmentId { get; set; }
         public decimal Amount { get; set; }
         public DateTimeOffset DueDate { get; set; }
         public AssessmentStatus FeeAssessmentStatus { get; set; }
