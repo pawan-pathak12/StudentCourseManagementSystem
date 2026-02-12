@@ -36,7 +36,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Create_WhenStudentAndCourseExists_Return201()
         {
             //Arrange 
-
             var createStudent = new CreateStudentDto
             {
                 Name = "Pawan",
@@ -245,14 +244,33 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         #endregion
 
         #region New Negative Path
+
+        #region Create
+
         [TestMethod]
         public async Task Create_WhenStudentNotFound_Return404()
         {
             //Arrange 
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                CourseId = course!.CourseId
+            };
 
             //Act
+            var resposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
 
         [TestMethod]
@@ -260,18 +278,70 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
+            var createStudent = new CreateStudentDto
+            {
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+            };
+
             //Act
+            var resposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
         [TestMethod]
         public async Task Create_WhenEnrollmentDuplicate_Return400()
         {
             //Arrange 
 
+            var createStudent = new CreateStudentDto
+            {
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
+            await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+
+            var request2 = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
             //Act
+            var response = await _client.PostAsJsonAsync("/api/enrollment", request2);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
@@ -279,16 +349,129 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            //Act
+            var createStudent = new CreateStudentDto
+            {
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
+
+            //Act 
+            var response = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
-
 
         #endregion
 
+        [TestMethod]
+        public async Task GetById_WhenEnrollmentNotFound_Return404()
+        {
 
+            //Act 
+            var resposne = await _client.GetAsync($"/api/enrollment/{7777418}");
 
+            //Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
 
+        }
+
+        [TestMethod]
+        public async Task Update_WhenRouteIdAndBodyIdMissMatched_Return400()
+        {
+            //Arrange
+            var createStudent = new CreateStudentDto
+            {
+                Name = "Pawan",
+                Address = "Haldibari"
+            };
+            var studentResponse = await _client
+                .PostAsJsonAsync("/api/student", createStudent);
+            var student = await studentResponse.Content
+                .ReadFromJsonAsync<StudentResponseDto>();
+
+            var createCourse = new CreateCourseDto
+            {
+                Title = "Math",
+                Credits = 3
+            };
+            var courseResponse = await _client
+                .PostAsJsonAsync("/api/course", createCourse);
+            var course = await courseResponse.Content
+                .ReadFromJsonAsync<CourseResponseDto>();
+
+            var enrollmentRequest = new CreateEnrollmentDto
+            {
+                StudentId = student!.StudentId,
+                CourseId = course!.CourseId
+            };
+
+            var enrollmentResposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+            var createdEnrollment = await enrollmentResposne.Content
+                .ReadFromJsonAsync<EnrollmentResponseDto>();
+
+            var update = new UpdateEnrollmentDto
+            {
+                EnrollmentId = 9999,
+                CourseId = course.CourseId,
+                StudentId = student.StudentId,
+                CancellationReason = " Tesitng "
+            };
+
+            //Act 
+
+            var response = await _client.PutAsJsonAsync($"/api/enrollment/{createdEnrollment!.EnrollmentId}", update);
+            //Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task Update_WhenEnrollmentDoesnotExists_Return404()
+        {
+            //Arrange
+            var update = new UpdateEnrollmentDto
+            {
+                CancellationReason = "testing ",
+                CancelledDate = DateTimeOffset.UtcNow,
+                IsActive = true
+            };
+
+            //Act 
+            var resposne = await _client.PutAsJsonAsync($"/api/enrollment/{99999}", update);
+
+            //Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task Delete_WhenEnrollmentDoesnotExists_Return404()
+        {
+            //Act 
+            var resposne = await _client.DeleteAsync($"/api/enrollment/{999999944550}");
+            //Assert
+            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+        }
+
+        #endregion
     }
 }

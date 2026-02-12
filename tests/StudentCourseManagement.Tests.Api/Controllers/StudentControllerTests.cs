@@ -12,6 +12,7 @@ using System.Transactions;
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
+
     // since jwt token is used so this all test is failed as all the endpoint is authorize
     // error to fix : as CreateUser method is not under testclass so data is not deleted once test is completed 
     // bug : in generate jwt token user role and id is nnot returned so left it fix 
@@ -224,6 +225,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
                 Email = "user1122@gmail.com",
                 Password = "Apple@@211"
             };
+
+
             var userResponse = await _client.PostAsJsonAsync("/api/Auth/register", user);
 
             userResponse.EnsureSuccessStatusCode();
