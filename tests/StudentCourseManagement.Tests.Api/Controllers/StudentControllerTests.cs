@@ -23,12 +23,16 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var student = new CreateStudentDto
             {
                 Name = "Pawan",
-                Address = "Haldibari"
+                Address = "Haldibari",
+                Email = $"tester{RandomNumberGenerator()}@gmail.com",
+                DOB = DateTimeOffset.UtcNow.AddYears(-20),
+                Gender = "Male"
             };
 
             //Act 
-            var response = await _client.PostAsJsonAsync("/api/Student", student);
+            var response = await _client.PostAsJsonAsync("/api/student/", student);
 
+            response.EnsureSuccessStatusCode();
             //Assert
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
@@ -36,21 +40,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         [TestMethod]
         public async Task GetById_WhenStudentExists_Return200()
         {
-            // Arrange 
-
-            var student = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var createResponse = await _client.PostAsJsonAsync("/api/Student", student);
-
-            var createdStudent = await createResponse.Content.
-                ReadFromJsonAsync<StudentResponseDto>();
-
+            //Arrange 
+            var studentData = await builder.CreateStudent();
             //Act 
 
-            var response = await _client.GetAsync($"/api/Student/{createdStudent!.StudentId}");
+            var response = await _client.GetAsync($"/api/student/{studentData!.StudentId}");
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
@@ -59,19 +53,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task GetAll_WhenStudentExists_ReturnOk()
         {
             //Arrange 
-            var student = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-
-            var response = await _client.PostAsJsonAsync("/api/student", student);
+            var studentData = await builder.CreateStudent();
 
             //Act 
             var resposne = await _client.GetAsync("/api/student/");
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, resposne.StatusCode);
         }
 
 
@@ -79,30 +67,22 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRequestIsValid_Return200()
         {
             //Arrange 
-
-            var student = new CreateStudentDto
+            var studentData = await builder.CreateStudent();
+            var student2 = new UpdateStudentDto
             {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-
-            var studentResponse = await _client.PostAsJsonAsync("/api/student", student);
-            var createdStudent = await studentResponse.Content.
-                ReadFromJsonAsync<StudentResponseDto>();
-
-
-            var student2 = new CreateStudentDto
-            {
+                Id = studentData!.StudentId,
+                Email = studentData.Email,
+                DOB = studentData.DOB,
                 Name = "Ram Nath",
                 Address = "Ktm"
             };
 
             //Act 
-            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{createdStudent!.StudentId}", student2);
+            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{studentData!.StudentId}", student2);
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, updateResponse.StatusCode);
-
         }
+
         [TestMethod]
         public async Task Delete_WhenStudentExists_Return204()
         {
@@ -124,12 +104,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
          use sends wrong / unexpected / missing / invalid data => system must fall correctly
         */
 
-
         [TestMethod]
         public async Task GetById_WhenStudentDoesNotExist_Return404()
         {
             //Act 
-            var response = await _client.GetAsync("/api/student/9999999");
+            var response = await _client.GetAsync($"/api/student/{9999999}");
 
             //Arrange
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -146,7 +125,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PatchAsJsonAsync("/api/student/99999", request);
+            var response = await _client.PutAsJsonAsync($"/api/student/{99999}", request);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -163,11 +142,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PutAsJsonAsync("/api/student/1", request);
+            var response = await _client.PutAsJsonAsync($"/api/student/{1}", request);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
         #endregion
+
+
     }
 }

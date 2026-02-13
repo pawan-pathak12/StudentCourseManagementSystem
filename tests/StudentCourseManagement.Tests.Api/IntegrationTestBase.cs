@@ -62,6 +62,12 @@ namespace StudentCourseManagement.Tests.Api
 
         #endregion
 
+        protected int RandomNumberGenerator()
+        {
+            var rand = new Random();
+            return rand.Next(00000, 99999);
+        }
+
 
     }
 }

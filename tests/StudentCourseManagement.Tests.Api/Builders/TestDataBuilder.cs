@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
@@ -21,7 +22,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
         private readonly IInvoiceLineItemRepository _invoiceLineItemRepository;
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPaymentMethodRepository _paymentMethodRepository;
-
+        protected IMapper mapper;
         public TestDataBuilder(IServiceProvider serviceProvider)
         {
             _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
@@ -48,6 +49,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
             var userId = await _userRepository.AddAsync(user);
             var userData = await _userRepository.GetByIdAsync(userId);
+
             return new User
             {
                 Email = userData.Email,

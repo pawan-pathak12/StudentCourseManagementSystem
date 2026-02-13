@@ -62,11 +62,15 @@ namespace StudentCourseManagement.API.Controllers
         #region GetById
         [HttpGet("{id}")]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
             _logger.LogInformation($"API request : GET student with ID {id}");
 
             var student = await _studentService.GetByIdAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
             _logger.LogInformation("API Resposne : returning data");
             var studentDto = _mapper.Map<StudentResponseDto>(student);
 
