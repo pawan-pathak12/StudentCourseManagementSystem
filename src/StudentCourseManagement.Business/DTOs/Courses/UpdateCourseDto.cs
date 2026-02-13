@@ -23,7 +23,7 @@ namespace StudentCourseManagement.Application.DTOs.Courses
         public DateTimeOffset EnrollmentEndDate { get; set; }
 
 
-        public bool IsActive { get; set; }  // Allow toggling active status
+        public bool IsActive { get; set; }
     }
 
 

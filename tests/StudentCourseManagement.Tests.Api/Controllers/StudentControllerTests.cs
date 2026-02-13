@@ -1,13 +1,6 @@
-﻿using StudentCourseManagement.Application.DTOs.Auth;
-using StudentCourseManagement.Application.DTOs.Students;
-using StudentCourseManagement.Business.DTOs.Auth;
-using StudentCourseManagement.Domain.Entities.Identites;
-using StudentCourseManagement.Tests.Api.Fixtures;
-using StudentCourseManagement.Tests.Common;
+﻿using StudentCourseManagement.Application.DTOs.Students;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
@@ -16,40 +9,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
     // since jwt token is used so this all test is failed as all the endpoint is authorize
     // error to fix : as CreateUser method is not under testclass so data is not deleted once test is completed 
     // bug : in generate jwt token user role and id is nnot returned so left it fix 
-    public class StudentControllerTests
-
+    public class StudentControllerTests : IntegrationTestBase
     {
-        private TransactionScope _scope = null!;
-        private static CustomWebApplicationFactory _factory = null!;
-        private HttpClient _client = null!;
-
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            _factory = new CustomWebApplicationFactory();
-        }
-
-        [TestInitialize]
-        public async Task TestInit()
-        {
-            _scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            _client = _factory.CreateClient();
-            var user = await CreateUser();
-            var token = JwtTestTokenGenerator.GenerateToken(user);
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-        }
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _factory.Dispose();
-        }
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-            _client.Dispose();
-            _scope.Dispose();
-        }
 
         #region happy path 
 
@@ -62,12 +23,16 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var student = new CreateStudentDto
             {
                 Name = "Pawan",
-                Address = "Haldibari"
+                Address = "Haldibari",
+                Email = $"tester{RandomNumberGenerator()}@gmail.com",
+                DOB = DateTimeOffset.UtcNow.AddYears(-20),
+                Gender = "Male"
             };
 
             //Act 
-            var response = await _client.PostAsJsonAsync("/api/student", student);
+            var response = await _client.PostAsJsonAsync("/api/student/", student);
 
+            response.EnsureSuccessStatusCode();
             //Assert
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
@@ -75,21 +40,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         [TestMethod]
         public async Task GetById_WhenStudentExists_Return200()
         {
-            // Arrange 
-
-            var student = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var createResponse = await _client.PostAsJsonAsync("/api/student", student);
-
-            var createdStudent = await createResponse.Content.
-                ReadFromJsonAsync<StudentResponseDto>();
-
+            //Arrange 
+            var studentData = await builder.CreateStudent();
             //Act 
 
-            var response = await _client.GetAsync($"/api/student/{createdStudent!.StudentId}");
+            var response = await _client.GetAsync($"/api/student/{studentData!.StudentId}");
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
@@ -98,19 +53,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task GetAll_WhenStudentExists_ReturnOk()
         {
             //Arrange 
-            var student = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-
-            var response = await _client.PostAsJsonAsync("/api/student", student);
+            var studentData = await builder.CreateStudent();
 
             //Act 
             var resposne = await _client.GetAsync("/api/student/");
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, resposne.StatusCode);
         }
 
 
@@ -118,45 +67,30 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRequestIsValid_Return200()
         {
             //Arrange 
-
-            var student = new CreateStudentDto
+            var studentData = await builder.CreateStudent();
+            var student2 = new UpdateStudentDto
             {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-
-            var studentResponse = await _client.PostAsJsonAsync("/api/student", student);
-            var createdStudent = await studentResponse.Content.
-                ReadFromJsonAsync<StudentResponseDto>();
-
-
-            var student2 = new CreateStudentDto
-            {
+                Id = studentData!.StudentId,
+                Email = studentData.Email,
+                DOB = studentData.DOB,
                 Name = "Ram Nath",
                 Address = "Ktm"
             };
 
             //Act 
-            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{createdStudent!.StudentId}", student2);
+            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{studentData!.StudentId}", student2);
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, updateResponse.StatusCode);
-
         }
+
         [TestMethod]
         public async Task Delete_WhenStudentExists_Return204()
         {
             //Arrange 
-            var student = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResposne = await _client.PostAsJsonAsync("/api/student", student);
-            var createdStudent = await studentResposne.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
+            var studentData = await builder.CreateStudent();
 
             //Act 
-            var deleteResposne = await _client.DeleteAsync($"/api/student/{createdStudent!.StudentId}");
+            var deleteResposne = await _client.DeleteAsync($"/api/student/{studentData!.StudentId}");
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, deleteResposne.StatusCode);
@@ -170,12 +104,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
          use sends wrong / unexpected / missing / invalid data => system must fall correctly
         */
 
-
         [TestMethod]
         public async Task GetById_WhenStudentDoesNotExist_Return404()
         {
             //Act 
-            var response = await _client.GetAsync("/api/student/9999999");
+            var response = await _client.GetAsync($"/api/student/{9999999}");
 
             //Arrange
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -192,7 +125,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PatchAsJsonAsync("/api/student/99999", request);
+            var response = await _client.PutAsJsonAsync($"/api/student/{99999}", request);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -209,37 +142,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PutAsJsonAsync("/api/student/1", request);
+            var response = await _client.PutAsJsonAsync($"/api/student/{1}", request);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
         #endregion
 
-        #region helper method
 
-        public async Task<User> CreateUser()
-        {
-            var user = new RegisterRequest
-            {
-                Email = "user1122@gmail.com",
-                Password = "Apple@@211"
-            };
-
-
-            var userResponse = await _client.PostAsJsonAsync("/api/Auth/register", user);
-
-            userResponse.EnsureSuccessStatusCode();
-            var userData = await userResponse.Content
-                .ReadFromJsonAsync<UserResponseDto>();
-
-            return new User
-            {
-                UserId = userData.UserId,
-                Email = userData?.Email,
-                Role = userData?.Role
-            };
-        }
-        #endregion
     }
 }

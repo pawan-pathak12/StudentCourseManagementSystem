@@ -18,8 +18,8 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.Identities
         }
         public async Task<int> AddAsync(User user)
         {
-            const string sql = @"INSERT INTO Users (Email, PasswordHash, CreatedAt)
-                        VALUES (@Email, @PasswordHash, @CreatedAt);
+            const string sql = @"INSERT INTO Users (Email, PasswordHash, CreatedAt,Role)
+                        VALUES (@Email, @PasswordHash, @CreatedAt,@Role);
                         SELECT CAST(SCOPE_IDENTITY() as int);";
 
             using var connection = _dbContext.CreateConnection();

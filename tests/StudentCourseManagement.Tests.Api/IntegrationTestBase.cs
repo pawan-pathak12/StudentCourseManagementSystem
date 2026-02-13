@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using StudentCourseManagement.Application.DTOs.Auth;
-using StudentCourseManagement.Business.DTOs.Auth;
-using StudentCourseManagement.Domain.Entities.Identites;
+using StudentCourseManagement.Tests.Api.Builders;
 using StudentCourseManagement.Tests.Api.Fixtures;
 using StudentCourseManagement.Tests.Common;
-using System.Data;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Api
@@ -15,9 +11,10 @@ namespace StudentCourseManagement.Tests.Api
     public abstract class IntegrationTestBase
     {
         protected static CustomWebApplicationFactory Factory = null!;
+        protected TestDataBuilder builder = null!;
         protected HttpClient _client = null!;
-        protected IDbConnection Connection = null!;
-        private TransactionScope _scope = null!;
+        protected TransactionScope _scope = null!;
+        protected IServiceProvider Services = null!;
 
         #region Class Init
 
@@ -45,47 +42,32 @@ namespace StudentCourseManagement.Tests.Api
             _client = Factory.CreateClient();
 
             var scope = Factory.Services.CreateScope();
-            Connection = scope.ServiceProvider.GetRequiredService<IDbConnection>();
+            Services = scope.ServiceProvider;
+            builder = new TestDataBuilder(Services);
 
-            var user = await CreateUser();
+            var user = await builder.CreateUser();
             var token = JwtTestTokenGenerator.GenerateToken(user);
 
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
         }
 
+
         [TestCleanup]
         public void TestCleanup()
         {
             _client.Dispose();
-            _scope.Dispose(); // rollback
+            _scope.Dispose();
         }
 
         #endregion
 
-        #region Helpers
-
-        protected async Task<User> CreateUser()
+        protected int RandomNumberGenerator()
         {
-            var user = new RegisterRequest
-            {
-                Email = Guid.NewGuid() + "@gmail.com",
-                Password = "Apple@@211"
-            };
-
-            var response = await _client.PostAsJsonAsync("/api/Auth/register", user);
-            response.EnsureSuccessStatusCode();
-
-            var data = await response.Content.ReadFromJsonAsync<UserResponseDto>();
-
-            return new User
-            {
-                UserId = data!.UserId,
-                Email = data.Email,
-                Role = data.Role
-            };
+            var rand = new Random();
+            return rand.Next(00000, 99999);
         }
 
-        #endregion
+
     }
 }

@@ -1,41 +1,12 @@
 ﻿using StudentCourseManagement.Application.DTOs.Courses;
-using StudentCourseManagement.Tests.Api.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
-using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
-    public class CourseControllerTests
+    public class CourseControllerTests : IntegrationTestBase
     {
-        private TransactionScope _scope = null!;
-        private static CustomWebApplicationFactory _factory = null!;
-        private static HttpClient _client = null!;
-
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            _factory = new CustomWebApplicationFactory();
-        }
-
-        [TestInitialize]
-        public void TestInit()
-        {
-            _client = _factory.CreateClient();
-        }
-
-        [TestCleanup]
-        public void TestClean()
-        {
-            _scope.Dispose();
-            _client.Dispose();
-        }
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _factory.Dispose();
-        }
 
         #region New - Happy Part 
         [TestMethod]
@@ -60,40 +31,24 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         [TestMethod]
         public async Task GetAll_WhenStudentExists_Return200()
         {
+
             //Arrange
-            var course = new CreateCourseDto
-            {
-                Title = "Testing",
-                Capacity = 100,
-                Code = "CS101",
-                Credits = 10
-            };
-            await _client.PostAsJsonAsync("/api/course", course);
+            await builder.CreateCourse();
 
             //Act
-            var courses = await _client.GetAsync("/api/student");
+            var courses = await _client.GetAsync("/api/course");
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, courses.StatusCode);
         }
 
+        [TestMethod]
         public async Task GetById_WhenStudentExists_Return200()
         {
             //Arrange
-
-            var course = new CreateCourseDto
-            {
-                Title = "Testing",
-                Capacity = 100,
-                Code = "CS101",
-                Credits = 10
-            };
-            var createResponse = await _client.PostAsJsonAsync("/api/course", course);
-            var createdCourse = await createResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
+            var course = await builder.CreateCourse();
             //Act
-            var response = await _client.GetAsync($"/api/course/{createdCourse!.CourseId}");
+            var response = await _client.GetAsync($"/api/course/{course!.CourseId}");
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -103,26 +58,23 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenStudentExists_Return204()
         {
             //Arrange
-            var course = new CreateCourseDto
-            {
-                Title = "Testing",
-                Capacity = 100,
-                Code = "CS101",
-                Credits = 10
-            };
-            var createdResposne = await _client.PostAsJsonAsync("/api/course", course);
-            var createdCourse = await createdResposne.Content.
-                ReadFromJsonAsync<CourseResponseDto>();
+            var course = await builder.CreateCourse();
 
             var updateCourse = new UpdateCourseDto
             {
-                CourseId = createdCourse!.CourseId,
+                CourseId = course!.CourseId,
                 Description = "New DEscription",
-                IsActive = true
+                IsActive = true,
+                Code = course.Code,
+                Title = course.Title,
+                Credits = course.Credits,
+                Capacity = course.Capacity,
+                StartDate = course.StartDate,
+                Instructor = course.Instructor
             };
 
             //Act
-            var resposne = await _client.PutAsJsonAsync($"/api/course/{createdCourse!.CourseId}", updateCourse);
+            var resposne = await _client.PutAsJsonAsync($"/api/course/{course!.CourseId}", updateCourse);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.NoContent, resposne.StatusCode);
@@ -132,20 +84,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Delete_WhneStudentExists_Return204()
         {
             //Arrange
-            var course = new CreateCourseDto
-            {
-                Title = "Testing",
-                Capacity = 100,
-                Code = "CS101",
-                Credits = 10
-            };
-
-            var createdResposne = await _client.PostAsJsonAsync("/api/course", course);
-            var createdCourse = await createdResposne.Content.
-                ReadFromJsonAsync<CourseResponseDto>();
+            var course = await builder.CreateCourse();
 
             //Act
-            var resposne = await _client.DeleteAsync($"/api/course/{createdCourse!.CourseId}");
+            var resposne = await _client.DeleteAsync($"/api/course/{course!.CourseId}");
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.NoContent, resposne.StatusCode);
@@ -161,7 +103,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var course = new CreateCourseDto
             {
                 Title = "",
-                Capacity = -11
+                Capacity = 11
             };
 
             //Act
@@ -182,8 +124,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             //Assert 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
-
-
 
         [TestMethod]
         public async Task Update_WhenCoursetDoesNotExists_Return404()
@@ -207,31 +147,21 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRouteIdAndBodyIdMisMatch_Return400()
         {
             //Arrange
-            var course = new CreateCourseDto
-            {
-                Title = "Testing",
-                Capacity = 100,
-                Code = "CS101",
-                Credits = 10
-            };
-            var createResponse = await _client.PostAsJsonAsync("/api/course", course);
-            var createdCourse = await createResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var course = await builder.CreateCourse();
 
             var request = new UpdateCourseDto
             {
-                CourseId = createdCourse!.CourseId,
+                CourseId = 9999,
                 Title = "c# basic ",
                 Capacity = 111
             };
 
             //Act
-            var response = await _client.PutAsJsonAsync($"/api.course/{111}", request);
+            var response = await _client.PutAsJsonAsync($"/api.course/{course!.CourseId}", request);
             //Assert 
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
-
 
         [TestMethod]
         public async Task Delete_WhenCoursetDoesNotExist_Return404()
@@ -244,8 +174,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
         #endregion
-
-
 
     }
 }
