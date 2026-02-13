@@ -1,14 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
+using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Domain.Entities.Identites;
 using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Tests.Api.Builders
 {
     public class TestDataBuilder
     {
+        private readonly IUserRepository _userRepository;
         private readonly IStudentRepository _studentRepository;
         private readonly ICourseRepository _courseRepository;
         private readonly IEnrollmentRepository _enrollmentRepository;
@@ -21,6 +24,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
         public TestDataBuilder(IServiceProvider serviceProvider)
         {
+            _userRepository = serviceProvider.GetRequiredService<IUserRepository>();
             _studentRepository = serviceProvider.GetRequiredService<IStudentRepository>();
             _courseRepository = serviceProvider.GetRequiredService<ICourseRepository>();
             _enrollmentRepository = serviceProvider.GetRequiredService<IEnrollmentRepository>();
@@ -33,13 +37,33 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
+        public async Task<User> CreateUser()
+        {
+            var user = new User();
+
+            var rand = new Random();
+            user.PasswordHash = "AQAAAAIAAYagAAAAEIu6fYWy1QHI+acYlUsU83kFNlNoFfKymXcjBio7LI8+aNomKFEBlvdgGiqFs9onlA==";
+            user.Email = $"user+{rand.Next(10000, 99999)}@gmail.com";
+            user.Role = "Admin";
+
+            var userId = await _userRepository.AddAsync(user);
+            var userData = await _userRepository.GetByIdAsync(userId);
+            return new User
+            {
+                Email = userData.Email,
+                Role = userData.Role,
+                UserId = userId
+            };
+        }
+
         public async Task<Student> CreateStudent()
         {
+            var rand = new Random();
             var student = new Student
             {
                 Name = "Test Student",
                 IsActive = true,
-                Email = Guid.NewGuid() + "@gmail.com"
+                Email = $"user{rand.Next(0000, 9999)}" + "@gmail.com"
             };
 
             var id = await _studentRepository.AddAsync(student);

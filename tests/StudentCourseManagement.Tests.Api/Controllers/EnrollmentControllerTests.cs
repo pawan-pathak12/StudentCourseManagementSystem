@@ -1,36 +1,14 @@
 ﻿using StudentCourseManagement.Application.DTOs.Courses;
 using StudentCourseManagement.Application.DTOs.Enrollments;
 using StudentCourseManagement.Application.DTOs.Students;
-using StudentCourseManagement.Tests.Api.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
-    public class EnrollmentControllerTests
+    public class EnrollmentControllerTests : IntegrationTestBase
     {
-        private static CustomWebApplicationFactory _factory = null!;
-        private static HttpClient _client = null!;
-
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            _factory = new CustomWebApplicationFactory();
-        }
-        [TestInitialize]
-        public void TestInit()
-        {
-            _client = _factory.CreateClient();
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _client.Dispose();
-            _factory.Dispose();
-        }
-
         #region New Happy Path 
         [TestMethod]
         public async Task Create_WhenStudentAndCourseExists_Return201()

@@ -10,11 +10,6 @@ namespace StudentCourseManagement.Tests.Common
     {
         public static string GenerateToken(User user)
         {
-            // user role and userid is not returned 
-            var a = user.Email;
-            var b = user.Role;
-            var c = user.UserId;
-
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes("THIS_IS_A_SUPER_SECRET_KEY_CHANGE_LATER_BYOWNER")
                 );

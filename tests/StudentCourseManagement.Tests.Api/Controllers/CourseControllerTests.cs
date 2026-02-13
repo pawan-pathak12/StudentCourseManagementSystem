@@ -1,41 +1,12 @@
 ﻿using StudentCourseManagement.Application.DTOs.Courses;
-using StudentCourseManagement.Tests.Api.Fixtures;
 using System.Net;
 using System.Net.Http.Json;
-using System.Transactions;
 
 namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
-    public class CourseControllerTests
+    public class CourseControllerTests : IntegrationTestBase
     {
-        private TransactionScope _scope = null!;
-        private static CustomWebApplicationFactory _factory = null!;
-        private static HttpClient _client = null!;
-
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            _factory = new CustomWebApplicationFactory();
-        }
-
-        [TestInitialize]
-        public void TestInit()
-        {
-            _client = _factory.CreateClient();
-        }
-
-        [TestCleanup]
-        public void TestClean()
-        {
-            _scope.Dispose();
-            _client.Dispose();
-        }
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _factory.Dispose();
-        }
 
         #region New - Happy Part 
         [TestMethod]
@@ -244,8 +215,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
         #endregion
-
-
 
     }
 }

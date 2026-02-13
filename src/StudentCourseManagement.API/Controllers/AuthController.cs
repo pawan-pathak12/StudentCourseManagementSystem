@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using StudentCourseManagement.Application.DTOs.Auth;
+using StudentCourseManagement.Business.DTOs.Auth;
 using StudentCourseManagement.Business.Interfaces.Repositories.Identities;
 using StudentCourseManagement.Business.Services;
 using StudentCourseManagement.Domain.Entities.Identites;
@@ -74,7 +75,14 @@ namespace StudentCourseManagement.API.Controllers
             {
                 return NotFound();
             }
-            return Ok(user);
+            var userData = new UserResponseDto
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                Role = user.Role
+            };
+            return Ok(userData);
+
         }
         #endregion
 

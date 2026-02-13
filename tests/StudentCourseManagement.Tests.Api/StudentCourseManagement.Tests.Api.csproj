@@ -26,8 +26,4 @@
 	  <InternalsVisibleTo Include="StudentCourseManagement.Tests.Api" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\FinancialModule\" />
-  </ItemGroup>
-
 </Project>
