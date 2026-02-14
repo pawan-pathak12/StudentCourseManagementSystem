@@ -102,6 +102,10 @@ namespace StudentCourseManagement.Tests.Api.Builders
             return await _enrollmentRepository.GetByIdAsync(id);
         }
 
+        public async Task UpdateEnrollment(int id, Enrollment enrollment)
+        {
+            await _enrollmentRepository.UpdateAsync(id, enrollment);
+        }
 
         public async Task<FeeTemplate?> CreateFeeTemplate(int courseId)
         {
@@ -116,6 +120,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
             var id = await _feeTemplateRepository.AddAsync(template);
             return await _feeTemplateRepository.GetByIdAsync(id);
         }
+
 
 
         public async Task<FeeAssessment?> CreateFeeAssessment(int enrollmentId, int templateId)

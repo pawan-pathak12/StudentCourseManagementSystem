@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using StudentCourseManagement.Application.DTOs.Courses;
-using StudentCourseManagement.Application.DTOs.Enrollments;
-using StudentCourseManagement.Application.DTOs.FInancialModule.FeeAssessments;
-using StudentCourseManagement.Application.DTOs.Students;
+﻿using StudentCourseManagement.Application.DTOs.FInancialModule.FeeAssessments;
+using StudentCourseManagement.Domain.Entities;
 using StudentCourseManagement.Domain.Enums;
-using StudentCourseManagement.Tests.Api.Builders;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -18,50 +14,100 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task AssessFee_WhenAllBusinessRuleValid_Return200()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             //Act 
+            var response = await _client.PostAsJsonAsync($"/api/feeAssessment/assess/{enrollment!.EnrollmentId}", enrollment!.EnrollmentId);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
 
         [TestMethod]
         public async Task GetAll_WhenFeeAssessmentExists_Return200()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+
+
+            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             //Act 
+            var response = await _client.GetAsync("/api/feeAssessment/");
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [TestMethod]
         public async Task GetById_WhenFeeAssessmentExists_Return200()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+
+
+            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             //Act 
+            var response = await _client.GetAsync($"/api/feeAssessment/{feeAssessment!.FeeAssessmentId}");
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [TestMethod]
         public async Task Update_WhenFeeAssessmentExists_Return200()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+
+
+            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+
+            var updateData = new UpdateFeeAssessmentDto
+            {
+                FeeAssessmentId = feeAssessment.FeeAssessmentId,
+                FeeAssessmentStatus = AssessmentStatus.Assessed,
+                Amount = 00,
+                PaidDate = DateTimeOffset.UtcNow
+            };
 
             //Act 
+            var response = await _client.PutAsJsonAsync($"/api/feeAssessment/{feeAssessment.FeeAssessmentId}", updateData);
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [TestMethod]
         public async Task Delete_WhenFeeAssessmentExists_Return204()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+
+
+            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             //Act 
+            var response = await _client.DeleteAsync($"/api/feeAssessment/{feeAssessment!.FeeAssessmentId}");
 
             //Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
 
@@ -84,44 +130,22 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task AssessFee_WhenAnyBusinessRuleFailed_Return400()
         {
             //Arrange 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-
-            var enrollmentResposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
-            var enrollment = await enrollmentResposne.Content
-                    .ReadFromJsonAsync<EnrollmentResponseDto>();
-
-            await _client.PutAsJsonAsync($"api/enrollment/{enrollment!.EnrollmentId}", new UpdateEnrollmentDto
+            var updateEnrollment = new Enrollment
             {
                 EnrollmentId = enrollment!.EnrollmentId,
                 CourseId = enrollment!.CourseId,
                 StudentId = enrollment!.StudentId,
                 EnrollmentStatus = EnrollmentStatus.Cancelled
-            });
+            };
+
+            await builder.UpdateEnrollment(enrollment.EnrollmentId, updateEnrollment);
             // here enrollment status is cancelled so this must fail 
+
 
             //Act 
             var response = await _client.PostAsJsonAsync($"/api/feeAssessment/assess{enrollment!.EnrollmentId}", enrollment.EnrollmentId);
@@ -163,15 +187,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Update_WhenRouteIdAndBodyIdMissMatched_Return400()
         {
             //Arrange 
-            var scope = Factory.Services.CreateScope();
-            var dataBuilder = new TestDataBuilder(scope.ServiceProvider);
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
+            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
+            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
 
-            var student = await dataBuilder.CreateStudent();
-            var course = await dataBuilder.CreateCourse();
-            var enrollment = await dataBuilder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeTemplate = await dataBuilder.CreateFeeTemplate(course.CourseId);
-
-            var feeAssessment = await dataBuilder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             var update = new UpdateFeeAssessmentDto
             {
@@ -195,7 +216,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
-
 
         #endregion
 

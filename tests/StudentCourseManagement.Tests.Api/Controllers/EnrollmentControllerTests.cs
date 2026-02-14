@@ -14,25 +14,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Create_WhenStudentAndCourseExists_Return201()
         {
             //Arrange 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
@@ -52,35 +35,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-
-            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
-            var enrollment = await enrollmentResponse.Content
-                .ReadFromJsonAsync<EnrollmentResponseDto>();
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.GetAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
@@ -94,33 +52,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-
-            await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.GetAsync("/api/enrollment/");
@@ -133,35 +68,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenEnrollmentExists_Return204()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
-            var enrollment = await enrollmentResponse.Content
-                .ReadFromJsonAsync<EnrollmentResponseDto>();
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             var updateRequest = new UpdateEnrollmentDto
             {
@@ -181,36 +91,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Delete_WhenEnrollmentExists_Return204()
         {
             //Arrange 
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-
-            var enrollmentResponse = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
-            var enrollment = await enrollmentResponse.Content
-                .ReadFromJsonAsync<EnrollmentResponseDto>();
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.DeleteAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
@@ -378,35 +262,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRouteIdAndBodyIdMissMatched_Return400()
         {
             //Arrange
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
+            var student = await builder.CreateStudent();
+            var course = await builder.CreateCourse();
 
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
-
-            var enrollmentRequest = new CreateEnrollmentDto
-            {
-                StudentId = student!.StudentId,
-                CourseId = course!.CourseId
-            };
-
-            var enrollmentResposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
-            var createdEnrollment = await enrollmentResposne.Content
-                .ReadFromJsonAsync<EnrollmentResponseDto>();
+            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
 
             var update = new UpdateEnrollmentDto
             {
@@ -417,8 +276,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-
-            var response = await _client.PutAsJsonAsync($"/api/enrollment/{createdEnrollment!.EnrollmentId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/enrollment/{enrollment!.EnrollmentId}", update);
             //Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
