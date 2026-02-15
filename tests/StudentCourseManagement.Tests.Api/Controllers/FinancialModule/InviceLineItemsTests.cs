@@ -1,17 +1,16 @@
-﻿using StudentCourseManagement.Application.DTOs.FInancialModule.Invoices;
-using StudentCourseManagement.Domain.Constants;
-using StudentCourseManagement.Domain.Enums;
+﻿using StudentCourseManagement.Application.DTOs.FInancialModule.InvoiceLineItems;
+using StudentCourseManagement.Application.DTOs.FInancialModule.Invoices;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 {
     [TestClass]
-    public class InvoiceTests : IntegrationTestBase
+    public class InviceLineItemsTests : IntegrationTestBase
     {
+        //need : id : invoice , feetemplate , courseId
 
         #region Happy Path 
-
         [TestMethod]
         public async Task Create_WhenValid_Return201()
         {
@@ -21,17 +20,18 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
 
-            var invoice = new CreateInvoiceDto
+
+            var lineItem = new CreateInvoiceDto
             {
-                InvoiceId = student!.StudentId,
                 CourseId = course!.CourseId,
-                DueDate = DateTimeOffset.UtcNow.AddDays(FinancialConstants.DUE_DATE_DAYS),
-                feeTemplateId = feeAssessment!.FeeAssessmentId
+                InvoiceId = invoice!.InvoiceId,
+                feeTemplateId = feeTemplate!.FeeTemplateId
             };
 
             //Act 
-            var response = await _client.PostAsJsonAsync("/api/invoice", invoice);
+            var response = await _client.PostAsJsonAsync("/api/invoiceLineItem", lineItem);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
@@ -47,9 +47,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
             var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
             //Act 
-            var response = await _client.GetAsync("/api/invoice");
+            var response = await _client.GetAsync("/api/invoiceLineItem");
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
@@ -64,8 +65,9 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
             var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
             //Act 
-            var response = await _client.GetAsync($"/api/invoice/{invoice!.InvoiceId}");
+            var response = await _client.GetAsync($"/api/invoiceLineItem/{lineItem!.InvoiceLineItemId}");
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -82,18 +84,16 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
             var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
 
-            var update = new UpdateInvoiceDto
+            var update = new UpdateInvoiceLineItemDto
             {
-                InvoiceId = invoice!.InvoiceId,
-                InvoiceStatus = InvoiceStatus.Issued,
-                IsActive = true,
-                PaidDate = DateTimeOffset.UtcNow
-
+                LineItemId = lineItem!.InvoiceLineItemId,
+                IsActive = true
             };
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/invoice/{invoice.InvoiceId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{lineItem!.InvoiceLineItemId}", update);
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
@@ -109,9 +109,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
             var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
             //Act 
-            var response = await _client.DeleteAsync($"/api/invoice/{invoice!.InvoiceId}");
+            var response = await _client.DeleteAsync($"/api/invoiceLineItem/{lineItem!.InvoiceLineItemId}");
 
             //Assert
 
@@ -125,12 +126,17 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Create_WhenValidationFailed_Return400()
         {
             //Arrange
-            var create = new CreateInvoiceDto
+            var course = await builder.CreateCourse();
+            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
+
+            var create = new CreateInvoiceLineItemDto  //misisng invoice Id 
             {
-                CourseId = 11, // pass invalid courseId 
+                CourseId = course!.CourseId,
+                FeeTemplateId = feeTemplate!.FeeTemplateId,
+                Amount = 100
             };
             //Act 
-            var response = await _client.PostAsJsonAsync("/api/invoice", create);
+            var response = await _client.PostAsJsonAsync("/api/invoiceLineItem", create);
             //Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -140,25 +146,24 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task GetById_When_Return404()
         {
             //Act 
-            var response = await _client.GetAsync($"/api/invoice/{212322}");
+            var response = await _client.GetAsync($"/api/invoiceLineItem/{212322}");
 
             //Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
-        public async Task Update_WhenInvoiceDoesNotExists_Return404()
+        public async Task Update_WhenInvoiceLineItemDoesNotExists_Return404()
         {
             //Arrange 
-            var update = new UpdateInvoiceDto
+            var update = new UpdateInvoiceLineItemDto
             {
-                InvoiceId = 12288,
-                InvoiceStatus = InvoiceStatus.Cancelled,
-                IsActive = true
+                LineItemId = 9999,
+                Amount = 1111
             };
 
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/invoice/{update.InvoiceId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{update.LineItemId}", update);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
@@ -177,18 +182,17 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
             var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var LineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
-
-            var update = new UpdateInvoiceDto
+            var update = new UpdateInvoiceLineItemDto
             {
-                InvoiceId = 9999,
-                InvoiceStatus = InvoiceStatus.Issued,
-                IsActive = true,
-                PaidDate = DateTimeOffset.UtcNow
+                LineItemId = 222111, // wrrong id is passed 
+                Amount = 111,
+                IsActive = true
 
             };
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/invoice/{invoice!.InvoiceId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{LineItem!.InvoiceLineItemId}", update);
             //Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -198,7 +202,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Delete_When_Return404()
         {
             //Act 
-            var response = await _client.DeleteAsync($"/api/invoice/{22224}");
+            var response = await _client.DeleteAsync($"/api/invoiceLineItem/{222214}");
 
             //Assert
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);

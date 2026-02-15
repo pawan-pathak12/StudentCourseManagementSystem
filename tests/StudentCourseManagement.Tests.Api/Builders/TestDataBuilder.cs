@@ -157,12 +157,25 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
         public async Task<InvoiceLineItem?> CreateInvoiceLineItem(int invoiceId)
         {
+            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+            if (invoice == null)
+            {
+                return null;
+            }
+            var feeTemplate = await _feeTemplateRepository.GetActiveByCourseId(invoice!.CourseId);
+            if (feeTemplate == null)
+            {
+                return null;
+            }
             var item = new InvoiceLineItem
             {
                 InvoiceId = invoiceId,
                 Description = "Test Item",
                 Amount = 1000,
-                IsActive = true
+                IsActive = true,
+                CourseId = invoice!.CourseId,
+                CreatedAt = DateTimeOffset.UtcNow,
+                FeeTemplateId = feeTemplate!.FeeTemplateId
             };
 
             var id = await _invoiceLineItemRepository.AddAsync(item);
