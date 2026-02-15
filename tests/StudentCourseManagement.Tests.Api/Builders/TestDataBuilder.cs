@@ -188,7 +188,8 @@ namespace StudentCourseManagement.Tests.Api.Builders
             var method = new PaymentMethod
             {
                 Name = "Cash",
-                IsActive = true
+                IsActive = true,
+                PaymentMethodType = PaymentMethodType.Cash
             };
 
             var id = await _paymentMethodRepository.AddAsync(method);
