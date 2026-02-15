@@ -139,14 +139,16 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Invoice?> CreateInvoice(int studentId)
+        public async Task<Invoice?> CreateInvoice(int studentId, int feeAssessmentId, int courseId)
         {
             var invoice = new Invoice
             {
                 StudentId = studentId,
                 CreatedAt = DateTime.UtcNow,
                 TotalAmount = 1000,
-                IsActive = true
+                IsActive = true,
+                FeeAssessmentId = feeAssessmentId,
+                CourseId = courseId
             };
 
             var id = await _invoiceRepository.AddAsync(invoice);
@@ -155,12 +157,25 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
         public async Task<InvoiceLineItem?> CreateInvoiceLineItem(int invoiceId)
         {
+            var invoice = await _invoiceRepository.GetByIdAsync(invoiceId);
+            if (invoice == null)
+            {
+                return null;
+            }
+            var feeTemplate = await _feeTemplateRepository.GetActiveByCourseId(invoice!.CourseId);
+            if (feeTemplate == null)
+            {
+                return null;
+            }
             var item = new InvoiceLineItem
             {
                 InvoiceId = invoiceId,
                 Description = "Test Item",
                 Amount = 1000,
-                IsActive = true
+                IsActive = true,
+                CourseId = invoice!.CourseId,
+                CreatedAt = DateTimeOffset.UtcNow,
+                FeeTemplateId = feeTemplate!.FeeTemplateId
             };
 
             var id = await _invoiceLineItemRepository.AddAsync(item);
@@ -173,7 +188,8 @@ namespace StudentCourseManagement.Tests.Api.Builders
             var method = new PaymentMethod
             {
                 Name = "Cash",
-                IsActive = true
+                IsActive = true,
+                PaymentMethodType = PaymentMethodType.Cash
             };
 
             var id = await _paymentMethodRepository.AddAsync(method);
