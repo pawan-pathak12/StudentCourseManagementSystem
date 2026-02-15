@@ -139,14 +139,16 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Invoice?> CreateInvoice(int studentId)
+        public async Task<Invoice?> CreateInvoice(int studentId, int feeAssessmentId, int courseId)
         {
             var invoice = new Invoice
             {
                 StudentId = studentId,
                 CreatedAt = DateTime.UtcNow,
                 TotalAmount = 1000,
-                IsActive = true
+                IsActive = true,
+                FeeAssessmentId = feeAssessmentId,
+                CourseId = courseId
             };
 
             var id = await _invoiceRepository.AddAsync(invoice);

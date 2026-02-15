@@ -4,6 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.FInancialModule.Invoices
 {
     public class UpdateInvoiceDto
     {
+        public int InvoiceId { get; set; }
         public InvoiceStatus InvoiceStatus { get; set; }
         public DateTimeOffset PaidDate { get; set; }
         public bool IsActive { get; set; }
