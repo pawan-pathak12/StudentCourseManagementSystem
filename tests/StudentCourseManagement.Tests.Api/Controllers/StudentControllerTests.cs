@@ -6,9 +6,6 @@ namespace StudentCourseManagement.Tests.Api.Controllers
 {
     [TestClass]
 
-    // since jwt token is used so this all test is failed as all the endpoint is authorize
-    // error to fix : as CreateUser method is not under testclass so data is not deleted once test is completed 
-    // bug : in generate jwt token user role and id is nnot returned so left it fix 
     public class StudentControllerTests : IntegrationTestBase
     {
 
@@ -30,7 +27,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PostAsJsonAsync("/api/student/", student);
+            var response = await _client.PostAsJsonAsync("/api/student", student);
 
             response.EnsureSuccessStatusCode();
             //Assert
@@ -56,12 +53,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var studentData = await builder.CreateStudent();
 
             //Act 
-            var resposne = await _client.GetAsync("/api/student/");
+            var resposne = await _client.GetAsync("/api/student");
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.OK, resposne.StatusCode);
         }
-
 
         [TestMethod]
         public async Task Update_WhenRequestIsValid_Return200()

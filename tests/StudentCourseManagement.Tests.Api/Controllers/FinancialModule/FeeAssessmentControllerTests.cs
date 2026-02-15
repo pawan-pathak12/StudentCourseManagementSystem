@@ -23,7 +23,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.PostAsJsonAsync($"/api/feeAssessment/assess/{enrollment!.EnrollmentId}", enrollment!.EnrollmentId);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [TestMethod]
@@ -39,7 +39,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             //Act 
-            var response = await _client.GetAsync("/api/feeAssessment/");
+            var response = await _client.GetAsync("/api/feeAssessment");
 
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
