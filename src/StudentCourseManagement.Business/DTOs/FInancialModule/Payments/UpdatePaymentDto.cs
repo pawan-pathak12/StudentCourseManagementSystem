@@ -4,6 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.FInancialModule.Payments
 {
     public class UpdatePaymentDto
     {
+        public int PaymentId { get; set; }
         [Required]
         public int PaymentMethodId { get; set; }
         public decimal Amount { get; set; }

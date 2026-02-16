@@ -58,7 +58,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
             };
         }
 
-        public async Task<Student> CreateStudent()
+        public async Task<Student> CreateAndReturnStudent()
         {
             var rand = new Random();
             var student = new Student
@@ -73,7 +73,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Course> CreateCourse()
+        public async Task<Course> CreateAndReturnCourse()
         {
             var course = new Course
             {
@@ -87,7 +87,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Enrollment?> CreateEnrollment(int studentId, int courseId)
+        public async Task<Enrollment?> CreateAndReturnEnrollment(int studentId, int courseId)
         {
             var enrollment = new Enrollment
             {
@@ -107,7 +107,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
             await _enrollmentRepository.UpdateAsync(id, enrollment);
         }
 
-        public async Task<FeeTemplate?> CreateFeeTemplate(int courseId)
+        public async Task<FeeTemplate?> CreateAndReturnFeeTemplate(int courseId)
         {
             var template = new FeeTemplate
             {
@@ -123,7 +123,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
 
 
-        public async Task<FeeAssessment?> CreateFeeAssessment(int enrollmentId, int templateId)
+        public async Task<FeeAssessment?> CreateAndReturnFeeAssessment(int enrollmentId, int templateId)
         {
             var fee = new FeeAssessment
             {
@@ -139,7 +139,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Invoice?> CreateInvoice(int studentId, int feeAssessmentId, int courseId)
+        public async Task<Invoice?> CreateAndReturnInvoice(int studentId, int feeAssessmentId, int courseId)
         {
             var invoice = new Invoice
             {
@@ -183,7 +183,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<PaymentMethod?> CreatePaymentMethod()
+        public async Task<PaymentMethod?> CreateAndReturnPaymentMethod()
         {
             var method = new PaymentMethod
             {
@@ -197,13 +197,17 @@ namespace StudentCourseManagement.Tests.Api.Builders
         }
 
 
-        public async Task<Payment?> CreatePayment(int invoiceId, int methodId)
+        public async Task<Payment?> CreateAndReturnPayment(int invoiceId, int methodId, decimal amount)
         {
+            var studentId = await _studentRepository.AddAsync(new Student { Name = "Ram Nath", IsActive = true, Address = "Ktm", Gender = "male" });
+
             var payment = new Payment
             {
+                StudentId = studentId,
+                PaymentStatus = PaymentStatus.Completed,
                 InvoiceId = invoiceId,
                 PaymentMethodId = methodId,
-                Amount = 1000,
+                Amount = amount,
                 PaymentDate = DateTime.UtcNow,
                 IsActive = true
             };

@@ -38,7 +38,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task GetById_WhenStudentExists_Return200()
         {
             //Arrange 
-            var studentData = await builder.CreateStudent();
+            var studentData = await builder.CreateAndReturnStudent();
             //Act 
 
             var response = await _client.GetAsync($"/api/student/{studentData!.StudentId}");
@@ -50,7 +50,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task GetAll_WhenStudentExists_ReturnOk()
         {
             //Arrange 
-            var studentData = await builder.CreateStudent();
+            var studentData = await builder.CreateAndReturnStudent();
 
             //Act 
             var resposne = await _client.GetAsync("/api/student");
@@ -63,7 +63,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRequestIsValid_Return200()
         {
             //Arrange 
-            var studentData = await builder.CreateStudent();
+            var studentData = await builder.CreateAndReturnStudent();
             var student2 = new UpdateStudentDto
             {
                 Id = studentData!.StudentId,
@@ -83,7 +83,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Delete_WhenStudentExists_Return204()
         {
             //Arrange 
-            var studentData = await builder.CreateStudent();
+            var studentData = await builder.CreateAndReturnStudent();
 
             //Act 
             var deleteResposne = await _client.DeleteAsync($"/api/student/{studentData!.StudentId}");

@@ -14,8 +14,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Create_WhenStudentAndCourseExists_Return201()
         {
             //Arrange 
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
@@ -35,10 +35,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
-            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.GetAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
@@ -52,10 +52,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
-            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.GetAsync("/api/enrollment/");
@@ -68,10 +68,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenEnrollmentExists_Return204()
         {
             //Arrange 
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
-            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student.StudentId, course.CourseId);
 
             var updateRequest = new UpdateEnrollmentDto
             {
@@ -91,10 +91,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Delete_WhenEnrollmentExists_Return204()
         {
             //Arrange 
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
-            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student.StudentId, course.CourseId);
 
             //Act
             var existingEnrollment = await _client.DeleteAsync($"/api/enrollment/{enrollment!.EnrollmentId}");
@@ -262,10 +262,10 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRouteIdAndBodyIdMissMatched_Return400()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
-            var enrollment = await builder.CreateEnrollment(student.StudentId, course.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student.StudentId, course.CourseId);
 
             var update = new UpdateEnrollmentDto
             {
