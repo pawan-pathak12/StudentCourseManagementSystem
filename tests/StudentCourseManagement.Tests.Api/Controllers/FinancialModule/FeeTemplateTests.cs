@@ -13,7 +13,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Create_WhenValid_Return201()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
+            var course = await builder.CreateAndReturnCourse();
             var feeTemplate = new CreateFeeTemplateDto
             {
                 CourseId = course!.CourseId,
@@ -32,8 +32,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task GetAll_WhenTemplateExists_Return200()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
 
             //Act 
             var response = await _client.GetAsync("/api/feeTemplate");
@@ -45,8 +45,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task GetById_WhenExistingTemplateExists_Return200()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
 
             //Act 
             var response = await _client.GetAsync($"/api/feeTemplate/{feeTemplate!.FeeTemplateId}");
@@ -58,8 +58,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Update_WhenExistinhTemplateExists_Return200()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
 
             var updateFeeTemplate = new UpdateFeeTemplateDto
             {
@@ -79,8 +79,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Delete_WhenFeeTemplateExists_Return200()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
 
             //Act 
             var response = await _client.DeleteAsync($"/api/feeTemplate/{feeTemplate!.FeeTemplateId}");
@@ -138,8 +138,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Update_WhenRouteAndBodyIdMissMatched_Return400()
         {
             //Arrange 
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course.CourseId);
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
 
             var updateData = new UpdateFeeTemplateDto
             {

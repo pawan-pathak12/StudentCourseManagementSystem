@@ -31,7 +31,7 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     public async Task GetById_WhenPaymentMethodExists_Return200()
     {
         // Arrange
-        var paymentMethodData = await builder.CreatePaymentMethod();
+        var paymentMethodData = await builder.CreateAndReturnPaymentMethod();
 
         // Act
         var response = await _client.GetAsync($"/api/paymentmethod/{paymentMethodData!.PaymentMethodId}");
@@ -44,7 +44,7 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     public async Task GetAll_WhenPaymentMethodsExist_ReturnOk()
     {
         // Arrange
-        var paymentMethodData = await builder.CreatePaymentMethod();
+        var paymentMethodData = await builder.CreateAndReturnPaymentMethod();
 
         // Act
         var response = await _client.GetAsync("/api/paymentmethod");
@@ -57,7 +57,7 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     public async Task Update_WhenRequestIsValid_Return200()
     {
         // Arrange
-        var paymentMethodData = await builder.CreatePaymentMethod();
+        var paymentMethodData = await builder.CreateAndReturnPaymentMethod();
         var updateDto = new UpdatePaymentMethodDto
         {
             PaymentMethodId = paymentMethodData!.PaymentMethodId,
@@ -76,7 +76,7 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     public async Task Delete_WhenPaymentMethodExists_Return204()
     {
         // Arrange
-        var paymentMethodData = await builder.CreatePaymentMethod();
+        var paymentMethodData = await builder.CreateAndReturnPaymentMethod();
 
         // Act
         var response = await _client.DeleteAsync($"/api/paymentmethod/{paymentMethodData!.PaymentMethodId}");

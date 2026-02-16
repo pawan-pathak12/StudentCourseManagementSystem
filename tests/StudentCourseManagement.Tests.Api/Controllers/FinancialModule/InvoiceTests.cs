@@ -16,11 +16,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Create_WhenValid_Return201()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
 
             var invoice = new CreateInvoiceDto
             {
@@ -41,12 +41,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task GetAll_WhenInvoiceExists_Return200()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
 
             //Act 
             var response = await _client.GetAsync("/api/invoice");
@@ -58,12 +58,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task GetById_WhenInvoiceExistis_Return201()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
             //Act 
             var response = await _client.GetAsync($"/api/invoice/{invoice!.InvoiceId}");
 
@@ -76,12 +76,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Update_WhenValid_Return200()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
 
 
             var update = new UpdateInvoiceDto
@@ -103,12 +103,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Delete_WhenInvoiceExists_Return200()
         {
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
 
             //Act 
             var response = await _client.DeleteAsync($"/api/invoice/{invoice!.InvoiceId}");
@@ -171,12 +171,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             //Arrange
 
             //Arrange
-            var student = await builder.CreateStudent();
-            var course = await builder.CreateCourse();
-            var feeTemplate = await builder.CreateFeeTemplate(course!.CourseId);
-            var enrollment = await builder.CreateEnrollment(student!.StudentId, course!.CourseId);
-            var feeAssessment = await builder.CreateFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
+            var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
+            var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+            var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
 
 
             var update = new UpdateInvoiceDto

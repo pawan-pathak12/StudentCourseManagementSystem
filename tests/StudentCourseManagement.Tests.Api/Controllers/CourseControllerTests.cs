@@ -33,7 +33,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
 
             //Arrange
-            await builder.CreateCourse();
+            await builder.CreateAndReturnCourse();
 
             //Act
             var courses = await _client.GetAsync("/api/course");
@@ -46,7 +46,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task GetById_WhenStudentExists_Return200()
         {
             //Arrange
-            var course = await builder.CreateCourse();
+            var course = await builder.CreateAndReturnCourse();
             //Act
             var response = await _client.GetAsync($"/api/course/{course!.CourseId}");
 
@@ -58,7 +58,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenStudentExists_Return204()
         {
             //Arrange
-            var course = await builder.CreateCourse();
+            var course = await builder.CreateAndReturnCourse();
 
             var updateCourse = new UpdateCourseDto
             {
@@ -84,7 +84,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Delete_WhneStudentExists_Return204()
         {
             //Arrange
-            var course = await builder.CreateCourse();
+            var course = await builder.CreateAndReturnCourse();
 
             //Act
             var resposne = await _client.DeleteAsync($"/api/course/{course!.CourseId}");
@@ -147,7 +147,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenRouteIdAndBodyIdMisMatch_Return400()
         {
             //Arrange
-            var course = await builder.CreateCourse();
+            var course = await builder.CreateAndReturnCourse();
 
             var request = new UpdateCourseDto
             {
