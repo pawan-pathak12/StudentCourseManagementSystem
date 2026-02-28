@@ -27,8 +27,9 @@ namespace StudentCourseManagement.API.Controllers
         }
 
         #region httpPost
-        [HttpPost]
+
         [Authorize(Roles = "User, Admin")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
         {
             if (!ModelState.IsValid)
@@ -37,29 +38,22 @@ namespace StudentCourseManagement.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            try
+            var course = _mapper.Map<Course>(createCourseDto);
+            var (success, errorMessage, courseId) = await _courseService.CreateAsync(course);
+            if (!success)
             {
-                var course = _mapper.Map<Course>(createCourseDto);
-                var (success, errorMessage, courseId) = await _courseService.CreateAsync(course);
-                if (!success)
-                {
-                    return BadRequest($"Error Message : {errorMessage}");
-                }
-                var responseDto = _mapper.Map<CourseResponseDto>(course);
-
-                _logger.LogInformation("Course created successfully ");
-
-                return CreatedAtAction(nameof(GetById), new { id = courseId }, createCourseDto);
+                return BadRequest($"Error Message : {errorMessage}");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while creating course.");
-                return StatusCode(500, "An error occurred while creating the course.");
-            }
+            var responseDto = _mapper.Map<CourseResponseDto>(course);
+
+            _logger.LogInformation("Course created successfully ");
+
+            return CreatedAtAction(nameof(GetById), new { id = courseId }, createCourseDto);
+
+
         }
 
         #endregion
-
 
         #region httpget
         [HttpGet]
@@ -126,24 +120,17 @@ namespace StudentCourseManagement.API.Controllers
                 return BadRequest("Course ID in route does not match ID in body.");
             }
 
-            try
-            {
-                var course = _mapper.Map<Course>(updateCourseDto);
-                var success = await _courseService.UpdateAsync(id, course);
+            var course = _mapper.Map<Course>(updateCourseDto);
+            var success = await _courseService.UpdateAsync(id, course);
 
-                if (!success)
-                {
-                    _logger.LogWarning("Course with ID {CourseId} not found for update.", id);
-                    return NotFound($"Course with ID {id} not found.");
-                }
-
-                return NoContent();
-            }
-            catch (Exception ex)
+            if (!success)
             {
-                _logger.LogError(ex, "Error occurred while updating course with ID: {CourseId}", id);
-                return StatusCode(500, "An error occurred while updating the course.");
+                _logger.LogWarning("Course with ID {CourseId} not found for update.", id);
+                return NotFound($"Course with ID {id} not found.");
             }
+
+            return NoContent();
+
         }
 
         [HttpDelete("{id:int}")]

@@ -12,12 +12,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         [TestMethod]
         public async Task Create_WhenDataIsValid_Return201()
         {
+            var rand = new Random();
             //Arrange
             var course = new CreateCourseDto
             {
-                Title = "Testing",
+                Title = "Testing 1",
                 Capacity = 100,
-                Code = "CS101",
+                Code = $"CS1{rand.Next(000, 999)}",
                 Credits = 10
             };
 
@@ -173,6 +174,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             //Assert 
             Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
         }
+
         #endregion
 
     }
