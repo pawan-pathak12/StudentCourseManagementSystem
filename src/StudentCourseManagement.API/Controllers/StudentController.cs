@@ -27,9 +27,9 @@ namespace StudentCourseManagement.API.Controllers
 
 
         #region HttpPost
+        [Authorize(Roles = "User, Admin")]
 
         [HttpPost]
-        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateStudentDto createStudentDto)
         {
             var student = _mapper.Map<Student>(createStudentDto);
@@ -40,7 +40,9 @@ namespace StudentCourseManagement.API.Controllers
             }
 
             _logger.LogInformation("API Response : Created now student data");
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = studentId }, createStudentDto);
+            return Ok("Student Created");
+
+            //     return CreatedAtAction(nameof(GetByIdAsync), new { id = studentId }, createStudentDto);
         }
         #endregion
 
@@ -55,13 +57,12 @@ namespace StudentCourseManagement.API.Controllers
             _logger.LogInformation("API resposne : returning student all record ");
 
             return Ok(result);
-
-
         }
 
         #region GetById
-        [HttpGet("{id}")]
+
         [Authorize(Roles = "User, Admin")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             _logger.LogInformation($"API request : GET student with ID {id}");
@@ -83,10 +84,14 @@ namespace StudentCourseManagement.API.Controllers
 
         #region HttpPut
 
-        [HttpPut]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateStudentDto updateStudentDto)
+        [HttpPut("{int:id}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateStudentDto updateStudentDto)
         {
+            if (id != updateStudentDto.Id)
+            {
+                return BadRequest("Id MisMatched");
+            }
             var student = _mapper.Map<Student>(updateStudentDto);
 
             var isUpdated = await _studentService.UpdateAsync(student.StudentId, student);
@@ -100,7 +105,6 @@ namespace StudentCourseManagement.API.Controllers
             return Ok("Update is successful");
         }
         #endregion
-
 
         #region HttpDelete 
 

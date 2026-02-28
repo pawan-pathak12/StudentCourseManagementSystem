@@ -14,7 +14,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         // happy path means : use sends correct data => system works => success resposne 
 
         [TestMethod]
-        public async Task Create_WhenRequestIsValid_Return201()
+        public async Task Create_WhenRequestIsValid_Return200()
         {
             //Arrange 
             var student = new CreateStudentDto
@@ -29,9 +29,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             //Act 
             var response = await _client.PostAsJsonAsync("/api/student", student);
 
-            response.EnsureSuccessStatusCode();
             //Assert
-            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
         [TestMethod]
@@ -66,7 +65,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var studentData = await builder.CreateAndReturnStudent();
             var student2 = new UpdateStudentDto
             {
-                Id = studentData!.StudentId,
+                Id = (int)studentData!.StudentId,
                 Email = studentData.Email,
                 DOB = studentData.DOB,
                 Name = "Ram Nath",
@@ -74,8 +73,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{studentData!.StudentId}", student2);
+
+            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{(int)studentData!.StudentId}", student2);
+
             //Assert 
+
             Assert.AreEqual(HttpStatusCode.OK, updateResponse.StatusCode);
         }
 
@@ -114,6 +116,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         public async Task Update_WhenStudentDoesNotExist_Return404()
         {
             //Arrange 
+            int id = 999988;
             var request = new UpdateStudentDto
             {
                 Name = "Updted Name ",
@@ -121,7 +124,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/student/{99999}", request);
+            var response = await _client.PutAsJsonAsync($"/api/student/{id}", request);
 
             //Assert 
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
