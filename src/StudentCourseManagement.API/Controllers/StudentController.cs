@@ -85,8 +85,8 @@ namespace StudentCourseManagement.API.Controllers
         #region HttpPut
 
         [Authorize(Roles = "User, Admin")]
-        [HttpPut("{int:id}")]
-        public async Task<IActionResult> UpdateAsync([FromRoute] int id, [FromBody] UpdateStudentDto updateStudentDto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] UpdateStudentDto updateStudentDto)
         {
             if (id != updateStudentDto.Id)
             {

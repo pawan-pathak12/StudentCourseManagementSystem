@@ -24,7 +24,7 @@ namespace StudentCourseManagement.Tests.Api.Fixtures
                     {"Jwt:Audience" ,"JwtAuthLearningUsers" },
                     {"Jwt:Key" , "THIS_IS_A_SUPER_SECRET_KEY_CHANGE_LATER_BYOWNER" }
                 };
-                config.AddInMemoryCollection(settings);
+                config.AddInMemoryCollection(settings!);
             });
             builder.UseEnvironment("Test");
         }

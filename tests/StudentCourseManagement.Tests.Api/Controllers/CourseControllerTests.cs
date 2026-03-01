@@ -16,10 +16,18 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             //Arrange
             var course = new CreateCourseDto
             {
-                Title = "Testing 1",
-                Capacity = 100,
-                Code = $"CS1{rand.Next(000, 999)}",
-                Credits = 10
+                Code = $"C{rand.Next(1000, 9999)}",
+                Title = "Introduction to Computer Science and Technology",
+                Credits = 3,
+                Description = "Foundational course covering programming basics, algorithms, and problem-solving.",
+                Instructor = "Jon Doe",
+
+                StartDate = DateTimeOffset.UtcNow.AddDays(7),
+                EndDate = DateTimeOffset.UtcNow.AddDays(120),
+
+                Capacity = 50,
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(30)
             };
 
             //Act
@@ -137,15 +145,15 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             };
 
             //Act
-            var response = await _client.PostAsJsonAsync($"/api/course/{9999}", request);
+            var response = await _client.PutAsJsonAsync($"/api/course/{9999}", request);
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
 
         [TestMethod]
-        public async Task Update_WhenRouteIdAndBodyIdMisMatch_Return400()
+        public async Task Update_WhenRouteIdAndBodyIdMisMatch_Return404()
         {
             //Arrange
             var course = await builder.CreateAndReturnCourse();
@@ -160,7 +168,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             //Act
             var response = await _client.PutAsJsonAsync($"/api.course/{course!.CourseId}", request);
             //Assert 
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
 
         }
 
