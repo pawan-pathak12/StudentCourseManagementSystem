@@ -14,6 +14,7 @@ namespace StudentCourseManagement.Tests.Api
         protected TestDataBuilder builder = null!;
         protected HttpClient _client = null!;
         protected TransactionScope _scope = null!;
+
         protected IServiceProvider Services = null!;
 
         #region Class Init

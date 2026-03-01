@@ -1,6 +1,4 @@
-﻿using StudentCourseManagement.Application.DTOs.Courses;
-using StudentCourseManagement.Application.DTOs.Enrollments;
-using StudentCourseManagement.Application.DTOs.Students;
+﻿using StudentCourseManagement.Application.DTOs.Enrollments;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -110,82 +108,47 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         #region Create
 
         [TestMethod]
-        public async Task Create_WhenStudentNotFound_Return404()
+        public async Task Create_WhenStudentNotFound_Return400()
         {
             //Arrange 
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var course = builder.CreateAndReturnCourse();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
-                CourseId = course!.CourseId
+                CourseId = course!.Id
             };
 
             //Act
             var resposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, resposne.StatusCode);
         }
 
         [TestMethod]
-        public async Task Create_WhenCourseNotFound_Return404()
+        public async Task Create_WhenCourseNotFound_Return400()
         {
             //Arrange 
-
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
+            var student = builder.CreateAndReturnStudent();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
-                StudentId = student!.StudentId,
+                StudentId = student!.Id,
             };
 
             //Act
             var resposne = await _client.PostAsJsonAsync("/api/enrollment", enrollmentRequest);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, resposne.StatusCode);
         }
         [TestMethod]
         public async Task Create_WhenEnrollmentDuplicate_Return400()
         {
             //Arrange 
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
@@ -199,6 +162,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
                 StudentId = student!.StudentId,
                 CourseId = course!.CourseId
             };
+
             //Act
             var response = await _client.PostAsJsonAsync("/api/enrollment", request2);
 
@@ -211,25 +175,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         {
             //Arrange 
 
-            var createStudent = new CreateStudentDto
-            {
-                Name = "Pawan",
-                Address = "Haldibari"
-            };
-            var studentResponse = await _client
-                .PostAsJsonAsync("/api/student", createStudent);
-            var student = await studentResponse.Content
-                .ReadFromJsonAsync<StudentResponseDto>();
-
-            var createCourse = new CreateCourseDto
-            {
-                Title = "Math",
-                Credits = 3
-            };
-            var courseResponse = await _client
-                .PostAsJsonAsync("/api/course", createCourse);
-            var course = await courseResponse.Content
-                .ReadFromJsonAsync<CourseResponseDto>();
+            var student = await builder.CreateAndReturnStudent();
+            var course = await builder.CreateAndReturnCourse();
 
             var enrollmentRequest = new CreateEnrollmentDto
             {
@@ -282,7 +229,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         }
 
         [TestMethod]
-        public async Task Update_WhenEnrollmentDoesnotExists_Return404()
+        public async Task Update_WhenEnrollmentDoesNotExists_Return400()
         {
             //Arrange
             var update = new UpdateEnrollmentDto
@@ -296,7 +243,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var resposne = await _client.PutAsJsonAsync($"/api/enrollment/{99999}", update);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, resposne.StatusCode);
         }
 
         [TestMethod]

@@ -77,10 +77,24 @@ namespace StudentCourseManagement.Tests.Api.Builders
         {
             var course = new Course
             {
-                Title = "Test Course",
+                Code = "CS101",
+                Title = "Introduction to Computer Science",
                 Credits = 3,
+                Description = "Foundational course covering programming basics, algorithms, and problem-solving.",
+                Instructor = "Dr. Jane Doe",
+
+
+                StartDate = DateTimeOffset.UtcNow.AddDays(7),
+                EndDate = DateTimeOffset.UtcNow.AddDays(120),
+
                 IsActive = true,
+                Capacity = 50,
+
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(1),
+                EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(30)
             };
+
+
 
             var id = await _courseRepository.AddAsync(course);
             return await _courseRepository.GetByIdAsync(id);

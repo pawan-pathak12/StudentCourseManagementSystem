@@ -32,12 +32,6 @@ namespace StudentCourseManagement.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCourseDto createCourseDto)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for CreateCourse request.");
-                return BadRequest(ModelState);
-            }
-
             var course = _mapper.Map<Course>(createCourseDto);
             var (success, errorMessage, courseId) = await _courseService.CreateAsync(course);
             if (!success)
@@ -108,11 +102,6 @@ namespace StudentCourseManagement.API.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto updateCourseDto)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid model state for UpdateCourse request. ID: {CourseId}", id);
-                return BadRequest(ModelState);
-            }
 
             if (id != updateCourseDto.CourseId)
             {

@@ -31,10 +31,6 @@ namespace StudentCourseManagement.API.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateEnrollmentDto createDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             try
             {
