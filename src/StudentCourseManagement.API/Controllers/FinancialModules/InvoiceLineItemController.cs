@@ -28,10 +28,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateInvoiceLineItemDto lineItemDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var invoiceLineItem = _mapper.Map<InvoiceLineItem>(lineItemDto);
             var (success, errorMessage, lineItemId) = await _lineItemService.CreateAsync(invoiceLineItem);
@@ -74,10 +70,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateInvoiceLineItemDto updateInvoiceLineItemDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var invoiceLineItem = _mapper.Map<InvoiceLineItem>(updateInvoiceLineItemDto);
             var isUpdated = await _lineItemService.UpdateAsync(id, invoiceLineItem);

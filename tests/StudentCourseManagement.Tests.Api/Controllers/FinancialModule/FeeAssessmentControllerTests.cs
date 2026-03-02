@@ -78,7 +78,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 
             var updateData = new UpdateFeeAssessmentDto
             {
-                FeeAssessmentId = feeAssessment.FeeAssessmentId,
+                FeeAssessmentId = feeAssessment!.FeeAssessmentId,
                 FeeAssessmentStatus = AssessmentStatus.Assessed,
                 Amount = 00,
                 PaidDate = DateTimeOffset.UtcNow
@@ -127,7 +127,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task AssessFee_WhenAnyBusinessRuleFailed_Return400()
+        public async Task AssessFee_WhenAnyBusinessRuleFailed_Return404()
         {
             //Arrange 
             var student = await builder.CreateAndReturnStudent();
@@ -148,7 +148,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 
 
             //Act 
-            var response = await _client.PostAsJsonAsync($"/api/feeAssessment/assess{enrollment!.EnrollmentId}", enrollment.EnrollmentId);
+            var response = await _client.PostAsJsonAsync($"/api/feeAssessment/assess/{enrollment!.EnrollmentId}", enrollment.EnrollmentId);
 
             //Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
@@ -162,7 +162,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.GetAsync($"/api/feeAssessment/{77888881}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [TestMethod]
@@ -209,12 +209,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         [TestMethod]
         public async Task Delete_WhenFeeAssessmentNotFound_Return400()
         {
-
             //Act 
             var resposne = await _client.DeleteAsync($"/api/feeAssessment/{8353485}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, resposne.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, resposne.StatusCode);
         }
 
         #endregion

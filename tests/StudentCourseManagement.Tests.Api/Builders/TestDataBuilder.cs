@@ -75,9 +75,10 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
         public async Task<Course> CreateAndReturnCourse()
         {
+            var rand = new Random();
             var course = new Course
             {
-                Code = "CS101",
+                Code = $"CS{rand.Next(1000, 9999)}",
                 Title = "Introduction to Computer Science",
                 Credits = 3,
                 Description = "Foundational course covering programming basics, algorithms, and problem-solving.",
@@ -128,7 +129,8 @@ namespace StudentCourseManagement.Tests.Api.Builders
                 Name = "Test Template",
                 Amount = 1000,
                 IsActive = true,
-                CourseId = courseId
+                CourseId = courseId,
+                CreatedAt = DateTimeOffset.UtcNow
             };
 
             var id = await _feeTemplateRepository.AddAsync(template);
@@ -139,13 +141,17 @@ namespace StudentCourseManagement.Tests.Api.Builders
 
         public async Task<FeeAssessment?> CreateAndReturnFeeAssessment(int enrollmentId, int templateId)
         {
+            var enrollment = await _enrollmentRepository.GetByIdAsync(enrollmentId);
+
             var fee = new FeeAssessment
             {
                 EnrollmentId = enrollmentId,
                 FeeTemplateId = templateId,
+                CourseId = enrollment!.CourseId,
                 Amount = 1000,
                 DueDate = DateTime.UtcNow.AddDays(30),
-                IsActive = true
+                IsActive = true,
+                AssessmentDate = DateTimeOffset.UtcNow
             };
 
             var id = await _feeAssessmentRepository.AddAsync(fee);
@@ -158,6 +164,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
             var invoice = new Invoice
             {
                 StudentId = studentId,
+                AmountPaid = 0,
                 CreatedAt = DateTime.UtcNow,
                 TotalAmount = 1000,
                 IsActive = true,

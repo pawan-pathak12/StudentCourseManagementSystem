@@ -93,7 +93,9 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
                 _logger.LogWarning($"Update Failed : FeeAssessent with Id {feeAssessmentId} not found");
                 return false;
             }
-
+            feeAssessment.EnrollmentId = assessment.EnrollmentId;
+            feeAssessment.CourseId = assessment.CourseId;
+            feeAssessment.FeeTemplateId = assessment.FeeTemplateId;
 
             return await _feeAssessmentRepository.UpdateAsync(feeAssessmentId, feeAssessment);
         }

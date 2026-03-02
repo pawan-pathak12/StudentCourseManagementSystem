@@ -19,8 +19,9 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var course = await builder.CreateAndReturnCourse();
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
+
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course.CourseId);
 
 
             var lineItem = new CreateInvoiceDto
@@ -46,7 +47,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course.CourseId);
             await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
             //Act 
@@ -56,7 +57,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 
         }
         [TestMethod]
-        public async Task GetById_WhenInvoiceExistis_Return201()
+        public async Task GetById_WhenInvoiceExistis_Return200()
         {
             //Arrange
             var student = await builder.CreateAndReturnStudent();
@@ -64,7 +65,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course.CourseId);
             var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
             //Act 
             var response = await _client.GetAsync($"/api/invoiceLineItem/{lineItem!.InvoiceLineItemId}");
@@ -83,20 +84,20 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course.CourseId);
             var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
 
             var update = new UpdateInvoiceLineItemDto
             {
-                LineItemId = lineItem!.InvoiceLineItemId,
-                IsActive = true
+                InvoiceLineItemId = lineItem!.InvoiceLineItemId,
+                IsActive = true,
+                Amount = 100
             };
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{lineItem!.InvoiceLineItemId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{update!.InvoiceLineItemId}", update);
             //Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-
         }
 
         [TestMethod]
@@ -108,7 +109,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course.CourseId);
             var lineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
             //Act 
@@ -123,6 +124,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         #endregion
 
         #region Negative Part 
+        [TestMethod]
         public async Task Create_WhenValidationFailed_Return400()
         {
             //Arrange
@@ -149,24 +151,24 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.GetAsync($"/api/invoiceLineItem/{212322}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [TestMethod]
-        public async Task Update_WhenInvoiceLineItemDoesNotExists_Return404()
+        public async Task Update_WhenInvoiceLineItemDoesNotExists_Return400()
         {
             //Arrange 
             var update = new UpdateInvoiceLineItemDto
             {
-                LineItemId = 9999,
+                InvoiceLineItemId = 9999,
                 Amount = 1111
             };
 
             //Act 
-            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{update.LineItemId}", update);
+            var response = await _client.PutAsJsonAsync($"/api/invoiceLineItem/{update.InvoiceLineItemId}", update);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
 
@@ -181,12 +183,12 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
             var LineItem = await builder.CreateInvoiceLineItem(invoice!.InvoiceId);
 
             var update = new UpdateInvoiceLineItemDto
             {
-                LineItemId = 222111, // wrrong id is passed 
+                InvoiceLineItemId = 222111, // wrrong id is passed 
                 Amount = 111,
                 IsActive = true
 
@@ -199,13 +201,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task Delete_When_Return404()
+        public async Task Delete_When_Return400()
         {
             //Act 
             var response = await _client.DeleteAsync($"/api/invoiceLineItem/{222214}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
 

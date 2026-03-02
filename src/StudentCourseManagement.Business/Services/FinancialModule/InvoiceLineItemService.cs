@@ -90,6 +90,11 @@ public class InvoiceLineItemService : IInvoiceLineItemService
             _logger.LogWarning($"Failed to Update InvoiceLineItem: InvoiceLineItem with Id {lineItemId} not found");
             return false;
         }
+        lineItem.InvoiceId = lineItemData.InvoiceId;
+        lineItem.CourseId = lineItemData.CourseId;
+        lineItem.FeeTemplateId = lineItemData.FeeTemplateId;
+
+
         await _lineItemRepository.UpdateAsync(lineItemId, lineItem);
         return true;
     }

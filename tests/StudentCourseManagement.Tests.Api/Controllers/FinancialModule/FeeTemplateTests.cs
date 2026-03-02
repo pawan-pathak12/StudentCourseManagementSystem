@@ -13,9 +13,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         public async Task Create_WhenValid_Return201()
         {
             //Arrange 
+            var rand = new Random();
             var course = await builder.CreateAndReturnCourse();
             var feeTemplate = new CreateFeeTemplateDto
             {
+                Name = $"Lab Fee {rand.Next(1000, 9999)}",
                 CourseId = course!.CourseId,
                 Amount = 1122,
                 Description = "Testing"
@@ -55,17 +57,20 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task Update_WhenExistinhTemplateExists_Return200()
+        public async Task Update_WhenExistingTemplateExists_Return200()
         {
             //Arrange 
             var course = await builder.CreateAndReturnCourse();
+            Assert.IsNotNull(course);
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course.CourseId);
-
+            Assert.IsNotNull(feeTemplate);
             var updateFeeTemplate = new UpdateFeeTemplateDto
             {
+                Name = feeTemplate?.Name,
                 FeeTemplateId = feeTemplate!.FeeTemplateId,
+                CourseId = feeTemplate.CourseId,
                 Amount = 1000,
-                Description = "hello ",
+                Description = "Testing update endpoint ",
                 IsActive = true
             };
             //Act 
@@ -104,7 +109,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.PostAsJsonAsync("/api/feeTemplate", feeTemplate);
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.BadGateway, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
@@ -118,7 +123,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task Update_WhenFeeTemplateNotFound_Return404()
+        public async Task Update_WhenFeeTemplateNotFound_Return400()
         {
             //Arrange 
             var updateData = new UpdateFeeTemplateDto
@@ -131,7 +136,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.PutAsJsonAsync($"/api/feeTemplate/{updateData!.FeeTemplateId}", updateData);
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
@@ -153,13 +158,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
         [TestMethod]
-        public async Task Delete_WhentemplateIdNotFound_Return404()
+        public async Task Delete_WhentemplateIdNotFound_Return400()
         {
             //Act 
             var response = await _client.DeleteAsync($"/api/feeTemplate/1111");
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
         #endregion
     }

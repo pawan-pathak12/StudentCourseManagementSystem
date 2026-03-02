@@ -27,11 +27,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateFeeTemplateDto createFeeTemplate)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var feeTemplate = _mapper.Map<FeeTemplate>(createFeeTemplate);
             var (succes, errorMessage, feeTemplateId) = await _feeTemplateService.CreateAsync(feeTemplate);
 
@@ -73,10 +68,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateFeeTemplateDto updateFeeTemplate)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var feeTemplate = _mapper.Map<FeeTemplate>(updateFeeTemplate);
             var isUpdated = await _feeTemplateService.UpdateAsync(id, feeTemplate);
