@@ -17,7 +17,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var course = new CreateCourseDto
             {
                 Code = $"C{rand.Next(1000, 9999)}",
-                Title = "Introduction to Computer Science and Technology",
+                Title = $"Introduction to Computer Science and Technology {rand.Next(1000, 9999)}",
                 Credits = 3,
                 Description = "Foundational course covering programming basics, algorithms, and problem-solving.",
                 Instructor = "Jon Doe",
