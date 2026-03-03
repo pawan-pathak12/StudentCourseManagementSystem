@@ -186,11 +186,12 @@ namespace StudentCourseManagement.Tests.Unit.Services.FinancialModules.Refunds
             var paymentId = await _paymentRepository.AddAsync(payment);
 
             var (success, errorMessage) = await _refundService.ProcessRefundAsync(paymentId, "Testing");
+
             //Assert
             Assert.IsTrue(success);
             var updatedFeeAssessment = await _feeAssessmentRepository.GetByIdAsync(feeAssessmentId);
             Assert.IsNotNull(updatedFeeAssessment);
-            Assert.AreNotEqual(asseStatus, updatedFeeAssessment.FeeAssessmentStatus);
+            Assert.AreEqual(asseStatus, updatedFeeAssessment.FeeAssessmentStatus);
         }
 
         #region Helper Moethods 

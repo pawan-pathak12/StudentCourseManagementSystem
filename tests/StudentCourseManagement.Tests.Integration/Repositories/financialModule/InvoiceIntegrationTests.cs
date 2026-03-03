@@ -202,11 +202,12 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
             // test failed cause ;feetemplateId and FeeassessmentId is 0
 
             var feetemplateId = await CreateFeeTemplateAsync(courseId);
-            var feeAssessment = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
 
             var invoice = new InvoiceBuilder()
                     .WithCourseId(courseId).WithStudentId(studentId)
-                    .WithTotalAmount(1000).WithBalanceDue(1000).WithAmountPaid(0)
+                    .WithTotalAmount(1000).WithBalanceDue(1000)
+                    .WithAmountPaid(0).WithFeeAssessmentId(feeAssessmentId)
                     .WithDueDate(DateTimeOffset.UtcNow.AddDays(-35)).Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 
@@ -222,17 +223,16 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         public async Task GetAllOverdueInvoicesAsync_ShouldReturnListOfOverdueInvoices()
         {
             // Arrange
-            // Arrange
             var studentId = await CreateStudentAsync();
             var courseId = await CreateCourseAsync();
 
             var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feetemplateId = await CreateFeeTemplateAsync(courseId);
-            var feeAssessment = await CreateFeeAssessmentAsync(courseId, enrollmentId, feetemplateId);
+            var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
 
             var invoice = new InvoiceBuilder()
                     .WithCourseId(courseId).WithStudentId(studentId)
-                    .WithTotalAmount(1000).WithBalanceDue(1000).WithAmountPaid(0)
+                    .WithTotalAmount(1000).WithBalanceDue(1000).WithAmountPaid(0).WithFeeAssessmentId(feeAssessmentId)
                     .WithDueDate(DateTimeOffset.UtcNow.AddDays(-35)).Build();
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
             // Act

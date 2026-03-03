@@ -192,10 +192,10 @@ namespace StudentCourseManagement.Data.Repositories.Dapper.FinancialModule
             return invoice;
         }
 
-        public async Task<IEnumerable<Invoice>> GetAllOverDueInvoicesAsync()
+        public async Task<IEnumerable<Invoice?>> GetAllOverDueInvoicesAsync()
         {
-            const string sql = @"select * from Invoices
-                                DueDate< @Date;";
+            const string sql = @"select * from Invoices where
+                                DueDate < @Date";
 
             using var connection = _context.CreateConnection();
             var invoices = await connection.QueryAsync<Invoice>(sql, new { Date = DateTimeOffset.UtcNow });

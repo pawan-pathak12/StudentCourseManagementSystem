@@ -204,16 +204,18 @@ namespace StudentCourseManagement.Tests.Integration.Repositories.financialModule
         {
             //Arrange 
             var studentId = await CreateStudentAsync();
+            Assert.IsGreaterThan(0, studentId);
             var courseId = await CreateCourseAsync();
-            var enrollmentId = await CreateEnrollmentAsync(courseId, studentId);
+            var enrollmentId = await CreateEnrollmentAsync(studentId, courseId);
             var feetemplateId = await CreateFeeTemplateAsync(courseId);
             var feeAssessmentId = await CreateFeeAssessmentAsync(enrollmentId, courseId, feetemplateId);
+
             var invoice = new Invoice
             {
                 FeeAssessmentId = feeAssessmentId,
                 CourseId = courseId,
                 IsActive = true,
-                StudentId = studentId
+                StudentId = studentId,
             };
             var invoiceId = await _invoiceRepository.AddAsync(invoice);
 

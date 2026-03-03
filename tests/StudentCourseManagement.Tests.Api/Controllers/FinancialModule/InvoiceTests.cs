@@ -24,10 +24,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 
             var invoice = new CreateInvoiceDto
             {
-                InvoiceId = student!.StudentId,
+                StudentId = student!.StudentId,
                 CourseId = course!.CourseId,
                 DueDate = DateTimeOffset.UtcNow.AddDays(FinancialConstants.DUE_DATE_DAYS),
-                feeTemplateId = feeAssessment!.FeeAssessmentId
+                FeeAssessmentId = feeAssessment!.FeeAssessmentId,
+                feeTemplateId = feeTemplate!.FeeTemplateId
             };
 
             //Act 
@@ -46,7 +47,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
 
             //Act 
             var response = await _client.GetAsync("/api/invoice");
@@ -55,7 +56,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
 
         }
         [TestMethod]
-        public async Task GetById_WhenInvoiceExistis_Return201()
+        public async Task GetById_WhenInvoiceExists_Return201()
         {
             //Arrange
             var student = await builder.CreateAndReturnStudent();
@@ -63,7 +64,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
             //Act 
             var response = await _client.GetAsync($"/api/invoice/{invoice!.InvoiceId}");
 
@@ -81,12 +82,15 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
 
 
             var update = new UpdateInvoiceDto
             {
                 InvoiceId = invoice!.InvoiceId,
+                StudentId = invoice.StudentId,
+                CourseId = invoice.CourseId,
+                FeeAssessmentId = invoice.FeeAssessmentId,
                 InvoiceStatus = InvoiceStatus.Issued,
                 IsActive = true,
                 PaidDate = DateTimeOffset.UtcNow
@@ -108,7 +112,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
 
             //Act 
             var response = await _client.DeleteAsync($"/api/invoice/{invoice!.InvoiceId}");
@@ -122,6 +126,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         #endregion
 
         #region Negative Part 
+        [TestMethod]
         public async Task Create_WhenValidationFailed_Return400()
         {
             //Arrange
@@ -143,11 +148,11 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.GetAsync($"/api/invoice/{212322}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [TestMethod]
-        public async Task Update_WhenInvoiceDoesNotExists_Return404()
+        public async Task Update_WhenInvoiceDoesNotExists_Return400()
         {
             //Arrange 
             var update = new UpdateInvoiceDto
@@ -161,7 +166,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.PutAsJsonAsync($"/api/invoice/{update.InvoiceId}", update);
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
 
@@ -176,12 +181,15 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var feeTemplate = await builder.CreateAndReturnFeeTemplate(course!.CourseId);
             var enrollment = await builder.CreateAndReturnEnrollment(student!.StudentId, course!.CourseId);
             var feeAssessment = await builder.CreateAndReturnFeeAssessment(enrollment!.EnrollmentId, feeTemplate!.FeeTemplateId);
-            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, course!.CourseId, feeAssessment!.FeeAssessmentId);
+            var invoice = await builder.CreateAndReturnInvoice(student!.StudentId, feeAssessment!.FeeAssessmentId, course!.CourseId);
 
 
             var update = new UpdateInvoiceDto
             {
                 InvoiceId = 9999,
+                FeeAssessmentId = invoice!.FeeAssessmentId,
+                CourseId = invoice!.CourseId,
+                StudentId = invoice!.StudentId,
                 InvoiceStatus = InvoiceStatus.Issued,
                 IsActive = true,
                 PaidDate = DateTimeOffset.UtcNow
@@ -195,13 +203,13 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task Delete_When_Return404()
+        public async Task Delete_When_Return400()
         {
             //Act 
             var response = await _client.DeleteAsync($"/api/invoice/{22224}");
 
             //Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
 
         }
 

@@ -29,10 +29,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreatePaymentDto paymentDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var payment = _mapper.Map<Payment>(paymentDto);
             var (success, errorMessage, paymentId) = await _paymentService.CreateAsync(payment);

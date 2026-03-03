@@ -28,10 +28,6 @@ namespace StudentCourseManagement.API.Controllers.FinancialModules
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create([FromBody] CreateInvoiceDto createInvoice)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             var invoice = _mapper.Map<Invoice>(createInvoice);
             var (success, errorMessage, invoiceId) = await _invoiceService.CreateAsync(invoice);

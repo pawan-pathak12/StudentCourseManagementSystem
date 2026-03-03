@@ -3,6 +3,7 @@ using StudentCourseManagement.Business.Interfaces.Repositories;
 using StudentCourseManagement.Business.Interfaces.Repositories.FinancialModule;
 using StudentCourseManagement.Business.Interfaces.Services.FinancialModule;
 using StudentCourseManagement.Domain.Entities.FinancialModule;
+using StudentCourseManagement.Domain.Enums;
 
 namespace StudentCourseManagement.Business.Services.FinancialModule
 {
@@ -30,20 +31,25 @@ namespace StudentCourseManagement.Business.Services.FinancialModule
             if (student == null)
             {
                 _logger.LogWarning($"Student with Id {invoice.StudentId} not found");
-                return (false, $"", 0);
+                return (false, $"Student with Id {invoice.StudentId} not found", 0);
             }
             var course = await _courseRepository.GetByIdAsync(invoice.CourseId);
             if (course == null)
             {
                 _logger.LogWarning($"Course with Id {invoice.CourseId} not found");
-                return (false, $"", 0);
+                return (false, $"Course with Id {invoice.CourseId} not found", 0);
             }
             var feeAssessment = await _feeAssessmentRepository.GetByIdAsync(invoice.FeeAssessmentId);
             if (feeAssessment == null)
             {
                 _logger.LogWarning($"FeeAssessment with Id {invoice.FeeAssessmentId} not found");
-                return (false, $"", 0);
+                return (false, $"FeeAssessment with Id {invoice.FeeAssessmentId} not found", 0);
             }
+
+            invoice.IsActive = true;
+            invoice.CreatedAt = DateTimeOffset.UtcNow;
+            invoice.InvoiceStatus = InvoiceStatus.Issued;
+
 
             var invocieId = await _invoiceRepository.AddAsync(invoice);
             return (true, null, invocieId);
