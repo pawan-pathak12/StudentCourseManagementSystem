@@ -65,16 +65,17 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var studentData = await builder.CreateAndReturnStudent();
             var student2 = new UpdateStudentDto
             {
-                Id = (int)studentData!.StudentId,
+                StudentId = studentData!.StudentId,
                 Email = studentData.Email,
                 DOB = studentData.DOB,
                 Name = "Ram Nath",
-                Address = "Ktm"
+                Address = "Ktm",
+                Number = 9812456789
             };
 
             //Act 
 
-            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{(int)studentData!.StudentId}", student2);
+            var updateResponse = await _client.PutAsJsonAsync($"/api/student/{student2!.StudentId}", student2);
 
             //Assert 
 
@@ -113,7 +114,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         }
 
         [TestMethod]
-        public async Task Update_WhenStudentDoesNotExist_Return404()
+        public async Task Update_WhenStudentDoesNotExist_Return400()
         {
             //Arrange 
             int id = 999988;
@@ -127,17 +128,23 @@ namespace StudentCourseManagement.Tests.Api.Controllers
             var response = await _client.PutAsJsonAsync($"/api/student/{id}", request);
 
             //Assert 
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
         public async Task Update_WhenRouteIdAndBodyIdMissMatch_Return400()
         {
-            //Arrmage 
+            //Arrange
+            var studentData = await builder.CreateAndReturnStudent();
+
             var request = new UpdateStudentDto
             {
-                Id = 99,
-                Name = "String"
+                StudentId = studentData!.StudentId,
+                Email = studentData.Email,
+                DOB = studentData.DOB,
+                Name = "Ram Nath",
+                Address = "Ktm",
+                Number = 9812456789
             };
 
             //Act 

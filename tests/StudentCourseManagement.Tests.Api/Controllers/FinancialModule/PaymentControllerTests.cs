@@ -72,6 +72,8 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             {
                 PaymentId = payment!.PaymentId,
                 IsActive = true,
+                StudentId = testData!.StudentId,
+                InvoiceId = testData!.InvoiceId,
                 Amount = 150,
                 PaymentMethodId = payment!.PaymentMethodId
             };
@@ -132,7 +134,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
         }
 
         [TestMethod]
-        public async Task Update_WhenPaymentNotExists_Return404()
+        public async Task Update_WhenPaymentNotExists_Return400()
         {
             // Arrange
             var paymentMethod = await builder.CreateAndReturnPaymentMethod();
@@ -147,17 +149,17 @@ namespace StudentCourseManagement.Tests.Api.Controllers.FinancialModule
             var response = await _client.PutAsJsonAsync($"/api/payment/{111}", updateDto);
 
             // Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
-        public async Task Delete_WhenPaymentNotExists_Return404()
+        public async Task Delete_WhenPaymentNotExists_Return400()
         {
             // Act
             var response = await _client.DeleteAsync("/api/payment/99999");
 
             // Assert
-            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         #endregion

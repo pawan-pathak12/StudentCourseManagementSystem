@@ -63,9 +63,10 @@ namespace StudentCourseManagement.Tests.Api.Builders
             var rand = new Random();
             var student = new Student
             {
-                Name = "Test Student",
+                Name = $"Test Student {rand.Next(100, 999)}",
                 IsActive = true,
-                Email = $"user{rand.Next(0000, 9999)}" + "@gmail.com"
+                Email = $"user{rand.Next(0000, 9999)}" + "@gmail.com",
+                Gender = "Male",
             };
 
             var id = await _studentRepository.AddAsync(student);
@@ -91,7 +92,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
                 IsActive = true,
                 Capacity = 50,
 
-                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(1),
+                EnrollmentStartDate = DateTimeOffset.UtcNow.AddDays(-1),
                 EnrollmentEndDate = DateTimeOffset.UtcNow.AddDays(30)
             };
 
@@ -147,6 +148,7 @@ namespace StudentCourseManagement.Tests.Api.Builders
             {
                 EnrollmentId = enrollmentId,
                 FeeTemplateId = templateId,
+                FeeAssessmentStatus = AssessmentStatus.Assessed,
                 CourseId = enrollment!.CourseId,
                 Amount = 1000,
                 DueDate = DateTime.UtcNow.AddDays(30),

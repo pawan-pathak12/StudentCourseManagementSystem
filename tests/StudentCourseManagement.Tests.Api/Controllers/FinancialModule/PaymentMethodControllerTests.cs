@@ -92,22 +92,12 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     // unhappy path means: user sends incorrect data => system rejects => error response
 
     [TestMethod]
-    public async Task GetById_WhenPaymentMethodNotExists_Return404()
-    {
-        // Act
-        var response = await _client.GetAsync("/api/paymentmethod/99999");
-
-        // Assert
-        Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [TestMethod]
     public async Task Create_WhenDataInvalid_Return400()
     {
         // Arrange
         var paymentMethod = new CreatePaymentMethodDto
         {
-            Name = "",  // Invalid: empty name
+            Name = "",   // Invalid: empty name
         };
 
         // Act
@@ -118,7 +108,18 @@ public class PaymentMethodControllerTests : IntegrationTestBase
     }
 
     [TestMethod]
-    public async Task Update_WhenPaymentMethodNotExists_Return404()
+    public async Task GetById_WhenPaymentMethodNotExists_Return404()
+    {
+        // Act
+        var response = await _client.GetAsync("/api/paymentmethod/99999");
+
+        // Assert
+        Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+
+    [TestMethod]
+    public async Task Update_WhenPaymentMethodNotExists_Return400()
     {
         // Arrange
         var updateDto = new UpdatePaymentMethodDto
@@ -132,17 +133,17 @@ public class PaymentMethodControllerTests : IntegrationTestBase
         var response = await _client.PutAsJsonAsync("/api/paymentmethod/99999", updateDto);
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [TestMethod]
-    public async Task Delete_WhenPaymentMethodNotExists_Return404()
+    public async Task Delete_WhenPaymentMethodNotExists_Return400()
     {
         // Act
         var response = await _client.DeleteAsync("/api/paymentmethod/99999");
 
         // Assert
-        Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     #endregion

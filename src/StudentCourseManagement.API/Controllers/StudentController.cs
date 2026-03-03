@@ -88,7 +88,7 @@ namespace StudentCourseManagement.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] UpdateStudentDto updateStudentDto)
         {
-            if (id != updateStudentDto.Id)
+            if (id != updateStudentDto.StudentId)
             {
                 return BadRequest("Id MisMatched");
             }

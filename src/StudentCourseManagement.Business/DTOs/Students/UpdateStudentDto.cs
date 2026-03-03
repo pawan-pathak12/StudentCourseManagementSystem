@@ -4,7 +4,7 @@ namespace StudentCourseManagement.Application.DTOs.Students
 {
     public class UpdateStudentDto
     {
-        public int Id { get; set; }
+        public int StudentId { get; set; }
         [Required]
         public string? Name { get; set; }
         [Required]
@@ -15,7 +15,7 @@ namespace StudentCourseManagement.Application.DTOs.Students
         [Required]
         public DateTimeOffset DOB { get; set; }
         [Required]
-        [MinLength(10, ErrorMessage = "Number must be at least 10 digits.")]
+        [Range(1000000000, long.MaxValue, ErrorMessage = "Number must be at least 10 digits.")]
         public long Number { get; set; }
         public string? Gender { get; set; }
         public bool IsActive { get; set; }

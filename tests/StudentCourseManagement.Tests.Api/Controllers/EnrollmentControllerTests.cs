@@ -8,6 +8,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
     public class EnrollmentControllerTests : IntegrationTestBase
     {
         #region New Happy Path 
+
         [TestMethod]
         public async Task Create_WhenStudentAndCourseExists_Return201()
         {
@@ -63,7 +64,7 @@ namespace StudentCourseManagement.Tests.Api.Controllers
         }
 
         [TestMethod]
-        public async Task Update_WhenEnrollmentExists_Return204()
+        public async Task Update_WhenEnrollmentExists_Return200()
         {
             //Arrange 
             var student = await builder.CreateAndReturnStudent();

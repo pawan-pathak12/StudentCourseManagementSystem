@@ -103,10 +103,7 @@ namespace StudentCourseManagement.API.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateEnrollmentDto updateDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+
 
             if (id != updateDto.EnrollmentId)
             {
@@ -124,7 +121,7 @@ namespace StudentCourseManagement.API.Controllers
                 }
 
                 _logger.LogInformation("Enrollment with ID {EnrollmentId} updated successfully", id);
-                return NoContent();
+                return Ok("Updated Successfully");
             }
             catch (Exception ex)
             {
